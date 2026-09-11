@@ -1,0 +1,6 @@
+# USD per 1M tokens. Update from provider pages; unknown model => cost None + warning, never a crash.
+gpt-4o-mini:        {input_per_1m: 0.15,  output_per_1m: 0.60}
+gpt-4o:             {input_per_1m: 2.50,  output_per_1m: 10.00}
+claude-sonnet-4-6:  {input_per_1m: 3.00,  output_per_1m: 15.00}
+claude-haiku-4-5:   {input_per_1m: 0.80,  output_per_1m: 4.00}
+vllm/local-8b:      {input_per_1m: 0.02,  output_per_1m: 0.02}   # amortized GPU cost; document your assumption

@@ -1,0 +1,32 @@
+# One command gives every project its infrastructure. `docker compose -f infra/docker-compose.yml up -d`
+services:
+  postgres:
+    image: postgres:16
+    environment: { POSTGRES_USER: aisys, POSTGRES_PASSWORD: aisys, POSTGRES_DB: aisys }
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+  phoenix:                      # LLM trace UI (OpenTelemetry-native). Swap for Langfuse if you prefer.
+    image: arizephoenix/phoenix:latest
+    ports: ["6006:6006", "4317:4317"]   # 6006 UI, 4317 OTLP gRPC — aisys.tracing exports here directly
+  prometheus:
+    image: prom/prometheus:latest
+    ports: ["9090:9090"]
+    volumes: [./prometheus.yml:/etc/prometheus/prometheus.yml]
+  grafana:
+    image: grafana/grafana:latest
+    ports: ["3000:3000"]
+    environment: { GF_SECURITY_ADMIN_PASSWORD: admin }
+    volumes: [./grafana/provisioning:/etc/grafana/provisioning]
+  vllm:                         # requires NVIDIA GPU + nvidia-container-toolkit; comment out otherwise
+    image: vllm/vllm-openai:latest
+    command: >
+      --model ${VLLM_MODEL:-Qwen/Qwen2.5-7B-Instruct} --served-model-name vllm/local-8b
+      --max-model-len 16384 --enable-prefix-caching --gpu-memory-utilization 0.9
+    ports: ["8001:8000"]
+    deploy: { resources: { reservations: { devices: [{ driver: nvidia, count: 1, capabilities: [gpu] }] } } }
+    profiles: ["gpu"]
+volumes:
+  pgdata: {}

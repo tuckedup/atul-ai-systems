@@ -1,0 +1,23 @@
+# The feature that makes the portfolio look like Cursor/OpenAI work: a PR is blocked if agent quality regresses.
+name: eval-gate
+on:
+  pull_request:
+    paths: ["forgecode/**", "routebench/**", "packages/core/**"]
+jobs:
+  forgebench-smoke:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: aisys, POSTGRES_PASSWORD: aisys, POSTGRES_DB: aisys }
+        ports: ["5432:5432"]
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      DATABASE_URL: postgresql://aisys:aisys@localhost:5432/aisys
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --all-packages
+      - run: uv run python forgecode/forgebench/run.py --subset smoke --out /tmp/candidate.json
+      - name: Block on regression vs committed baseline
+        run: uv run aisys evals-compare forgecode/forgebench/baseline.json /tmp/candidate.json --max-drop 0.02
