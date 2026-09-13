@@ -1,0 +1,60 @@
+{
+  "abc123": {
+    "trace_id": "abc123",
+    "project": "incident_commander",
+    "spans": [
+      {
+        "span_id": "span-1",
+        "parent_span_id": null,
+        "name": "incident_commander.entry",
+        "kind": "agent",
+        "status": "UNSET",
+        "latency_ms": 12.5,
+        "attributes": {
+          "aisys.input": "{'alert_id': 'INC-42'}",
+          "aisys.output": "{'run_id': 'exec-approve-1'}"
+        }
+      },
+      {
+        "span_id": "span-2",
+        "parent_span_id": "span-1",
+        "name": "approval.request",
+        "kind": "approval",
+        "status": "UNSET",
+        "latency_ms": 1.2,
+        "attributes": {
+          "aisys.input": "{'tool': 'run_terminal', 'command': 'df -h && systemctl restart nginx'}",
+          "aisys.output": "{'approval_id': 'APPR-001'}"
+        }
+      },
+      {
+        "span_id": "span-3",
+        "parent_span_id": "span-2",
+        "name": "tool.run_terminal",
+        "kind": "tool",
+        "status": "UNSET",
+        "latency_ms": 340.0,
+        "attributes": {
+          "aisys.input": "df -h && systemctl restart nginx",
+          "aisys.output": "Filesystem ... 72% used\nnginx restarted",
+          "llm.model": "",
+          "llm.prompt_tokens": 0,
+          "llm.completion_tokens": 0,
+          "llm.cost_usd": 0.0
+        }
+      },
+      {
+        "span_id": "span-4",
+        "parent_span_id": "span-1",
+        "name": "incident_commander.exit",
+        "kind": "agent",
+        "status": "UNSET",
+        "latency_ms": 8.1,
+        "attributes": {
+          "aisys.input": "{}",
+          "aisys.output": "{'status': 'resolved', 'note': 'nginx restarted, disk at 72%'}"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "model": "gpt-4o-mini",
+  "provider": "openai-direct",
+  "quality": {
+    "qa": 0.92,
+    "code": 0.88,
+    "math": 0.95
+  },
+  "input_per_1m": 0.15,
+  "output_per_1m": 0.6,
+  "p95_latency_ms": 180,
+  "circuit_open": false,
+  "traffic_weights": {
+    "gpt-4o-mini": 0.7,
+    "claude-sonnet-4": 0.3
+  }
+}
