@@ -1,0 +1,9 @@
+[project]
+name = "operator-ui"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["aisys-core", "fastapi>=0.115", "uvicorn>=0.30"]
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5"]
+[tool.uv.scripts]
+serve = "uv run uvicorn operator_api.app:app --host 127.0.0.1 --port 8777 --reload"

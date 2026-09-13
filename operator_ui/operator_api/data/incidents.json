@@ -1,0 +1,18 @@
+{
+  "incidents": [
+    {
+      "id": "INC-42",
+      "status": "resolved",
+      "title": "prod-02 disk pressure + nginx unresponsive",
+      "started_at": "2026-09-12T09:45:00Z",
+      "report_path": "/tmp/inc-42-report.md"
+    },
+    {
+      "id": "INC-43",
+      "status": "open",
+      "title": "checkout service 500s under load",
+      "started_at": "2026-09-12T10:20:00Z",
+      "report_path": null
+    }
+  ]
+}

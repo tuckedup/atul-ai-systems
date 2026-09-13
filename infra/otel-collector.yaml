@@ -1,0 +1,32 @@
+# OpenTelemetry collector configured for the infra/docker-compose.yml stack.
+# Ships OTLP traces to Phoenix (localhost:4317) and metrics to Prometheus.
+# When Phoenix/collector is unavailable, aisys.tracing init_tracing() falls back
+# to ConsoleSpanExporter + JSONL at .local/traces.jsonl without this file.
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  otlp/phoenix:
+    endpoint: phoenix:4317
+    insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:9464"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/phoenix]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]

@@ -1,0 +1,22 @@
+name: CI
+on:
+  pull_request:
+    paths:
+      - 'packages/core/**'
+      - 'infra/**'
+      - '.github/workflows/ci.yml'
+      - 'pyproject.toml'
+      - '.env.example'
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          python-version: '3.11'
+      - run: uv sync --extra dev
+        working-directory: packages/core
+      - run: uv run ruff check packages/core
+      - run: uv run mypy packages/core/aisys --strict
+      - run: uv run pytest packages/core/tests -q

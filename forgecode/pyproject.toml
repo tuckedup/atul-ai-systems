@@ -1,0 +1,7 @@
+[project]
+name = "forgecode"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["aisys-core", "langgraph>=0.2"]
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.23"]
