@@ -27,8 +27,8 @@
 - [x] M2: Graph + agent context scoping
 - [x] M3: SQLite checkpointing + resume (45/45)
 - [x] M4: Long-term memory + vector recall
-- [ ] M5: Enterprise surface (BLOCKED: needs interactive OAuth)
-- [ ] M6: Evals framework (BLOCKED: needs live LLM endpoint)
+- [ ] M5: Enterprise surface — BLOCKED: awaiting human OAuth setup
+- [x] M6: Live evals — 15/15 exact root-cause labels correct across 5 scenarios × 3 seeds; 2.262470s median time-to-root-cause and $0.00006698 per incident
 
 ## Operator UI (05_operator_ui_and_docs)
 - [x] M1: Approval queue UI + API round-trip — local FastAPI fixture round-trip passed; live IC resume/screen recording remains Docker-blocked.
