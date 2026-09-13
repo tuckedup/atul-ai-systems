@@ -1,0 +1,70 @@
+scenarios:
+  - id: live-dependency-outage
+    name: Dependency outage cascade
+    alert:
+      alertname: CheckoutErrorRate
+      severity: critical
+      service: checkout-service
+      summary: Checkout HTTP 5xx rate exceeded 18 percent
+    evidence:
+      - Checkout logs show connection refused errors for inventory-service on every failed request.
+      - Inventory-service has zero healthy endpoints and began failing before checkout-service.
+      - Checkout-service has had no deployment or configuration change in 48 hours.
+    ground_truth:
+      label: dependency_outage
+
+  - id: live-code-regression
+    name: Code regression after deployment
+    alert:
+      alertname: SearchLatency
+      severity: critical
+      service: search-service
+      summary: Search p99 latency increased from 180 ms to 4.2 seconds
+    evidence:
+      - The latency increase began within two minutes of deploying commit a81f2d7.
+      - The commit replaced a batched query with one database query per result row.
+      - Dependencies, database connection counts, CPU, and memory remain healthy.
+    ground_truth:
+      label: code_regression
+
+  - id: live-database-pool
+    name: Database connection exhaustion
+    alert:
+      alertname: ApiTimeouts
+      severity: critical
+      service: account-api
+      summary: Requests are timing out while waiting for persistence
+    evidence:
+      - Application logs repeatedly report timeout acquiring connection from pool.
+      - The pool is at 100 of 100 active connections with a growing waiter count.
+      - Database CPU is 34 percent and query latency is normal for acquired connections.
+    ground_truth:
+      label: database_connection_exhaustion
+
+  - id: live-expired-credentials
+    name: Expired service credentials
+    alert:
+      alertname: PartnerAuthenticationFailures
+      severity: critical
+      service: billing-worker
+      summary: All partner API calls return authentication errors
+    evidence:
+      - Partner responses are HTTP 401 with error token_expired.
+      - The mounted client credential expired at 09:00 UTC, exactly when failures began.
+      - Network reachability and partner service health checks succeed.
+    ground_truth:
+      label: expired_service_credentials
+
+  - id: live-capacity-exhaustion
+    name: Compute capacity exhaustion
+    alert:
+      alertname: WorkerQueueBacklog
+      severity: warning
+      service: image-worker
+      summary: Queue depth rose from 20 to 18000 jobs in ten minutes
+    evidence:
+      - All workers are healthy but pinned at 100 percent CPU with no idle slots.
+      - Per-job processing time is unchanged and logs contain no dependency or authentication errors.
+      - Arrival rate is six times the provisioned maximum throughput.
+    ground_truth:
+      label: capacity_exhaustion

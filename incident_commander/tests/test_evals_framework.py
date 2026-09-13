@@ -1,19 +1,22 @@
 """Tests for Incident Commander M6 — evals framework (loading, grading, no live LLM calls)."""
-import json
 import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from evals.runner import (
-    load_scenarios,
+    EvalRun,
+    LiveScenarioResult,
+    ScenarioResult,
+    _parse_diagnosis,
     grade_contains,
     grade_exact,
-    grade_range,
     grade_min_length,
+    grade_range,
     grade_scenario,
-    ScenarioResult,
-    EvalRun,
+    load_live_scenarios,
+    load_scenarios,
+    summarize_live_results,
 )
 
 
@@ -146,3 +149,26 @@ def test_grade_unknown_grader():
     assert "exact" in GRADERS
     assert "range" in GRADERS
     assert "min_length" in GRADERS
+
+
+def test_live_scenarios_are_exactly_five_with_ground_truth():
+    scenarios = load_live_scenarios()
+    assert len(scenarios) == 5
+    assert all(s["ground_truth"]["label"] for s in scenarios)
+    assert all(s["evidence"] for s in scenarios)
+
+
+def test_parse_diagnosis_and_live_summary():
+    label, rationale = _parse_diagnosis(
+        '{"root_cause_label":"dependency_outage","rationale":"downstream refused connections"}'
+    )
+    assert label == "dependency_outage"
+    assert "downstream" in rationale
+    results = [
+        LiveScenarioResult("a", "A", 11, "dependency_outage", label, rationale, True, 1.0, 10, 5, 0.01),
+        LiveScenarioResult("a", "A", 29, "dependency_outage", "code_regression", "wrong", False, 3.0, 12, 4, 0.02),
+    ]
+    summary = summarize_live_results(results)
+    assert summary["root_cause_accuracy"] == 0.5
+    assert summary["median_time_to_root_cause_s"] == 2.0
+    assert summary["cost_per_incident_usd"] == 0.015
