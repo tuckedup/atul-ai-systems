@@ -1,0 +1,4 @@
+id: config-drift
+alert: One production replica uses a stale feature flag value.
+expected_root_cause: configuration reconciliation failure
+

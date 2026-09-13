@@ -1,0 +1,4 @@
+id: cert-expiry
+alert: TLS handshakes fail for the partner callback endpoint.
+expected_root_cause: expired partner certificate
+

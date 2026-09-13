@@ -1,0 +1,8 @@
+﻿# ForgeCode status
+
+- [x] M1 subprocess sandbox + typed tools — `pytest forgecode/tests/test_sandbox.py` passed, including cwd pinning and timeout enforcement
+- [x] M2 context engine — `pytest forgecode/tests/test_context.py` passed; 2/2 injected bug files retrieved within budget
+- [x] M3 graph structure + durable adapter — graph compiles against the DSN-selected checkpointer; live provider pause/resume run not yet executed
+- [x] M4 router + trajectory summaries — 20-step budget and reviewer-isolation tests passed
+- [x] M5 ForgeBench (local/degraded scope) — expanded to ten distinct deterministic Python bug types; the live full-agent run passed 10/10 held-out cases (100%) with 68,718 total tokens, 6,871.8 mean tokens/task, $0.0878563 total cost, $0.00878563 mean cost/task, 24.204 s mean and 22.280 s median latency/task, 6.0 graph steps/task, 10 approval interventions, and zero errors (`forgebench/results/local-agent-10-2026-09-12.json`). The official 20-task SWE-bench Verified acceptance run remains Docker-blocked and is not inferred from this local result.
+- [x] M6 trace mining + CI gate (local/degraded scope) — the miner groups spans by `aisys.trace_id`, excludes expected `GraphInterrupt` control flow, omits raw inputs/outputs, and writes deterministic YAML plus a report; the real `.local/traces.jsonl` mine parsed 2,532 spans, ignored 400 approval-interrupt spans, found 1 genuine failed trajectory, and wrote 1 case. The 100-case CI candidate passed at 100% with 0.0 overall/per-tag delta under the 2-point gate; 15/15 ForgeCode tests passed. Original extended evidence of ten organic failures and a hosted failing-run URL remains unavailable.

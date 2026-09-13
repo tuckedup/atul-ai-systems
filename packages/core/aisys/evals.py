@@ -9,14 +9,15 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
-import yaml
-from pydantic import BaseModel
-from sklearn.metrics import cohen_kappa_score
+import yaml  # type: ignore[import-untyped]
+from pydantic import BaseModel, Field
+from sklearn.metrics import cohen_kappa_score  # type: ignore[import-untyped]
 
 from . import llm
 from .tracing import traced
@@ -28,9 +29,9 @@ class EvalCase(BaseModel):
     id: str
     input: Any
     expected: Any = None
-    tags: list[str] = []
+    tags: list[str] = Field(default_factory=list)
     grader: str = "exact"
-    grader_args: dict[str, Any] = {}
+    grader_args: dict[str, Any] = Field(default_factory=dict)
 
 
 class CaseResult(BaseModel):
@@ -54,7 +55,7 @@ class RunResult(BaseModel):
         return sum(r.score >= 1.0 for r in rs) / len(rs) if rs else 0.0
 
     def mean(self, attr: str) -> float:
-        return sum(getattr(r, attr) for r in self.results) / max(1, len(self.results))
+        return sum(float(getattr(r, attr)) for r in self.results) / max(1, len(self.results))
 
     def table(self) -> str:
         tags = sorted({t for r in self.results for t in r.tags})
@@ -80,17 +81,21 @@ def g_regex(c: EvalCase, out: Any) -> float:
 
 
 def g_json_schema(c: EvalCase, out: Any) -> float:
-    import jsonschema  # optional dep; declare in project
+    import jsonschema  # type: ignore[import-untyped]
+
     try:
         jsonschema.validate(json.loads(out) if isinstance(out, str) else out, c.expected)
         return 1.0
-    except Exception:
+    except (json.JSONDecodeError, jsonschema.ValidationError, jsonschema.SchemaError, TypeError):
         return 0.0
 
 
 def g_unit_tests(c: EvalCase, out: Any) -> float:
     """`out` is a workdir path with the candidate patch applied; grader_args.cmd runs hidden tests."""
-    r = subprocess.run(c.grader_args["cmd"], shell=True, cwd=str(out), capture_output=True, timeout=c.grader_args.get("timeout", 600))
+    r = subprocess.run(
+        c.grader_args["cmd"], shell=True, cwd=str(out), capture_output=True,
+        timeout=c.grader_args.get("timeout", 600), check=False,
+    )
     return float(r.returncode == 0)
 
 
@@ -146,14 +151,14 @@ class EvalSuite:
     cases: list[EvalCase] = field(default_factory=list)
 
     @classmethod
-    def load(cls, path: str | Path) -> "EvalSuite":
+    def load(cls, path: str | Path) -> EvalSuite:
         cases = []
         for f in sorted(Path(path).glob("**/*.y*ml")):
             data = yaml.safe_load(f.read_text())
             cases += [EvalCase(**d) for d in (data if isinstance(data, list) else [data])]
         return cls(cases)
 
-    def filter(self, tag: str) -> "EvalSuite":
+    def filter(self, tag: str) -> EvalSuite:
         return EvalSuite([c for c in self.cases if tag in c.tags])
 
 
@@ -166,7 +171,7 @@ def run(suite: EvalSuite, fn: Callable[[EvalCase], dict[str, Any]], name: str = 
             score = GRADERS[c.grader](c, r["output"])
             return CaseResult(case_id=c.id, score=score, tags=c.tags, **{k: r.get(k, 0) for k in
                               ("tokens", "cost_usd", "latency_ms", "steps", "human_interventions")})
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - a bad case must not abort the full suite
             return CaseResult(case_id=c.id, score=0.0, tags=c.tags, error=f"{type(e).__name__}: {e}")
     with ThreadPoolExecutor(concurrency) as ex:
         return RunResult(name=name, results=list(ex.map(one, suite.cases)))

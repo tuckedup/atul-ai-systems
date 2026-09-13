@@ -1,0 +1,90 @@
+- id: local-py-auth-expiry
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find, fix, and preserve existing behavior
+    hidden_tests: py-auth-expiry
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, boundary, python]
+  grader: exact
+- id: local-py-pagination-partial-page
+  input:
+    fixture: py-pagination
+    task: page counts drop the final partially filled page; fix the calculation without changing exact-page behavior
+    hidden_tests: py-pagination-partial-page
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, arithmetic, python]
+  grader: exact
+- id: local-py-cache-ttl-boundary
+  input:
+    fixture: py-cache
+    task: cache entries remain fresh at the exact TTL boundary; make the boundary expire while preserving younger entries
+    hidden_tests: py-cache-ttl-boundary
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, boundary, python]
+  grader: exact
+- id: local-py-retry-initial-delay
+  input:
+    fixture: py-retry
+    task: exponential retry delays start at twice the configured base; correct the sequence and keep the cap
+    hidden_tests: py-retry-initial-delay
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, algorithm, python]
+  grader: exact
+- id: local-py-dedupe-order
+  input:
+    fixture: py-dedupe
+    task: duplicate removal scrambles input order; preserve first occurrence order while removing duplicates
+    hidden_tests: py-dedupe-order
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, collections, python]
+  grader: exact
+- id: local-py-config-precedence
+  input:
+    fixture: py-config
+    task: configuration defaults overwrite caller overrides; correct merge precedence without mutating either input
+    hidden_tests: py-config-precedence
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, configuration, python]
+  grader: exact
+- id: local-py-extension-case
+  input:
+    fixture: py-extension
+    task: upload validation rejects uppercase forms of allowed extensions; make extension matching case-insensitive
+    hidden_tests: py-extension-case
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, validation, python]
+  grader: exact
+- id: local-py-windows-final
+  input:
+    fixture: py-windows
+    task: the sliding-window helper omits the final valid window; fix the off-by-one behavior
+    hidden_tests: py-windows-final
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, boundary, python]
+  grader: exact
+- id: local-py-average-fraction
+  input:
+    fixture: py-average
+    task: averages are truncated when the true result is fractional; return the precise arithmetic mean
+    hidden_tests: py-average-fraction
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, arithmetic, python]
+  grader: exact
+- id: local-py-flag-false
+  input:
+    fixture: py-flags
+    task: textual false and zero configuration flags are treated as enabled; parse common boolean spellings correctly
+    hidden_tests: py-flag-false
+    test_command: python -m pytest -q
+  expected: pass
+  tags: [bugfix, parsing, python]
+  grader: exact

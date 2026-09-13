@@ -12,7 +12,6 @@ from dataclasses import dataclass
 from typing import Literal
 
 from aisys import audit, tracing
-from aisys.settings import settings
 
 TaskClass = Literal["classify", "extract", "summarize", "code", "sql", "reason", "tool_use", "chat"]
 Difficulty = Literal["easy", "medium", "hard"]
@@ -82,7 +81,7 @@ class Router:
                 s -= 10; reasons.append("over budget")
             if q < r.quality_floor:
                 s -= 5; reasons.append("below quality floor")
-            s *= b.traffic_weight if b.traffic_weight < 1.0 else 1.0   # canary: shrink share, don't exclude
+            s *= min(1.0, b.traffic_weight)   # canary: shrink share, don't exclude
             scored.append((b, s, reasons))
         scored.sort(key=lambda t: t[1], reverse=True)
         best, score, reasons = scored[0]

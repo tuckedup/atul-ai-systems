@@ -10,9 +10,15 @@ dependencies = [
   "psycopg[binary]>=3.1", "redis>=5", "typer>=0.12", "rich>=13", "scikit-learn>=1.4",
 ]
 [project.optional-dependencies]
-dev = ["pytest>=8", "pytest-asyncio>=0.23", "respx>=0.21", "ruff>=0.5", "mypy>=1.10"]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "respx>=0.21", "ruff>=0.5", "mypy>=1.10", "jsonschema>=4.23"]
 [project.scripts]
 aisys = "aisys.cli:app"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["aisys"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,23 +1,40 @@
-# The feature that makes the portfolio look like Cursor/OpenAI work: a PR is blocked if agent quality regresses.
+# Deterministic degraded-mode gate: no Docker service and no live model key.
 name: eval-gate
+
 on:
   pull_request:
-    paths: ["forgecode/**", "routebench/**", "packages/core/**"]
+    paths:
+      - "forgecode/**"
+      - "packages/core/**"
+      - ".github/workflows/eval-gate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  forgebench-smoke:
+  forgebench-regression:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env: { POSTGRES_USER: aisys, POSTGRES_PASSWORD: aisys, POSTGRES_DB: aisys }
-        ports: ["5432:5432"]
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      DATABASE_URL: postgresql://aisys:aisys@localhost:5432/aisys
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
-      - run: uv sync --all-packages
-      - run: uv run python forgecode/forgebench/run.py --subset smoke --out /tmp/candidate.json
-      - name: Block on regression vs committed baseline
-        run: uv run aisys evals-compare forgecode/forgebench/baseline.json /tmp/candidate.json --max-drop 0.02
+      - uses: astral-sh/setup-uv@v6
+      - name: Install locked workspace
+        run: uv sync --frozen
+      - name: Verify ForgeCode and trace miner
+        run: uv run pytest forgecode/tests -q --basetemp .local/pytest-ci
+      - name: Run deterministic 100-case candidate
+        run: uv run python forgecode/forgebench/run.py --output .local/forgebench-candidate.json
+      - name: Block success-rate drops greater than two points
+        run: >-
+          uv run aisys evals-compare
+          forgecode/forgebench/baseline.json
+          .local/forgebench-candidate.json
+          --max-drop 0.02
+      - name: Preserve candidate metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forgebench-candidate
+          path: .local/forgebench-candidate.json
+          if-no-files-found: warn

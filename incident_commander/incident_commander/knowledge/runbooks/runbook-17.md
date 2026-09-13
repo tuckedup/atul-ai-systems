@@ -1,0 +1,5 @@
+---
+title: Api recovery 17
+roles: [sre, viewer]
+---
+Validate api health, compare the recent deployment, and collect evidence. Any restart, scale, rollback, database modification, or merge requires approval.

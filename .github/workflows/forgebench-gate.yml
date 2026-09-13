@@ -1,0 +1,14 @@
+name: ForgeBench regression gate
+on:
+  pull_request:
+    paths: ["forgecode/**", "packages/core/**"]
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - run: uv run pytest forgecode/tests -q
+      - run: uv run python forgecode/forgebench/run.py --output .local/forgebench-candidate.json
+      - run: uv run aisys evals-compare forgecode/forgebench/baseline.json .local/forgebench-candidate.json --max-drop 0.02

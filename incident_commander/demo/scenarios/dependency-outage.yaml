@@ -1,0 +1,4 @@
+id: dependency-outage
+alert: Payment dependency returns connection timeouts in three regions.
+expected_root_cause: upstream payment provider outage
+

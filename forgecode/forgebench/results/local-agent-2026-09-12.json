@@ -1,0 +1,24 @@
+{
+  "name": "forgecode-full-agent",
+  "trace_id": "d278ec9a7c3f4f9aa1f1d4b67c81e222",
+  "model_calls": 6,
+  "prompt_tokens": 6866,
+  "completion_tokens": 1144,
+  "results": [
+    {
+      "case_id": "local-py-auth-expiry",
+      "score": 1.0,
+      "tags": [
+        "bugfix",
+        "boundary",
+        "python"
+      ],
+      "tokens": 8010,
+      "cost_usd": 0.009506549999999999,
+      "latency_ms": 25461.613000006764,
+      "steps": 6,
+      "human_interventions": 1,
+      "error": null
+    }
+  ]
+}

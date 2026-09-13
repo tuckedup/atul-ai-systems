@@ -1,0 +1,36 @@
+- id: mined-2068ba3682fd
+  input:
+    trace_id: 56c8308231904aecba1af3aae00ac449
+    failure_reasons:
+    - ValueError
+    failed_spans:
+    - implementer
+    - tool.call
+    trajectory:
+    - name: planner
+      status: UNSET
+      kind: agent
+      latency_ms: 5320.482
+    - name: llm.chat
+      status: UNSET
+      kind: llm
+      latency_ms: 5278.563
+    - name: implementer
+      status: ERROR
+      kind: agent
+      error: ValueError
+    - name: llm.chat
+      status: UNSET
+      kind: llm
+      latency_ms: 2797.3
+    - name: tool.call
+      status: ERROR
+      kind: tool
+      error: ValueError
+    input_fingerprint: cba8b51e5423cf96
+  expected:
+    status: no_error
+  tags:
+  - mined
+  - failed-trajectory
+  grader: exact

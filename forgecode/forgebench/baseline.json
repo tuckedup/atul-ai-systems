@@ -1,0 +1,1305 @@
+{
+  "name": "context-retrieval",
+  "results": [
+    {
+      "case_id": "forge-001",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 49.37470000004396,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-002",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 49.665700003970414,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-003",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 47.83789999783039,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-004",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 49.08520000753924,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-005",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 47.774899983778596,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-006",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 47.48100001597777,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-007",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 46.11039999872446,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-008",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 47.106799989705905,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-009",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 46.61599997780286,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-010",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 47.686400008387864,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-011",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 46.09739998704754,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-012",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 46.69449999346398,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-013",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 47.97119999420829,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-014",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 48.858100024517626,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-015",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 47.49399999855086,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-016",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 47.64679999789223,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-017",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 43.70780001045205,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-018",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 43.48320001736283,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-019",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 42.635399993741885,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-020",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 43.721599999116734,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-021",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 44.8766999761574,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-022",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.45819999394007,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-023",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 44.61890002130531,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-024",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 44.536300003528595,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-025",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 38.27400002046488,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-026",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 38.70090001146309,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-027",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 35.00270002405159,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-028",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 37.23389998776838,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-029",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 39.0999999945052,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-030",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 39.4934999931138,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-031",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 35.568899998907,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-032",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 38.148999999975786,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-033",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 44.45529999793507,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-034",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 44.39210001146421,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-035",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 43.056300026364625,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-036",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.91709999577142,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-037",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 41.97239998029545,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-038",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.95459999027662,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-039",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 41.015800001332536,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-040",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.472299984889105,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-041",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 45.11180002009496,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-042",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 45.54779999307357,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-043",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 44.420599995646626,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-044",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 45.492100005503744,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-045",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 44.405799999367446,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-046",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 45.154299994464964,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-047",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 43.28100002021529,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-048",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 44.339400017634034,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-049",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 42.55060001742095,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-050",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 42.86149999825284,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-051",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 40.51910000271164,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-052",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 42.180599994026124,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-053",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 45.53160001523793,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-054",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.327099985210225,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-055",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 43.98849999415688,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-056",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 44.631199998548254,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-057",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 46.45829999935813,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-058",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 44.13739999290556,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-059",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 42.91769998962991,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-060",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 43.75969999819063,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-061",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 43.78570002154447,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-062",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 45.44029998942278,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-063",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 42.88519997498952,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-064",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 43.62280000350438,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-065",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 40.88809998938814,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-066",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.81219998281449,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-067",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 39.648600009968504,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-068",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 40.35920000751503,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-069",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 41.270800022175536,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-070",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.57380000106059,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-071",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 39.56820000894368,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-072",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 39.94950000196695,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-073",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 42.550799989840016,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-074",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 42.73529999773018,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-075",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 41.743300011148676,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-076",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 42.34700000961311,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-077",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 43.79230001359247,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-078",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 44.51279999921098,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-079",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 43.10100001748651,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-080",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 43.384899996453896,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-081",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 41.53060002136044,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-082",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 42.06730000441894,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-083",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 40.47999999602325,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-084",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.113800019957125,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-085",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 42.11459998623468,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-086",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 42.93960001086816,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-087",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 41.15019997698255,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-088",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 42.155099974479526,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-089",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 39.36049999902025,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-090",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 38.59739998006262,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-091",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 37.42639999836683,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-092",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 39.30099998251535,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-093",
+      "score": 1.0,
+      "tags": [
+        "api-migration"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 41.68899997603148,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-094",
+      "score": 1.0,
+      "tags": [
+        "dep-error"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 42.193900007987395,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-095",
+      "score": 1.0,
+      "tags": [
+        "multi-file"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 40.796499990392476,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-096",
+      "score": 1.0,
+      "tags": [
+        "ambiguous"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 39.919700007885695,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-097",
+      "score": 1.0,
+      "tags": [
+        "bugfix"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 41.7367999907583,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-098",
+      "score": 1.0,
+      "tags": [
+        "feature"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.890200023772195,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-099",
+      "score": 1.0,
+      "tags": [
+        "tests"
+      ],
+      "tokens": 199,
+      "cost_usd": 0.0,
+      "latency_ms": 40.808499994454905,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    },
+    {
+      "case_id": "forge-100",
+      "score": 1.0,
+      "tags": [
+        "refactor"
+      ],
+      "tokens": 87,
+      "cost_usd": 0.0,
+      "latency_ms": 41.140599991194904,
+      "steps": 1,
+      "human_interventions": 0,
+      "error": null
+    }
+  ]
+}

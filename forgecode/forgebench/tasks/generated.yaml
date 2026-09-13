@@ -1,0 +1,800 @@
+- id: forge-001
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-002
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-003
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-004
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-005
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-006
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-007
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-008
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-009
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-010
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-011
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-012
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-013
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-014
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-015
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-016
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-017
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-018
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-019
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-020
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-021
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-022
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-023
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-024
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-025
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-026
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-027
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-028
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-029
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-030
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-031
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-032
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-033
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-034
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-035
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-036
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-037
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-038
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-039
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-040
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-041
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-042
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-043
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-044
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-045
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-046
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-047
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-048
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-049
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-050
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-051
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-052
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-053
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-054
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-055
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-056
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-057
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-058
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-059
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-060
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-061
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-062
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-063
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-064
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-065
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-066
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-067
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-068
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-069
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-070
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-071
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-072
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-073
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-074
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-075
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-076
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-077
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-078
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-079
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-080
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-081
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-082
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-083
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-084
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-085
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-086
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-087
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-088
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-089
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-090
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-091
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-092
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains
+- id: forge-093
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - api-migration
+  grader: contains
+- id: forge-094
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - dep-error
+  grader: contains
+- id: forge-095
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - multi-file
+  grader: contains
+- id: forge-096
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - ambiguous
+  grader: contains
+- id: forge-097
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - bugfix
+  grader: contains
+- id: forge-098
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - feature
+  grader: contains
+- id: forge-099
+  input:
+    fixture: py-auth
+    task: refresh tokens intermittently fail exactly on expiry; find and fix the boundary
+  expected: auth.py
+  tags:
+  - tests
+  grader: contains
+- id: forge-100
+  input:
+    fixture: ts-slug
+    task: slug consecutive spaces create repeated dashes; normalize the separator
+  expected: src/slug.ts
+  tags:
+  - refactor
+  grader: contains

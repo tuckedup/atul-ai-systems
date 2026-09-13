@@ -1,0 +1,4 @@
+id: memory-leak
+alert: Worker RSS grows continuously and pods restart every 40 minutes.
+expected_root_cause: unbounded request cache
+

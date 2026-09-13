@@ -11,15 +11,18 @@ from __future__ import annotations
 
 import inspect
 import json
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Literal
+from typing import Any, Literal, ParamSpec, TypeVar
 
 from pydantic import BaseModel, ValidationError, create_model
 
-from .audit import AuditLog
+from .audit import AuditLog, default_audit_log
 from .tracing import current_trace_id, traced
 
 Risk = Literal["low", "medium", "high"]
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 @dataclass
@@ -72,21 +75,28 @@ class Registry:
 
     def serve_mcp(self, server_name: str = "aisys-tools") -> None:
         """Expose all tools via the official MCP SDK over stdio."""
-        from mcp.server.fastmcp import FastMCP
+        self.mcp_server(server_name).run(transport="stdio")
 
-        mcp = FastMCP(server_name)
+    def mcp_server(self, server_name: str = "aisys-tools") -> Any:
+        """Build the in-process server, useful for SSE/HTTP hosting and tests."""
+        from mcp.server.mcpserver import MCPServer
+
+        mcp = MCPServer(server_name)
         for t in self.tools.values():
             mcp.tool(name=t.name, description=t.description)(t.fn)
-        mcp.run()
+        return mcp
 
 
-registry = Registry()
+registry = Registry(audit=default_audit_log())
 
 
-def tool(risk: Risk = "low", name: str | None = None,
-         risk_predicate: Callable[[dict[str, Any]], Risk | None] | None = None) -> Callable:
+def tool(
+    risk: Risk = "low",
+    name: str | None = None,
+    risk_predicate: Callable[[dict[str, Any]], Risk | None] | None = None,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Decorator: derive a Pydantic model from the signature, register with a risk level."""
-    def deco(fn: Callable[..., Any]) -> Callable[..., Any]:
+    def deco(fn: Callable[P, R]) -> Callable[P, R]:
         sig = inspect.signature(fn)
         fields = {
             p.name: (p.annotation if p.annotation is not inspect.Parameter.empty else Any,

@@ -1,0 +1,15 @@
+{
+  "name": "forgecode-full-agent",
+  "results": [
+    {"case_id": "local-py-auth-expiry", "score": 1.0, "tags": ["bugfix", "boundary", "python"], "tokens": 5025, "cost_usd": 0.009863799999999999, "latency_ms": 26293.95220000879, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-pagination-partial-page", "score": 1.0, "tags": ["bugfix", "arithmetic", "python"], "tokens": 6763, "cost_usd": 0.0084663, "latency_ms": 31156.79170000658, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-cache-ttl-boundary", "score": 1.0, "tags": ["bugfix", "boundary", "python"], "tokens": 7291, "cost_usd": 0.009343549999999999, "latency_ms": 28518.90349999303, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-retry-initial-delay", "score": 1.0, "tags": ["bugfix", "algorithm", "python"], "tokens": 7523, "cost_usd": 0.0092671, "latency_ms": 29030.649200009066, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-dedupe-order", "score": 1.0, "tags": ["bugfix", "collections", "python"], "tokens": 7316, "cost_usd": 0.0091856, "latency_ms": 22848.622699995758, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-config-precedence", "score": 1.0, "tags": ["bugfix", "configuration", "python"], "tokens": 7510, "cost_usd": 0.0094337, "latency_ms": 20946.73260000127, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-extension-case", "score": 1.0, "tags": ["bugfix", "validation", "python"], "tokens": 6744, "cost_usd": 0.00799685, "latency_ms": 19864.996000003885, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-windows-final", "score": 1.0, "tags": ["bugfix", "boundary", "python"], "tokens": 7045, "cost_usd": 0.00843175, "latency_ms": 20204.0990999958, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-average-fraction", "score": 1.0, "tags": ["bugfix", "arithmetic", "python"], "tokens": 6772, "cost_usd": 0.00798195, "latency_ms": 21459.798399999272, "steps": 6, "human_interventions": 1, "error": null},
+    {"case_id": "local-py-flag-false", "score": 1.0, "tags": ["bugfix", "parsing", "python"], "tokens": 6729, "cost_usd": 0.007885699999999999, "latency_ms": 21710.793100006413, "steps": 6, "human_interventions": 1, "error": null}
+  ]
+}

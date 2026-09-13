@@ -7,7 +7,9 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+import threading
 import time
+from pathlib import Path
 from typing import Any
 
 import psycopg
@@ -33,9 +35,12 @@ def _h(prev: str, ts: float, event: dict[str, Any]) -> str:
 class AuditLog:
     def __init__(self, dsn: str):
         self.dsn = dsn
+        self._lock = threading.RLock()
         self.sqlite = dsn.startswith("sqlite")
         if self.sqlite:
-            self._sq = sqlite3.connect(dsn.replace("sqlite:///", ""), check_same_thread=False)
+            path = Path(dsn.removeprefix("sqlite:///"))
+            path.parent.mkdir(parents=True, exist_ok=True)
+            self._sq = sqlite3.connect(path, check_same_thread=False)
             self._sq.execute(DDL_SQLITE)
         else:
             with psycopg.connect(dsn) as c:
@@ -48,12 +53,13 @@ class AuditLog:
     def append(self, event: dict[str, Any]) -> str:
         ts = time.time()
         if self.sqlite:
-            cur = self._sq.cursor()
-            prev = self._last_hash(cur)
-            h = _h(prev, ts, event)
-            cur.execute("INSERT INTO audit (ts, event, prev_hash, hash) VALUES (?,?,?,?)", (ts, _canon(event), prev, h))
-            self._sq.commit()
-            return h
+            with self._lock:
+                cur = self._sq.cursor()
+                prev = self._last_hash(cur)
+                h = _h(prev, ts, event)
+                cur.execute("INSERT INTO audit (ts, event, prev_hash, hash) VALUES (?,?,?,?)", (ts, _canon(event), prev, h))
+                self._sq.commit()
+                return h
         with psycopg.connect(self.dsn) as c:
             c.execute("LOCK TABLE audit IN EXCLUSIVE MODE")  # serialize appends so the chain is linear
             prev = self._last_hash(c)
@@ -81,3 +87,16 @@ class AuditLog:
 
     def for_trace(self, trace_id: str) -> list[dict[str, Any]]:
         return [e for _, _, e, _, _ in self.rows() if e.get("trace_id") == trace_id]
+
+
+_DEFAULT: AuditLog | None = None
+
+
+def default_audit_log() -> AuditLog:
+    """Return one process-wide writer so all event types share a single linear chain."""
+    global _DEFAULT
+    if _DEFAULT is None:
+        from .settings import settings
+
+        _DEFAULT = AuditLog(settings.database_url)
+    return _DEFAULT

@@ -1,3 +1,4 @@
 """aisys-core: the six shared primitives every project imports."""
-from . import approval, audit, evals, llm, tools, tracing  # noqa: F401
-__all__ = ["llm", "tracing", "tools", "approval", "audit", "evals"]
+from . import approval, audit, cache, evals, llm, tools, tracing
+
+__all__ = ["approval", "audit", "cache", "evals", "llm", "tools", "tracing"]

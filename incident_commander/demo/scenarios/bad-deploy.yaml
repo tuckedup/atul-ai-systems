@@ -1,0 +1,4 @@
+id: bad-deploy
+alert: Checkout error rate rose from 1% to 18% after release 2026.09.11.
+expected_root_cause: incompatible cache serialization in the latest deployment
+

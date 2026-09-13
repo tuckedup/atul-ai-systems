@@ -1,0 +1,26 @@
+[project]
+name = "forgecode"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "aisys-core",
+  "langgraph>=1.0",
+  "langgraph-checkpoint-sqlite>=3.0",
+  "psutil>=7.0",
+  "pyyaml>=6",
+  "typer>=0.12",
+]
+
+[project.scripts]
+forgecode = "forgecode.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["forgecode"]
+
+[tool.uv.sources]
+aisys-core = { workspace = true }
+

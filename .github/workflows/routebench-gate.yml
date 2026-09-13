@@ -1,0 +1,13 @@
+name: RouteBench offline eval gate
+on:
+  pull_request:
+    paths: ["routebench/**", "packages/core/**"]
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+      - run: uv run pytest routebench/tests -q
+      - run: uv run python routebench/evalops/calibrate.py
