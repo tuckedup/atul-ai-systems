@@ -8,8 +8,9 @@ score(model) = w_q * quality[model][task_class]
 """
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from aisys import audit, tracing
 
@@ -48,12 +49,65 @@ class Decision:
     alternatives: list[tuple[str, float]]
 
 
+class UsageTracker:
+    """Thread-safe cumulative token and cost accounting for completed requests."""
+
+    def __init__(self, audit_log: audit.AuditLog):
+        self.audit = audit_log
+        self._lock = threading.Lock()
+        self._total_tokens = 0
+        self._total_cost_usd = 0.0
+        self._by_model: dict[str, dict[str, int | float]] = {}
+
+    def record(
+        self,
+        model: str,
+        input_tokens: int,
+        output_tokens: int,
+        cost_usd: float,
+        *,
+        cache_hit: bool = False,
+    ) -> None:
+        total_tokens = input_tokens + output_tokens
+        event = {
+            "type": "gateway_usage",
+            "trace_id": tracing.current_trace_id.get(),
+            "model": model,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": total_tokens,
+            "cost_usd": cost_usd,
+            "cache_hit": cache_hit,
+        }
+        with self._lock:
+            self._total_tokens += total_tokens
+            self._total_cost_usd += cost_usd
+            model_usage = self._by_model.setdefault(
+                model,
+                {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "cost_usd": 0.0},
+            )
+            model_usage["input_tokens"] += input_tokens
+            model_usage["output_tokens"] += output_tokens
+            model_usage["total_tokens"] += total_tokens
+            model_usage["cost_usd"] += cost_usd
+        self.audit.append(event)
+
+    def snapshot(self) -> dict[str, Any]:
+        with self._lock:
+            return {
+                "total_tokens": self._total_tokens,
+                "total_cost_usd": self._total_cost_usd,
+                "by_model": {model: dict(values) for model, values in self._by_model.items()},
+            }
+
+
 class Router:
     def __init__(self, quality: dict[str, dict[str, float]], backends: list[Backend], audit_log: audit.AuditLog,
                  w_q: float = 1.0, w_c: float = 0.35, w_l: float = 0.25):
         self.quality = quality            # {model: {task_class: measured_quality 0..1}}
         self.backends = backends
         self.audit = audit_log
+        self.usage = UsageTracker(audit_log)
         self.w = (w_q, w_c, w_l)
 
     def _est_cost(self, b: Backend, r: Request) -> float:

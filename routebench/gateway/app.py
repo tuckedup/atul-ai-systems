@@ -60,7 +60,7 @@ def build_runtime(backends: list[Backend], clients: dict[str, BackendClient], qu
         clients=clients,
         classifier=Classifier(cache),
         response_cache=ResponseCache(cache),
-        admission=AdmissionController(64),
+        admission=AdmissionController(50, queue_timeout_s=0.1),
         breakers={backend.model: CircuitBreaker() for backend in backends},
         budgets={},
     )
@@ -128,7 +128,19 @@ def _complete(body: ChatRequest, tenant: str) -> tuple[dict[str, Any], str]:
         try:
             result = client.chat(payload)
             runtime.breakers[decision.model].success()
-            charge = result.cost_usd or 0.0
+            metadata = next(item for item in runtime.router.backends if item.model == decision.model)
+            charge = result.cost_usd
+            if charge is None:
+                charge = (
+                    result.usage.prompt_tokens * metadata.input_per_1m
+                    + result.usage.completion_tokens * metadata.output_per_1m
+                ) / 1e6
+            runtime.router.usage.record(
+                decision.model,
+                result.usage.prompt_tokens,
+                result.usage.completion_tokens,
+                charge,
+            )
             if not budget.charge(charge):
                 raise HTTPException(402, "tenant budget exhausted")
             REQUESTS.labels(decision.model, "ok").inc()
@@ -153,6 +165,14 @@ def chat_completions(body: ChatRequest, x_tenant_id: str = Header("default")) ->
         cache_payload = body.model_dump()
         cached = runtime.response_cache.get(cache_payload) if not body.stream else None
         if cached is not None:
+            cached_usage = cached["usage"]
+            runtime.router.usage.record(
+                cached["model"],
+                int(cached_usage["prompt_tokens"]),
+                int(cached_usage["completion_tokens"]),
+                0.0,
+                cache_hit=True,
+            )
             return Response(json.dumps(cached), media_type="application/json", headers={"x-routebench-cache": "hit"})
         wire, backend = _complete(body, x_tenant_id)
         if body.stream:
@@ -175,6 +195,11 @@ def models() -> dict[str, Any]:
     return {"object": "list", "data": [{"id": item.model, "object": "model", "owned_by": item.provider} for item in runtime.router.backends]}
 
 
+@app.get("/v1/usage")
+def usage() -> dict[str, Any]:
+    return runtime.router.usage.snapshot()
+
+
 @app.get("/healthz")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -183,4 +208,3 @@ def health() -> dict[str, str]:
 @app.get("/metrics")
 def metrics() -> Response:
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
-

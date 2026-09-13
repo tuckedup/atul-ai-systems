@@ -1,5 +1,7 @@
 # Orchestration ledger
 
+- RouteBench M3/M4 complete — measured four real 50-request vLLM GPU configurations on the 1.5B fallback (69.065400–242.420700 ms p95 TTFT, 10.349351–24.807449 tokens/s, 6,488–6,490 MiB peak VRAM), added usage/cost accounting, 30-second-window circuit breaking with 60-second recovery, and bounded backpressure; 10/10 tests passed and Phoenix reported live gateway spans.
+
 ## 2026-09-12 resume
 
 - Read the root master plan and blockers plus all five component `STATUS.md` files. No prior `LEDGER.md` existed in this checkout.
