@@ -19,8 +19,8 @@
 ## RouteBench (03_routebench)
 - [x] M1: Gateway with OpenAI-compatible chat completions, request tracing, per-request cost ledger, and provider fallback on 5xx; `uv run --project routebench pytest routebench/tests` passed 7/7.
 - [x] M2: Mock OpenAI and Anthropic provider-shape adapters with streaming normalization, transient retries, and token-based cost estimation; covered by the same 7/7 passing suite.
-- [ ] M3: vLLM deployment (BLOCKED: needs GPU)
-- [ ] M4: Cost tracking
+- [x] M3: vLLM GPU matrix — four 50-request configurations measured on the Qwen2.5-1.5B fallback; vLLM 0.29's Docker Desktop UVA incompatibility required the v0.10.2 V0 engine
+- [x] M4: Cost tracking + reliability — cumulative usage endpoint, per-model audit ledger, 3-in-30s circuit breaker with 60s recovery, fallback routing, and bounded backpressure; 10/10 tests passed
 
 ## Incident Commander (04_incident_commander)
 - [x] M1: Demo service + chaos flag
