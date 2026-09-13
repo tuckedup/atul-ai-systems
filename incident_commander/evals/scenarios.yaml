@@ -1,0 +1,142 @@
+# Evals scenarios for Incident Commander
+# These define ground-truth test cases for measuring root-cause accuracy,
+# time-to-root-cause, and cost per incident.
+#
+# GRADING: Each scenario has a ground_truth and a grader.
+# - exact_match: output must exactly match expected
+# - contains: output must contain all expected substrings
+# - llm_judge: LLM-as-judge evaluates correctness (requires live LLM)
+# - scenario_score: composite score based on hypothesis rank + correctness
+
+scenarios:
+  - id: ic-e2e-001
+    name: "Dependency failure cascade"
+    tags: [e2e, root-cause, dependency]
+    alert:
+      alertname: HighErrorRate
+      severity: critical
+      service: demo-service
+      summary: "Error rate exceeded 10% for demo-service"
+      startsAt: "2026-09-12T04:00:00Z"
+    ground_truth:
+      root_cause: "Dependency failure causing cascading errors"
+      expected_agents: [coordinator, logs_agent, dependency_agent, code_agent, root_cause_agent, remediation_agent, risk_reviewer]
+      min_hypotheses: 1
+      top_hypothesis_contains: "dependency"
+      risk_level_in: [medium, high]
+    graders:
+      - type: contains
+        field: root_cause_hypothesis
+        expected: ["dependency"]
+      - type: scenario_score
+        weights:
+          hypothesis_rank: 0.4
+          agent_coverage: 0.3
+          cost_efficiency: 0.3
+
+  - id: ic-e2e-002
+    name: "Code regression detection"
+    tags: [e2e, root-cause, code]
+    alert:
+      alertname: HighLatency
+      severity: warning
+      service: demo-service
+      summary: "P99 latency exceeded 2s"
+      startsAt: "2026-09-12T04:01:00Z"
+    ground_truth:
+      root_cause: "Recent code change introduced regression"
+      expected_agents: [coordinator, logs_agent, dependency_agent, root_cause_agent, remediation_agent, risk_reviewer]
+      min_hypotheses: 1
+      top_hypothesis_contains: "regression"
+      risk_level_in: [low, medium]
+    graders:
+      - type: contains
+        field: root_cause_hypothesis
+        expected: ["regression"]
+      - type: scenario_score
+        weights:
+          hypothesis_rank: 0.5
+          agent_coverage: 0.3
+          cost_efficiency: 0.2
+
+  - id: ic-e2e-003
+    name: "Payment service unreachable"
+    tags: [e2e, root-cause, dependency]
+    alert:
+      alertname: DependencyDown
+      severity: critical
+      service: payment-service
+      summary: "payment-service is unreachable"
+      startsAt: "2026-09-12T03:58:00Z"
+    ground_truth:
+      root_cause: "Dependency failure causing cascading errors"
+      expected_agents: [coordinator, logs_agent, dependency_agent, code_agent, root_cause_agent, remediation_agent, risk_reviewer]
+      min_hypotheses: 1
+      top_hypothesis_contains: "dependency"
+      risk_level_in: [medium, high]
+    graders:
+      - type: contains
+        field: root_cause_hypothesis
+        expected: ["dependency"]
+      - type: scenario_score
+        weights:
+          hypothesis_rank: 0.4
+          agent_coverage: 0.3
+          cost_efficiency: 0.3
+
+  - id: ic-unit-001
+    name: "Coordinator plan generation"
+    tags: [unit, coordinator]
+    alert:
+      alertname: HighErrorRate
+      severity: critical
+      service: demo-service
+      summary: "Error rate exceeded 10%"
+    ground_truth:
+      min_plan_steps: 3
+      fan_out_contains: ["logs_agent", "dependency_agent"]
+      fan_out_may_contain: ["code_agent"]
+    graders:
+      - type: min_length
+        field: investigation_plan
+        min_length: 3
+      - type: contains
+        field: fan_out
+        expected: ["logs_agent", "dependency_agent"]
+
+  - id: ic-unit-002
+    name: "Risk scoring for critical alerts"
+    tags: [unit, risk]
+    alert:
+      alertname: HighErrorRate
+      severity: critical
+      service: demo-service
+      summary: "Error rate exceeded 10%"
+    ground_truth:
+      risk_score_min: 0.6
+      approval_required: true
+    graders:
+      - type: range
+        field: risk_score
+        min: 0.6
+        max: 1.0
+      - type: exact
+        field: approval_required
+        expected: true
+
+  - id: ic-unit-003
+    name: "Memory recall integration"
+    tags: [unit, memory, risk]
+    alert:
+      alertname: DependencyDown
+      severity: critical
+      service: payment-service
+      summary: "payment-service unreachable"
+    ground_truth:
+      risk_score_min: 0.5
+      approval_required: true
+    graders:
+      - type: range
+        field: risk_score
+        min: 0.5
+        max: 1.0

@@ -7,9 +7,12 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     default_model: str = "gpt-4o-mini"
     fallback_models: list[str] = []
-    database_url: str = "postgresql://aisys:aisys@localhost:5432/aisys"
-    redis_url: str = "redis://localhost:6379/0"
-    otlp_endpoint: str = "http://localhost:4317"
+    # One-line swap to Postgres: set DATABASE_URL=postgresql://aisys:aisys@localhost:5432/aisys
+    database_url: str = "sqlite:///.local/aisys.db"
+    # One-line swap to Redis: set REDIS_URL=redis://localhost:6379/0
+    redis_url: str = "local://dict"
+    # OTel: ConsoleSpanExporter + JSONL file. Swap to OTLP: set OTEL_ENDPOINT=http://localhost:4317
+    otlp_endpoint: str = "console+jsonl://.local/traces.jsonl"
     service_name: str = "aisys"
     request_timeout_s: float = 60.0
     max_retries: int = 3

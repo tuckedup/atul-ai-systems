@@ -11,8 +11,9 @@ from __future__ import annotations
 
 import inspect
 import json
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ValidationError, create_model
 
@@ -72,12 +73,13 @@ class Registry:
 
     def serve_mcp(self, server_name: str = "aisys-tools") -> None:
         """Expose all tools via the official MCP SDK over stdio."""
-        from mcp.server.fastmcp import FastMCP
+        from mcp.server.mcpserver import MCPServer
 
-        mcp = FastMCP(server_name)
+        mcp = MCPServer(name=server_name)
         for t in self.tools.values():
             mcp.tool(name=t.name, description=t.description)(t.fn)
-        mcp.run()
+        import asyncio
+        asyncio.run(mcp.run_stdio_async())
 
 
 registry = Registry()

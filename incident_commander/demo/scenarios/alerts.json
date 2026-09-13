@@ -1,0 +1,61 @@
+{
+  "alerts": [
+    {
+      "alertname": "HighErrorRate",
+      "severity": "critical",
+      "service": "demo-service",
+      "instance": "localhost:8000",
+      "summary": "Error rate exceeded 10% for demo-service",
+      "description": "The error rate for demo-service has exceeded the 10% threshold for the last 5 minutes.",
+      "labels": {
+        "job": "demo-service",
+        "severity": "critical",
+        "alertname": "HighErrorRate"
+      },
+      "annotations": {
+        "summary": "High error rate on demo-service",
+        "description": "Error rate is {{ $value }}% which exceeds the 10% threshold."
+      },
+      "startsAt": "2026-09-12T04:00:00Z",
+      "status": "firing"
+    },
+    {
+      "alertname": "HighLatency",
+      "severity": "warning",
+      "service": "demo-service",
+      "instance": "localhost:8000",
+      "summary": "P99 latency exceeded 2s for demo-service",
+      "description": "The P99 latency for demo-service has exceeded 2 seconds.",
+      "labels": {
+        "job": "demo-service",
+        "severity": "warning",
+        "alertname": "HighLatency"
+      },
+      "annotations": {
+        "summary": "High latency on demo-service",
+        "description": "P99 latency is {{ $value }}ms."
+      },
+      "startsAt": "2026-09-12T04:01:00Z",
+      "status": "firing"
+    },
+    {
+      "alertname": "DependencyDown",
+      "severity": "critical",
+      "service": "payment-service",
+      "instance": "payment-service:8080",
+      "summary": "payment-service is unreachable",
+      "description": "payment-service has been unreachable for 2 minutes.",
+      "labels": {
+        "job": "payment-service",
+        "severity": "critical",
+        "alertname": "DependencyDown"
+      },
+      "annotations": {
+        "summary": "payment-service down",
+        "description": "payment-service is not responding to health checks."
+      },
+      "startsAt": "2026-09-12T03:58:00Z",
+      "status": "firing"
+    }
+  ]
+}

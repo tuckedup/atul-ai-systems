@@ -82,6 +82,82 @@ def chat(
     raise ProviderError(f"all candidates failed: {candidates}") from last_err
 
 
+@traced(kind="llm")
+def chat_stream(
+    messages: list[dict[str, Any]],
+    model: str | None = None,
+    tools: list[dict[str, Any]] | None = None,
+    temperature: float = 0.0,
+    max_tokens: int = 2048,
+    fallback: list[str] | None = None,
+    **extra: Any,
+) -> Any:
+    """Streaming chat. Yields text chunks; final accumulation gives ChatResult-like stats."""
+    candidates = [model or settings.default_model] + list(fallback or settings.fallback_models)
+    last_err: Exception | None = None
+    for m in candidates:
+        for attempt in range(settings.max_retries):
+            try:
+                return _call_stream(m, messages, tools, temperature, max_tokens, extra)
+            except ProviderError as e:
+                last_err = e
+                time.sleep(min(8.0, (2**attempt) * 0.5 + random.random() * 0.25))
+    raise ProviderError(f"all candidates failed: {candidates}") from last_err
+
+
+def _call_stream(model: str, messages, tools, temperature, max_tokens, extra) -> Any:
+    """Internal streaming call. Returns a generator that yields text chunks."""
+    body: dict[str, Any] = {
+        "model": model, "messages": messages, "temperature": temperature,
+        "max_tokens": max_tokens, "stream": True, **extra
+    }
+    if tools:
+        body["tools"] = tools
+
+    def generate():
+        t0 = time.perf_counter()
+        full_text = []
+        usage = {"prompt_tokens": 0, "completion_tokens": 0}
+        with (
+            httpx.Client(timeout=settings.request_timeout_s) as client,
+            client.stream(
+                "POST",
+                f"{settings.openai_base_url}/chat/completions",
+                headers={"Authorization": f"Bearer {settings.openai_api_key}"},
+                json=body,
+            ) as r,
+        ):
+            if r.status_code == 429 or r.status_code >= 500:
+                raise ProviderError(f"{model}: HTTP {r.status_code}")
+            r.raise_for_status()
+            for line in r.iter_lines():
+                if line.startswith("data: "):
+                    data_str = line[6:]
+                    if data_str.strip() == "[DONE]":
+                        break
+                    import json
+                    data = json.loads(data_str)
+                    delta = data["choices"][0].get("delta", {})
+                    if "content" in delta and delta["content"]:
+                        full_text.append(delta["content"])
+                        yield delta["content"]
+                    if "usage" in data:
+                        usage = data["usage"]
+        # Return final stats as a ChatResult-like object
+        yield ChatResult(
+            text="".join(full_text),
+            tool_calls=[],
+            usage=Usage(**usage),
+            model=model,
+            provider="streaming",
+            latency_ms=(time.perf_counter() - t0) * 1000,
+            cost_usd=estimate_cost(model, Usage(**usage)),
+            raw={},
+        )
+
+    return generate()
+
+
 def _call(model: str, messages, tools, temperature, max_tokens, extra) -> ChatResult:
     body: dict[str, Any] = {
         "model": model, "messages": messages, "temperature": temperature, "max_tokens": max_tokens, **extra

@@ -1,5 +1,5 @@
 """OpenTelemetry setup + @traced decorator. Spans carry model/tokens/cost/latency so trace mining
-(ForgeCode) and online evals (RouteBench) can query them from Phoenix."""
+(ForgeCode) and online evals (RouteBench) can query them from traces."""
 from __future__ import annotations
 
 import contextvars
@@ -7,13 +7,19 @@ import functools
 import json
 import time
 import uuid
-from typing import Any, Callable, Literal
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any, Literal
 
 from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter
+from opentelemetry.sdk.trace.export import (
+    BatchSpanProcessor,
+    ConsoleSpanExporter,
+    SimpleSpanProcessor,
+    SpanExporter,
+)
 
 from .settings import settings
 
@@ -22,11 +28,60 @@ current_trace_id: contextvars.ContextVar[str] = contextvars.ContextVar("trace_id
 _TRUNC = 4000
 
 
+class JsonlSpanExporter(SpanExporter):
+    """Exports spans as JSONL to a file for local tracing."""
+
+    def __init__(self, path: str | Path):
+        self.path = Path(path)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+
+    def export(self, spans):
+        with open(self.path, "a", encoding="utf-8") as f:
+            for span in spans:
+                record = {
+                    "name": span.name,
+                    "trace_id": format(span.context.trace_id, "032x"),
+                    "span_id": format(span.context.span_id, "016x"),
+                    "parent_span_id": format(span.parent.span_id, "016x") if span.parent else None,
+                    "start_time": span.start_time,
+                    "end_time": span.end_time,
+                    "attributes": dict(span.attributes) if span.attributes else {},
+                    "status": span.status.status_code.name if span.status else "UNSET",
+                    "events": [{"name": e.name, "attributes": dict(e.attributes)} for e in (span.events or [])],
+                }
+                f.write(json.dumps(record, default=str) + "\n")
+
+    def shutdown(self):
+        pass
+
+    def force_flush(self, timeout_millis: int = 30000):
+        return True
+
+
+def _make_exporter(endpoint: str) -> SpanExporter:
+    """Create the appropriate exporter based on the endpoint scheme."""
+    if endpoint.startswith("console"):
+        return ConsoleSpanExporter()
+    elif endpoint.startswith("jsonl://") or endpoint.endswith(".jsonl"):
+        # Extract path from jsonl://.local/traces.jsonl or bare path
+        path = endpoint.replace("jsonl://", "")
+        return JsonlSpanExporter(path)
+    else:
+        # Default to OTLP for http:// or grpc:// endpoints
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+            OTLPSpanExporter,
+        )
+        return OTLPSpanExporter(endpoint=endpoint, insecure=True)
+
+
 def init_tracing(service_name: str | None = None, exporter: SpanExporter | None = None) -> None:
     provider = TracerProvider(resource=Resource.create({"service.name": service_name or settings.service_name}))
-    provider.add_span_processor(
-        BatchSpanProcessor(exporter or OTLPSpanExporter(endpoint=settings.otlp_endpoint, insecure=True))
-    )
+    exp = exporter or _make_exporter(settings.otlp_endpoint)
+    # Use SimpleSpanProcessor for console/jsonl (low volume), BatchSpanProcessor for OTLP
+    if isinstance(exp, (ConsoleSpanExporter, JsonlSpanExporter)):
+        provider.add_span_processor(SimpleSpanProcessor(exp))
+    else:
+        provider.add_span_processor(BatchSpanProcessor(exp))
     trace.set_tracer_provider(provider)
 
 

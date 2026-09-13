@@ -9,10 +9,11 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import yaml
 from pydantic import BaseModel
@@ -146,14 +147,14 @@ class EvalSuite:
     cases: list[EvalCase] = field(default_factory=list)
 
     @classmethod
-    def load(cls, path: str | Path) -> "EvalSuite":
+    def load(cls, path: str | Path) -> EvalSuite:
         cases = []
         for f in sorted(Path(path).glob("**/*.y*ml")):
             data = yaml.safe_load(f.read_text())
             cases += [EvalCase(**d) for d in (data if isinstance(data, list) else [data])]
         return cls(cases)
 
-    def filter(self, tag: str) -> "EvalSuite":
+    def filter(self, tag: str) -> EvalSuite:
         return EvalSuite([c for c in self.cases if tag in c.tags])
 
 

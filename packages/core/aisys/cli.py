@@ -2,7 +2,8 @@
 import typer
 from rich import print
 
-from . import audit as audit_mod, evals, llm, tracing
+from . import audit as audit_mod
+from . import evals, llm, tracing
 from .settings import settings
 
 app = typer.Typer(no_args_is_help=True)

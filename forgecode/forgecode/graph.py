@@ -3,7 +3,7 @@
 The shape is the deliverable. Prompt 02 fills in context/, tools/, sandbox/, router.py.
 Key properties this skeleton already enforces:
   * reviewer sees only (task, diff, test_output) — never implementer reasoning
-  * approval gate uses aisys.approval.Gate -> LangGraph interrupt -> Postgres checkpoint -> resumable
+  * approval gate uses aisys.approval.Gate -> LangGraph interrupt -> SQLite checkpoint -> resumable
   * every node is @traced so trace mining can query failed trajectories by node
 """
 from __future__ import annotations
@@ -11,7 +11,7 @@ from __future__ import annotations
 import operator
 from typing import Annotated, Literal, TypedDict
 
-from langgraph.checkpoint.postgres import PostgresSaver
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, StateGraph
 from langgraph.types import Command
 
@@ -147,7 +147,8 @@ def build_graph():
 def run(repo: str, task: str, thread_id: str):
     tracing.init_tracing("forgecode")
     tracing.new_trace_id()
-    with PostgresSaver.from_conn_string(settings.database_url) as saver:
+    db_path = settings.database_url.replace("sqlite:///", "")
+    with SqliteSaver.from_conn_string(db_path) as saver:
         saver.setup()
         app = build_graph().compile(checkpointer=saver)
         return app.invoke({"repo": repo, "task": task, "steps": [], "tokens": 0, "cost_usd": 0.0},
@@ -156,6 +157,7 @@ def run(repo: str, task: str, thread_id: str):
 
 def resume(thread_id: str, decision: str):
     """`forgecode approve <thread_id>` after the operator decides; picks up at the interrupted node."""
-    with PostgresSaver.from_conn_string(settings.database_url) as saver:
+    db_path = settings.database_url.replace("sqlite:///", "")
+    with SqliteSaver.from_conn_string(db_path) as saver:
         app = build_graph().compile(checkpointer=saver)
         return app.invoke(Command(resume=decision), config={"configurable": {"thread_id": thread_id}})

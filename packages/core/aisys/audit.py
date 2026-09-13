@@ -1,16 +1,19 @@
 """Append-only, hash-chained audit log. Any edit or deletion breaks verify().
 
-Postgres in production; SQLite for tests. Each row: hash = sha256(prev_hash + canonical_json(event)).
+SQLite by default; Postgres when DATABASE_URL points to postgres://.
+Each row: hash = sha256(prev_hash + canonical_json(event)).
 """
 from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sqlite3
 import time
 from typing import Any
 
-import psycopg
+# Lazy import psycopg only when Postgres DSN is detected
+psycopg: Any = None
 
 DDL_PG = """
 CREATE TABLE IF NOT EXISTS audit (
@@ -33,11 +36,18 @@ def _h(prev: str, ts: float, event: dict[str, Any]) -> str:
 class AuditLog:
     def __init__(self, dsn: str):
         self.dsn = dsn
-        self.sqlite = dsn.startswith("sqlite")
+        self.sqlite = not dsn.startswith("postgresql://") and not dsn.startswith("postgres://")
         if self.sqlite:
-            self._sq = sqlite3.connect(dsn.replace("sqlite:///", ""), check_same_thread=False)
+            # Handle sqlite:/// path or bare path
+            db_path = dsn.replace("sqlite:///", "")
+            os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
+            self._sq = sqlite3.connect(db_path, check_same_thread=False)
             self._sq.execute(DDL_SQLITE)
         else:
+            global psycopg
+            if psycopg is None:
+                import psycopg as _psycopg
+                psycopg = _psycopg
             with psycopg.connect(dsn) as c:
                 c.execute(DDL_PG)
 

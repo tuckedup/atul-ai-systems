@@ -1,0 +1,24 @@
+services:
+  - name: demo-service
+    team: platform
+    tier: 1
+    dependencies: [payment-service, database]
+    repository: https://github.com/example/demo-service
+    runbooks: [restart-service, rollback-deploy]
+    owners: [alice@example.com]
+
+  - name: payment-service
+    team: payments
+    tier: 1
+    dependencies: [database, stripe-api]
+    repository: https://github.com/example/payment-service
+    runbooks: [restart-service, scale-deployment]
+    owners: [bob@example.com]
+
+  - name: database
+    team: data
+    tier: 0
+    dependencies: []
+    repository: https://github.com/example/database-infra
+    runbooks: [restart-database, failover-database]
+    owners: [charlie@example.com]
