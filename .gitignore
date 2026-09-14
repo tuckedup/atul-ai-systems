@@ -8,3 +8,6 @@ operator_ui/node_modules/
 
 .env
 *.env
+
+.env
+*.env
