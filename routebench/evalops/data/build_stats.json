@@ -1,0 +1,97 @@
+{
+  "built_at": "2026-09-28T02:00:57+00:00",
+  "generators": [
+    "gpt-4o-mini",
+    "gpt-4.1-nano"
+  ],
+  "policy_subsets": [
+    "TofuEval-MediaS",
+    "TofuEval-MeetB",
+    "AggreFact-CNN"
+  ],
+  "seed": 20260927,
+  "stats": {
+    "balance": {
+      "after": 1232,
+      "before": 2740,
+      "max_ratio": 1.0,
+      "per_task": {
+        "code": {
+          "available_fail": 123,
+          "available_pass": 656,
+          "dropped": 533,
+          "kept_fail": 123,
+          "kept_pass": 123
+        },
+        "reason": {
+          "available_fail": 39,
+          "available_pass": 561,
+          "dropped": 522,
+          "kept_fail": 39,
+          "kept_pass": 39
+        },
+        "sql": {
+          "available_fail": 170,
+          "available_pass": 272,
+          "dropped": 102,
+          "kept_fail": 170,
+          "kept_pass": 170
+        },
+        "summarize": {
+          "available_fail": 260,
+          "available_pass": 260,
+          "dropped": 0,
+          "kept_fail": 260,
+          "kept_pass": 260
+        },
+        "tool_use": {
+          "available_fail": 24,
+          "available_pass": 375,
+          "dropped": 351,
+          "kept_fail": 24,
+          "kept_pass": 24
+        }
+      }
+    },
+    "code": {
+      "generated": 328,
+      "labelled": 308,
+      "negative": 43,
+      "positive": 265,
+      "undecided_dropped": 0
+    },
+    "code_mbpp": {
+      "generated": 500,
+      "labelled": 471,
+      "negative": 80,
+      "positive": 391,
+      "undecided_dropped": 0
+    },
+    "groundedness": {
+      "cases": 520,
+      "negative": 260,
+      "positive": 260
+    },
+    "reason": {
+      "generated": 600,
+      "labelled": 600,
+      "negative": 39,
+      "positive": 561,
+      "undecided_dropped": 0
+    },
+    "sql": {
+      "generated": 500,
+      "labelled": 442,
+      "negative": 170,
+      "positive": 272,
+      "undecided_dropped": 0
+    },
+    "tool_use": {
+      "generated": 400,
+      "labelled": 399,
+      "negative": 24,
+      "positive": 375,
+      "undecided_dropped": 0
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "fetched_at": "2026-09-27",
+  "sources": [
+    {
+      "name": "aggrefact",
+      "repo": "NinaCalvi/llm_aggrefact_pre_aug9",
+      "config": "default",
+      "split": "test",
+      "n_rows": 12949,
+      "license": "cc-by-nd-4.0 (per the original lytang/LLM-AggreFact dataset card; the fallback mirror repo used here does not restate a license)",
+      "url": "https://huggingface.co/datasets/NinaCalvi/llm_aggrefact_pre_aug9",
+      "label_convention": "1 = claim IS supported by the document (faithful); 0 = claim is NOT supported. Confirmed from the benchmark authors' own GitHub README (github.com/Liyan06/MiniCheck, README.md, \"Benchmark Access\" field table): 'label | 1 if the claim is supported, 0 otherwise'. Cross-checked against sample row 0 (AggreFact-CNN): claim sentences are directly restated from the document text and its label is 1, consistent with '1 = supported'.",
+      "sha256_of_output": "b5c75f979d4f532e4b42eb089495b389ae326df8ad3c4fa39a4c18d2873ab8b5",
+      "notes": "The requested original repo, lytang/LLM-AggreFact, is gated (HF metadata 'gated':'auto') and returned HTTP 401 on both the datasets-server rows endpoint and the resolve/raw file endpoints with no auth token available in this environment. Used a public, non-gated mirror instead: NinaCalvi/llm_aggrefact_pre_aug9 (created 2024-10-08, i.e. before the gate was added), which carries the same four core columns (dataset, doc, claim, label) plus contamination_identifier values still prefixed 'LLM-AggreFact:<hash>', confirming it is a verbatim copy of the original data, not a re-derivation. This mirror's test split has 12,949 rows vs. the official 29,320 -- appears to be a filtered/deduplicated subset of unknown provenance, but every row's content is verbatim real data. Fetched the ENTIRE mirror test split (not a partial sample) to guarantee natural label mix and maximum subset spread with zero sampling bias introduced by us. Per-subset counts: AggreFact-CNN=558, AggreFact-XSum=558, TofuEval-MediaS=726, TofuEval-MeetB=772, Wice=358, Reveal=1710, ClaimVerify=1088, FactCheck-GPT=1566, ExpertQA=3702, Lfqa=1911. Overall label balance: 1 (supported) = 7730, 0 (not supported) = 5219. RAGTruth is absent from this test-split mirror; this matches the original dataset card, which states RAGTruth rows were folded into the validation/dev split, not test."
+    },
+    {
+      "name": "gsm8k",
+      "repo": "openai/gsm8k",
+      "config": "main",
+      "split": "test",
+      "n_rows": 300,
+      "license": "MIT",
+      "url": "https://huggingface.co/datasets/openai/gsm8k",
+      "label_convention": null,
+      "sha256_of_output": "ae0a5537d196cb25060e9aea57f5cfd07af97565ee61398028cded00b8b8119e",
+      "notes": "Public, not gated. First 300 rows of the test split in dataset order via datasets-server /rows."
+    },
+    {
+      "name": "humaneval",
+      "repo": "openai/openai_humaneval",
+      "config": "openai_humaneval",
+      "split": "test",
+      "n_rows": 164,
+      "license": "MIT",
+      "url": "https://huggingface.co/datasets/openai/openai_humaneval",
+      "label_convention": null,
+      "sha256_of_output": "9b87f60394864692be0b84732349db355bc11eed602be3ec811d322d5768efc3",
+      "notes": "Public, not gated. All 164 rows of the (only) test split via datasets-server /rows."
+    },
+    {
+      "name": "mbpp",
+      "repo": "google-research-datasets/mbpp",
+      "config": "sanitized",
+      "split": "test",
+      "n_rows": 250,
+      "license": "cc-by-4.0",
+      "url": "https://huggingface.co/datasets/google-research-datasets/mbpp",
+      "label_convention": null,
+      "sha256_of_output": "d9aad796d6ff088cccb02cd87c99a40b5128d91b5e760ff3f27ba8c5ce172d35",
+      "notes": "Public, not gated. 'sanitized' config's test split has 257 rows total; capped at first 250 in dataset order per the brief."
+    },
+    {
+      "name": "spider",
+      "repo": "xlangai/spider",
+      "config": "spider",
+      "split": "validation",
+      "n_rows": 250,
+      "license": "cc-by-sa-4.0",
+      "url": "https://huggingface.co/datasets/xlangai/spider",
+      "label_convention": null,
+      "sha256_of_output": "59e9bd7f5b4446a8d7d9d5858a4195880d1962f3a357dba0e8e30d58ad8f3490",
+      "notes": "Public, not gated. Used validation split (1034 rows total; capped at first 250) since Spider's real held-out test set is not publicly released. xlangai/spider's own repo contains only the two parquet files (train/validation) -- no tables.json (confirmed via the HF tree API). Fell back to richardr1126/spider-schema (public, cc-by-4.0) for table schema info: fetched spider_schema_rows_v2.json verbatim and saved to data/raw/spider_tables.json (166 db schemas, in a flattened 'Schema (values (type))' / 'Primary Keys' / 'Foreign Keys' string format rather than the original Spider tables.json list-of-lists structure)."
+    },
+    {
+      "name": "bfcl",
+      "repo": "gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "config": null,
+      "split": "simple",
+      "n_rows": 200,
+      "license": "apache-2.0",
+      "url": "https://huggingface.co/datasets/gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "label_convention": null,
+      "sha256_of_output": "306631535935f38323ba67587ea9c807a7b415d3a77bef204b1ba20d3cb266ab",
+      "notes": "Public, not gated. This repo is a flat JSON-Lines file drop, not a datasets-server-indexed dataset, so files were resolved directly: BFCL_v3_simple.json (400 questions+function schemas) joined by shared 'id' field with possible_answer/BFCL_v3_simple.json (gold calls). All 200 of the first 200 rows joined successfully (0 missing). Raw verbatim downloads also saved to data/raw/bfcl_raw_questions.jsonl and data/raw/bfcl_raw_answers.jsonl."
+    }
+  ],
+  "failures": []
+}

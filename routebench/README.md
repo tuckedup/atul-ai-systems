@@ -4,16 +4,76 @@ RouteBench is an OpenAI-compatible gateway whose routing and rollout inputs are 
 
 ## Current control-plane checks
 
-- 200 committed eval cases across coding, extraction, SQL, summarization, reasoning, and tool use.
-- 50 committed calibration labels; calibration pipeline reports κ = 1.0 on this seed set.
+- 1,240 eval cases built from public benchmark sources with recorded provenance, across
+  summarization/groundedness, coding, SQL, reasoning and tool use. See
+  `evalops/data/raw/MANIFEST.json` for every source, row count and licence, and the sampling
+  policy docstring in `evalops/build.py` for what was included and excluded, and why.
+- A judge calibrated against independent labels, with the measured result, confusion matrix,
+  confidence interval, per-task breakdown, completion rate and full variant grid in
+  `evalops/data/CALIBRATION_REPORT.md`. Validate the artifact the way CI does with
+  `make calibrate-check` (non-zero exit on failure).
 - A 100-request backend-termination chaos test reroutes with 0 failed requests.
-- Promotion tests exercise offline, shadow, 5%, 25%, full, and automatic rollback states with an audit event.
+- Promotion tests exercise offline, shadow, 5%, 25%, full and automatic rollback with an audit
+  event, **plus** the calibration gate in front of the ladder: an artifact that is unmeasured,
+  rubric-drifted, incomplete, or below the κ policy blocks promotion regardless of how good the
+  candidate's quality score looks.
+
+### Correction to earlier versions of this README
+
+A previous revision claimed "50 committed calibration labels; calibration pipeline reports
+κ = 1.0 on this seed set". That number was an artefact, not a measurement: the generator wrote
+one variable into both the `human_score` and `judge_score` columns, so κ = 1.0 was arithmetically
+guaranteed and no model was ever called. The file is retained at
+`evalops/fixtures/synthetic_selfagreement_labels.csv` purely as the negative fixture that the
+gate is tested against. `docs/KAPPA_DESIGN.md` documents that defect and the three others found
+alongside it.
 
 The self-hosted backend and concurrency/context/cache/quantization measurements are Docker-blocked tonight. The matrix printed by `make bench` is configuration data used to exercise the router, not a claim of freshly measured inference performance.
 
 ## Harness & Evals
 
-Classifier results are cached by prompt hash. The router consumes a `(model, task_class) → quality` matrix rather than model-name conditionals, then normalizes cost and p95 latency and applies hard penalties for open circuits, SLA misses, context overflow, quality floors, and exhausted budgets. Promotion advances only when each measured stage remains within the configured regression limit.
+Classifier results are cached by prompt hash. The router consumes a `(model, task_class) → quality`
+matrix rather than model-name conditionals, then normalizes cost and p95 latency and applies hard
+penalties for open circuits, SLA misses, context overflow, quality floors, and exhausted budgets.
+Promotion advances only when each measured stage remains within the configured regression limit.
+
+One thing that had to be fixed for the matrix to reach the router at all: the eval suites tagged
+cases `coding`/`extraction`/`summarization` while `gateway/router.py` looked up
+`code`/`extract`/`summarize`. Every lookup missed and the router silently substituted its `0.5`
+default, so the policy was data-driven in shape but constant in practice. `evalops/taxonomy.py`
+now owns one canonical set of names, maps legacy spellings explicitly, and raises on anything
+unknown rather than defaulting — a tag the router cannot look up is a bug, not a 0.5.
+
+### Judge design
+
+The judge is never asked for a score. It answers a small set of observable yes/no questions from
+a versioned, task-specific rubric, and `evalops/rubrics.py::score` — ordinary Python — turns those
+verdicts into a number. Each rubric has exactly one `critical` criterion which forces 0.0 on
+failure, giving a hard floor, while the remaining weighted criteria leave the score a gradient for
+threshold tuning. Rubrics are written to predict their own oracle and explicitly declare out of
+scope everything the oracle ignores, because a judge that penalises something the label ignores
+disagrees with the label by construction.
+
+Judge outputs are validated, not parsed optimistically: a missing criterion, an invented criterion
+id, an unreadable verdict or a truncated response is an *error* with a status, excluded from the
+metric. The release gate requires ≥98% completion so coverage cannot be traded for agreement. The
+candidate response is delimited and declared untrusted data, and the generator's identity is
+withheld from the judge.
+
+### Calibration protocol
+
+Threshold and variant are selected on the dev split only; the winning bundle is frozen with its
+model, rubric hashes, dataset hash and split seed; the test split is then scored exactly once.
+`run_calibration test` refuses to run before `freeze` and refuses to re-select anything.
+Splits are assigned by hashing `(seed, group_id)` — groups being source documents or prompt
+families — so sibling items cannot straddle a split and adding corpus rows does not reshuffle the
+frozen test set. The confidence interval bootstraps over groups rather than items, and declines to
+produce an interval at all when the sample cannot support one.
+
+Label provenance is explicit and reported per track: published expert annotations and local hand
+labels back the headline claim, deterministic gold-oracle labels (hidden tests, gold SQL, gold
+final answer) are a strong but mechanically-applied label reported separately, and synthetic
+fixture labels are refused outright.
 
 ## Governance & Lineage
 

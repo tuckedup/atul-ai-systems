@@ -1,0 +1,133 @@
+id: tool_use
+version: "1.0.0"
+task_class: tool_use
+evidence_required: true
+
+source_notes: >
+  Function-calling rubric. The gold label compares the candidate's function call against a
+  gold call by function name plus argument values; it does not compare argument order or
+  surrounding text. This rubric is written to predict that oracle: since arguments are passed
+  by keyword, their order is never evidence of correctness, and prose around a correct,
+  unambiguous call must not affect the grade.
+
+pass_definition: >
+  The response calls the same function as gold with argument values equal to gold's for every
+  required argument, and omits or matches on optional arguments consistently with their
+  defaults. Argument order is irrelevant because arguments are keyword-based. Commentary text
+  before or after the call is irrelevant when the call itself is correct and unambiguous. A
+  call to the wrong function, a call to a function not in the provided schema, a missing
+  required argument, or an argument of the wrong type is a FAIL.
+
+criteria:
+  - id: correct_function_selected
+    critical: true
+    weight: 1
+    question: >
+      Does the response call the same function that gold calls, chosen from the tool schema
+      actually provided?
+    pass_when: >
+      The function name matches gold's exactly and is one of the functions defined in the
+      provided schema.
+    fail_when: >
+      The response calls a different function than gold, calls a function that does not exist
+      in the provided schema (a hallucinated tool), or fails to make any function call when
+      gold requires one.
+
+  - id: required_arguments_correct
+    weight: 4
+    question: >
+      Are all of the function's required arguments present with values equal to gold's
+      corresponding values?
+    pass_when: >
+      Every required argument is present and its value matches gold's value semantically (type
+      coercion applies the same way it would for extracted fields: 3 and "3" and 3.0 are the
+      same value; equivalent phrasings of the same string value are the same value).
+    fail_when: >
+      A required argument is missing entirely, or is present with a value that differs from
+      gold's in substance after coercion.
+
+  - id: no_type_or_schema_violations
+    weight: 2
+    question: >
+      Does every argument value conform to the type and constraints (enum, format) the schema
+      declares for that argument?
+    pass_when: >
+      Each argument's value is of the type the schema declares (a number where a number is
+      declared, one of the allowed values where an enum is declared) and correctly matches
+      gold's value.
+    fail_when: >
+      An argument is passed as the wrong type (a string where the schema declares a number, a
+      free-text value where the schema declares an enum), even if it superficially resembles
+      the correct value.
+
+  - id: optional_arguments_handled
+    weight: 2
+    question: >
+      Are optional arguments either matched to gold's value or reasonably omitted, without
+      inventing a value gold does not use and without omitting one gold explicitly sets?
+    pass_when: >
+      An optional argument gold omits (relying on its default) is also omitted or set to the
+      default in the response. An optional argument gold sets explicitly is set to the matching
+      value in the response.
+    fail_when: >
+      The response sets an optional argument gold leaves at its default to a different,
+      non-default value, or omits an optional argument that gold explicitly sets to a
+      non-default value that changes the call's behaviour.
+
+  - id: single_unambiguous_call
+    weight: 1
+    question: >
+      Is exactly one function call unambiguously identifiable as the response's answer, with
+      any surrounding text not part of the call itself?
+    pass_when: >
+      One call can be unambiguously extracted from the response, regardless of prose,
+      formatting, or a preceding explanation of what the call will do.
+    fail_when: >
+      The response proposes multiple different candidate calls without committing to one,
+      embeds the call inside prose in a way that changes its parsed meaning, or does not
+      produce a parseable call at all.
+
+boundary_examples:
+  - situation: >
+      The response calls `book_flight(date="2024-05-01", origin="SFO")` where gold is
+      `book_flight(origin="SFO", date="2024-05-01")`.
+    verdict: pass
+    why: >
+      Arguments are keyword-based; the order they are written in has no bearing on the call's
+      behaviour or on the oracle's comparison.
+  - situation: >
+      The schema declares `units` as an optional argument defaulting to "metric", gold's call
+      omits it, and the response's call also omits it.
+    verdict: pass
+    why: >
+      Omitting an optional argument that has a default, matching gold's own omission, is
+      exactly the behaviour the oracle treats as equivalent.
+  - situation: >
+      The response calls a function named `get_weather_v2` that is not present in the tool
+      schema provided for this turn, even though it looks plausible.
+    verdict: fail
+    why: >
+      Calling a function outside the provided schema is a hallucinated tool call; the oracle
+      compares against a real, schema-defined gold function and this cannot match it.
+  - situation: >
+      The required argument `quantity` is declared as a number, gold passes `quantity=3`, and
+      the response passes `quantity="3"`.
+    verdict: pass
+    why: >
+      Coercion treats "3" and 3 as the same value for the purposes of matching gold, mirroring
+      how the underlying comparator normalises argument values before comparing.
+  - situation: >
+      The response calls the correct function with all required arguments correct, but also
+      sets an optional `priority` argument to "high" when gold's call leaves it at its default
+      and the question gave no basis for a priority.
+    verdict: fail
+    why: >
+      Inventing a non-default value for an optional argument gold leaves at default changes
+      the call's behaviour and disagrees with gold's argument values.
+  - situation: >
+      The response writes two sentences explaining why it will check the weather, then makes
+      exactly one correct, unambiguous function call.
+    verdict: pass
+    why: >
+      Commentary around a correct and unambiguous call is irrelevant; only the call itself is
+      graded.

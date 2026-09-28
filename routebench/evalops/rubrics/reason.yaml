@@ -1,0 +1,135 @@
+id: reason
+version: "1.0.0"
+task_class: reason
+evidence_required: true
+
+source_notes: >
+  GSM8K-style multi-step reasoning rubric. The gold label compares only the candidate's final
+  numeric answer against the gold final answer (the value after `####`); it never inspects the
+  intermediate reasoning. This rubric is written to predict that oracle: a muddled or partly
+  wrong explanation that still lands on the correct final number must PASS, and a cleanly
+  reasoned response with an arithmetic slip in the last step must FAIL. The non-critical
+  criteria exist only to let a judge predict the final-answer check reliably when the stated
+  answer is ambiguous or absent, not to grade the reasoning for its own sake.
+
+pass_definition: >
+  The final numeric answer the response states matches the gold final answer as a NUMBER.
+  Units are out of scope -- the gold answer is a bare number. Formatting of that number -- commas, a currency symbol, a
+  trailing period, "The answer is 42" versus a bare "42", rounding presentation that still
+  reads as the same value -- is irrelevant. The quality, length, clarity or correctness of the
+  intermediate reasoning is out of scope: a response that stumbles through its steps but states
+  the right final number is a PASS, and a beautifully argued response that flubs the last
+  arithmetic step and states the wrong final number is a FAIL.
+
+criteria:
+  - id: final_answer_matches
+    critical: true
+    weight: 1
+    question: >
+      Does the numeric value the response gives as its final answer equal the gold final
+      answer?
+    pass_when: >
+      The stated final number equals gold's, regardless of formatting (commas, currency
+      symbols, trailing period, "The answer is X" phrasing) and regardless of what the
+      reasoning that preceded it said.
+    fail_when: >
+      The stated final number differs from gold's. Do NOT fail this for a missing or
+      differing unit, a currency symbol, or a thousands separator: the gold answer is a bare
+      number and the comparator is numeric, so penalising presentation here would disagree
+      with the label on cases that are actually correct.
+
+  - id: final_answer_is_stated
+    weight: 2
+    question: >
+      Does the response clearly commit to a single final numeric answer to the question that
+      was asked, rather than leaving it ambiguous, giving a range, or stopping mid-calculation?
+    pass_when: >
+      A single number is identifiable as the response's final answer, however it is phrased or
+      formatted, and it is not qualified with "or" between two different values.
+    fail_when: >
+      The response trails off before reaching a final number, presents multiple candidate
+      final answers without picking one, or gives a range where a single value is required.
+
+  - id: answers_the_question_asked
+    weight: 4
+    question: >
+      Is the stated final answer the quantity the question actually asked for, rather than an
+      intermediate quantity computed along the way?
+    pass_when: >
+      The final answer corresponds to what the question asks (e.g. "how much money is left"),
+      not to a subtotal, a per-unit rate, or a partial sum used to get there.
+    fail_when: >
+      The response states an intermediate value as if it were the answer -- e.g. it reports
+      the total cost when the question asked for the change received, or reports a per-item
+      price when asked for a total.
+
+  - id: arithmetic_steps_are_consistent
+    weight: 2
+    question: >
+      Are the arithmetic operations shown internally consistent, i.e. does each step's stated
+      result follow from the numbers it operates on?
+    pass_when: >
+      Every shown calculation step's result is arithmetically correct given its own inputs.
+      This does not require the response to show its work at all -- a bare final number with
+      no shown steps is not penalised here.
+    fail_when: >
+      A shown step's arithmetic is wrong on its own terms (e.g. "3 + 4 = 8"), independent of
+      whether the final answer happens to be right or wrong.
+
+  - id: quantities_traced_to_problem
+    weight: 1
+    question: >
+      Does every number used in the calculation come from the problem statement or from a
+      correctly derived intermediate step, rather than being invented or misread?
+    pass_when: >
+      Each input value used in the calculation matches a value given in the problem or a value
+      correctly computed earlier in the response.
+    fail_when: >
+      A value used in the calculation does not appear in the problem and was not correctly
+      derived -- a misread quantity, a fabricated number, or reusing the wrong figure from the
+      problem.
+
+boundary_examples:
+  - situation: >
+      The response's reasoning contains a confused, hard-to-follow explanation with a
+      backtrack, but the final stated number equals gold's.
+    verdict: pass
+    why: >
+      The oracle only compares the final number after `####`; muddled reasoning that still
+      arrives at the right answer matches gold.
+  - situation: >
+      The response's reasoning is clean and every intermediate step is well explained, but the
+      last arithmetic step is computed wrong and the final stated number differs from gold's.
+    verdict: fail
+    why: >
+      final_answer_matches is critical and looks only at the final number; good exposition
+      does not offset a wrong final value.
+  - situation: >
+      Gold's answer is "42" and the response states "The final answer is 42." with a trailing
+      period and a full sentence around it.
+    verdict: pass
+    why: >
+      Formatting and surrounding phrasing of the final number are explicitly out of scope; the
+      numeric value is what the oracle compares.
+  - situation: >
+      Gold's answer is "5 hours" and the response's final stated value is "5" with no unit.
+    verdict: fail
+    why: >
+      The pass_definition requires matching units when gold's answer carries them; a bare
+      number that drops a required unit does not match gold at the level the oracle checks.
+  - situation: >
+      The question asks how much change a customer receives, and the response correctly
+      computes the total cost and states that total as its final answer without subtracting
+      from the amount paid.
+    verdict: fail
+    why: >
+      The final number is an intermediate quantity, not the quantity the question asked for,
+      so it will not equal gold's final answer even though the arithmetic shown is correct.
+  - situation: >
+      The response shows one intermediate step with a typo-level arithmetic slip ("6 x 7 = 42"
+      written where the correct product is used anyway two lines later), but the final answer
+      still matches gold.
+    verdict: pass
+    why: >
+      final_answer_matches is the only critical criterion; arithmetic_steps_are_consistent
+      would flag the slip but is non-critical and does not zero the score by itself.

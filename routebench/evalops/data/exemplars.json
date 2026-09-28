@@ -1,0 +1,151 @@
+{
+  "exemplars": {
+    "code": [
+      {
+        "candidate_output": "```python\ndef string_to_tuple(s):\n    return tuple(s)\n```",
+        "case_id": "code_mbpp-4e23ff934518a67c",
+        "task_input": "Write a function to convert a given string to a tuple of characters.",
+        "verdict": "FAIL",
+        "why": "exit 1"
+      },
+      {
+        "candidate_output": "```python\ndef extract_freq(lst):\n    return len(set(lst))\n```",
+        "case_id": "code_mbpp-0a73bfb4599e31f5",
+        "task_input": "Write a function to extract the number of unique tuples in the given list.",
+        "verdict": "FAIL",
+        "why": "exit 1"
+      },
+      {
+        "candidate_output": "```python\ndef ascii_value(char):\n    return ord(char)\n```",
+        "case_id": "code_mbpp-2d80f3de528a0390",
+        "task_input": "Write a function to find the ascii value of a character.",
+        "verdict": "PASS",
+        "why": "tests passed"
+      },
+      {
+        "candidate_output": "```python\ndef count_Set_Bits(n):\n    return bin(n).count('1')\n```",
+        "case_id": "code_mbpp-020fe78ab1deb39d",
+        "task_input": "Write a python function to count the number of set bits (binary digits with value 1) in a given number.",
+        "verdict": "PASS",
+        "why": "tests passed"
+      }
+    ],
+    "reason": [
+      {
+        "candidate_output": "Let's break down the problem step by step:\n\n1. **Initial bill:**  \n   The initial total for groceries is $40.00.\n\n2. **Delivery fee:**  \n   They charged an additional $3.00 in delivery fees.\n\n3. **Subtotal before the percentage fee:**  \n   Add the delivery fee to the initial bill:  \n   $40.00 + $3.00 = $43.00\n\n4. **Percentage fee (25%):**  \n   The vendor added a 25% fee to the subtotal ($43.00).  \n   Calculate 25% of $43.00:  \n   0.25 \u00d7 $43.00 = $10.75\n\n5. **Total after the percentage fee:**  \n   Add this fee to the subtotal:  \n   $43.00 + $10.75 = $53.75\n\n6. **Add the tip:**  \n   Stephen added a $4.00 tip:  \n   $53.75 + $4.00 = $57.75\n\n**Final price of Stephen's groceries after all fees and",
+        "case_id": "reason-8d164c85a8d87cdd",
+        "task_input": "Stephen placed an online order for groceries.  His final bill came to $40.00.  Because this was through a delivery vendor, they tacked on a 25% fee to his final total and charged him $3.00 in delivery fees.  Stephen also added a $4.00 tip.  After the extra fees, what was the final price of Stephen's groceries?",
+        "verdict": "FAIL",
+        "why": "candidate=57.75 gold=57"
+      },
+      {
+        "candidate_output": "Let's analyze the problem step by step:\n\n1. Initially, Finn sees 11 tadpoles swimming in the pond.\n\n2. Then, 6 tadpoles come out of hiding from under a lily pad.  \n   - Since they come out of hiding, they are now visible.  \n   - These 6 tadpoles are already part of the initial 11, so the total number of visible tadpoles remains 11 (they are just now visible).\n\n3. Next, Finn sees 2 tadpoles hide under a rock.  \n   - These 2 tadpoles are now hidden and no longer visible.  \n   - Therefore, the number of visible tadpoles decreases by 2.\n\n4. To find the current number of visible tadpoles:  \n   - Start with the initial 11.  \n   - Subtract the 2 that hid under the rock.\n\nCalculation:  \n11 - 2 = 9\n\n",
+        "case_id": "reason-82736304fd3737b6",
+        "task_input": "Finn watches 11 tadpoles swimming in the pond.  Suddenly he sees 6 of them come out of hiding from under a lily pad ,then he sees 2 of them hide under a rock.  How many tadpoles can Finn see in the pond now?",
+        "verdict": "FAIL",
+        "why": "candidate=9 gold=15"
+      },
+      {
+        "candidate_output": "Step 1: Determine how many lollipops Jean has after eating some.  \nJean starts with 30 lollipops and eats 2.  \nSo, the remaining lollipops are:  \n30 - 2 = 28 lollipops.\n\nStep 2: Calculate how many bags Jean can fill with the remaining lollipops.  \nJean wants to package 2 lollipops in each bag.  \nTo find out how many bags can be filled, we divide the number of remaining lollipops by the number of lollipops per bag:  \n28 lollipops \u00f7 2 lollipops per bag = 14 bags.\n\nFinal answer:  \n14",
+        "case_id": "reason-589dfcaeabaca90a",
+        "task_input": "Jean has 30 lollipops. Jean eats 2 of the lollipops. With the remaining lollipops, Jean wants to package 2 lollipops in one bag. How many bags can Jean fill?",
+        "verdict": "PASS",
+        "why": "candidate=14 gold=14"
+      },
+      {
+        "candidate_output": "Step 1: Determine how much Carmen has.\nCarmen has $100.\n\nStep 2: Find out how much Samantha has.\nSamantha has $25 more than Carmen.\nSo, Samantha has $100 + $25 = $125.\n\nStep 3: Find out how much Daisy has.\nDaisy has $50 more than Samantha.\nSo, Daisy has $125 + $50 = $175.\n\nStep 4: Find the total amount all three girls have combined.\nTotal = Carmen's amount + Samantha's amount + Daisy's amount\nTotal = $100 + $125 + $175\n\nStep 5: Calculate the total.\n$100 + $125 = $225\n$225 + $175 = $400\n\nFinal answer:\n400",
+        "case_id": "reason-76361cb531c5612b",
+        "task_input": "Carmen has $100, Samantha has $25 more than Carmen, and Daisy has $50 more than Samantha. How much do all three girls have combined?",
+        "verdict": "PASS",
+        "why": "candidate=400 gold=400"
+      }
+    ],
+    "sql": [
+      {
+        "candidate_output": "SELECT Abbreviation FROM airlines WHERE Airline = 'Jetblue Airways';",
+        "case_id": "sql-0559885675eab3a4",
+        "task_input": "Which abbreviation corresponds to Jetblue Airways?",
+        "verdict": "FAIL",
+        "why": "got 0 rows, gold 1 rows"
+      },
+      {
+        "candidate_output": "SELECT Name, Song_release_year\nFROM singer\nORDER BY Age ASC\nLIMIT 1;",
+        "case_id": "sql-dadda4e4e53c6a70",
+        "task_input": "Show the name and the release year of the song by the youngest singer.",
+        "verdict": "FAIL",
+        "why": "got 1 rows, gold 1 rows"
+      },
+      {
+        "candidate_output": "SELECT COUNT(*) FROM airlines;",
+        "case_id": "sql-fc63a11735d38972",
+        "task_input": "How many airlines do we have?",
+        "verdict": "PASS",
+        "why": "result sets match"
+      },
+      {
+        "candidate_output": "SELECT COUNT(*) FROM countries;",
+        "case_id": "sql-a00e96335e2f8325",
+        "task_input": "How many countries are listed?",
+        "verdict": "PASS",
+        "why": "result sets match"
+      }
+    ],
+    "summarize": [
+      {
+        "candidate_output": "The merger received approval in October 2018.",
+        "case_id": "gnd-4b2358f512195aa8",
+        "task_input": "Summarise the source document faithfully. Every statement in your summary must be supported by the document.",
+        "verdict": "FAIL",
+        "why": "published expert annotation: 1 = claim supported by document"
+      },
+      {
+        "candidate_output": "The industry stays silent to avoid fighting the NRA publicly.",
+        "case_id": "gnd-bc43473f55c71d46",
+        "task_input": "Summarise the source document faithfully. Every statement in your summary must be supported by the document.",
+        "verdict": "FAIL",
+        "why": "published expert annotation: 1 = claim supported by document"
+      },
+      {
+        "candidate_output": "City staff recommends approval.",
+        "case_id": "gnd-42a95f701ad0981b",
+        "task_input": "Summarise the source document faithfully. Every statement in your summary must be supported by the document.",
+        "verdict": "PASS",
+        "why": "published expert annotation: 1 = claim supported by document"
+      },
+      {
+        "candidate_output": "A CBS employee tested positive for anthrax exposure.",
+        "case_id": "gnd-308e56ff4aa72a0a",
+        "task_input": "Summarise the source document faithfully. Every statement in your summary must be supported by the document.",
+        "verdict": "PASS",
+        "why": "published expert annotation: 1 = claim supported by document"
+      }
+    ],
+    "tool_use": [
+      {
+        "candidate_output": "{\"name\":\"calculate_stock_return\",\"arguments\":{\"investment_amount\":5000,\"annual_growth_rate\":6,\"holding_period\":5}}",
+        "case_id": "tool_use-b56bdb9d39c82f30",
+        "task_input": "Calculate the projected return on a $5000 investment in ABC company's stock, if the expected annual growth rate is 6% and the holding period is 5 years.",
+        "verdict": "FAIL",
+        "why": "argument 'annual_growth_rate': got 6, gold accepts [0.06]"
+      },
+      {
+        "candidate_output": "{\"name\": \"math.power\", \"arguments\": {\"base\": 3, \"exponent\": 4}}",
+        "case_id": "tool_use-3de38452e6be1b0e",
+        "task_input": "Calculate the power of 3 raised to the power 4.",
+        "verdict": "PASS",
+        "why": "function and arguments match gold"
+      },
+      {
+        "candidate_output": "{\"name\": \"light_travel_time\", \"arguments\": {\"distance_in_light_years\": 4}}}",
+        "case_id": "tool_use-e5821fd58c0d5f19",
+        "task_input": "How much time will it take for the light to reach earth from a star 4 light years away?",
+        "verdict": "PASS",
+        "why": "function and arguments match gold"
+      }
+    ]
+  },
+  "per_class": 2,
+  "selection_rule": "shortest candidate per label class; no judge output consulted",
+  "source_split": "train",
+  "split_seed": 20260927
+}

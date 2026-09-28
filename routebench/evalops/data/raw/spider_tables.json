@@ -1,0 +1,998 @@
+[
+    {
+        "Schema (values (type))": "perpetrator : Perpetrator_ID (number) , People_ID (number) , Date (text) , Year (number) , Location (text) , Country (text) , Killed (number) , Injured (number) | people : People_ID (number) , Name (text) , Height (number) , Weight (number) , Home Town (text)",
+        "Primary Keys": "perpetrator : Perpetrator_ID | people : People_ID",
+        "Foreign Keys": "perpetrator : People_ID equals people : People_ID",
+        "db_id": "perpetrator"
+    },
+    {
+        "Schema (values (type))": "classroom : building (text) , room_number (text) , capacity (number) | department : dept_name (text) , building (text) , budget (number) | course : course_id (text) , title (text) , dept_name (text) , credits (number) | instructor : ID (text) , name (text) , dept_name (text) , salary (number) | section : course_id (text) , sec_id (text) , semester (text) , year (number) , building (text) , room_number (text) , time_slot_id (text) | teaches : ID (text) , course_id (text) , sec_id (text) , semester (text) , year (number) | student : ID (text) , name (text) , dept_name (text) , tot_cred (number) | takes : ID (text) , course_id (text) , sec_id (text) , semester (text) , year (number) , grade (text) | advisor : s_ID (text) , i_ID (text) | time_slot : time_slot_id (text) , day (text) , start_hr (number) , start_min (number) , end_hr (number) , end_min (number) | prereq : course_id (text) , prereq_id (text)",
+        "Primary Keys": "classroom : building | department : dept_name | course : course_id | instructor : ID | section : course_id | teaches : ID | student : ID | takes : ID | advisor : s_ID | time_slot : time_slot_id | prereq : course_id",
+        "Foreign Keys": "course : dept_name equals department : dept_name | instructor : dept_name equals department : dept_name | section : building equals classroom : building | section : room_number equals classroom : room_number | section : course_id equals course : course_id | teaches : ID equals instructor : ID | teaches : course_id equals section : course_id | teaches : sec_id equals section : sec_id | teaches : semester equals section : semester | teaches : year equals section : year | student : dept_name equals department : dept_name | takes : ID equals student : ID | takes : course_id equals section : course_id | takes : sec_id equals section : sec_id | takes : semester equals section : semester | takes : year equals section : year | advisor : s_ID equals student : ID | advisor : i_ID equals instructor : ID | prereq : prereq_id equals course : course_id | prereq : course_id equals course : course_id",
+        "db_id": "college_2"
+    },
+    {
+        "Schema (values (type))": "airport : id (number) , City (text) , Country (text) , IATA (text) , ICAO (text) , name (text) | operate_company : id (number) , name (text) , Type (text) , Principal_activities (text) , Incorporated_in (text) , Group_Equity_Shareholding (number) | flight : id (number) , Vehicle_Flight_number (text) , Date (text) , Pilot (text) , Velocity (number) , Altitude (number) , airport_id (number) , company_id (number)",
+        "Primary Keys": "airport : id | operate_company : id | flight : id",
+        "Foreign Keys": "flight : company_id equals operate_company : id | flight : airport_id equals airport : id",
+        "db_id": "flight_company"
+    },
+    {
+        "Schema (values (type))": "Inst : instID (number) , name (text) , country (text) | Authors : authID (number) , lname (text) , fname (text) | Papers : paperID (number) , title (text) | Authorship : authID (number) , instID (number) , paperID (number) , authOrder (number)",
+        "Primary Keys": "Inst : instID | Authors : authID | Papers : paperID | Authorship : authID",
+        "Foreign Keys": "Authorship : paperID equals Papers : paperID | Authorship : instID equals Inst : instID | Authorship : authID equals Authors : authID",
+        "db_id": "icfp_1"
+    },
+    {
+        "Schema (values (type))": "body_builder : Body_Builder_ID (number) , People_ID (number) , Snatch (number) , Clean_Jerk (number) , Total (number) | people : People_ID (number) , Name (text) , Height (number) , Weight (number) , Birth_Date (text) , Birth_Place (text)",
+        "Primary Keys": "body_builder : Body_Builder_ID | people : People_ID",
+        "Foreign Keys": "body_builder : People_ID equals people : People_ID",
+        "db_id": "body_builder"
+    },
+    {
+        "Schema (values (type))": "storm : Storm_ID (number) , Name (text) , Dates_active (text) , Max_speed (number) , Damage_millions_USD (number) , Number_Deaths (number) | region : Region_id (number) , Region_code (text) , Region_name (text) | affected_region : Region_id (number) , Storm_ID (number) , Number_city_affected (number)",
+        "Primary Keys": "storm : Storm_ID | region : Region_id | affected_region : Region_id",
+        "Foreign Keys": "affected_region : Storm_ID equals storm : Storm_ID | affected_region : Region_id equals region : Region_id",
+        "db_id": "storm_record"
+    },
+    {
+        "Schema (values (type))": "aircraft : Aircraft_ID (number) , Order_Year (number) , Manufacturer (text) , Model (text) , Fleet_Series (text) , Powertrain (text) , Fuel_Propulsion (text) | pilot : Pilot_ID (number) , Pilot_name (text) , Rank (number) , Age (number) , Nationality (text) , Position (text) , Join_Year (number) , Team (text) | pilot_record : Record_ID (number) , Pilot_ID (number) , Aircraft_ID (number) , Date (text)",
+        "Primary Keys": "aircraft : Aircraft_ID | pilot : Pilot_ID | pilot_record : Pilot_ID",
+        "Foreign Keys": "pilot_record : Aircraft_ID equals aircraft : Aircraft_ID | pilot_record : Pilot_ID equals pilot : Pilot_ID",
+        "db_id": "pilot_record"
+    },
+    {
+        "Schema (values (type))": "race : Race_ID (number) , Name (text) , Class (text) , Date (text) , Track_ID (text) | track : Track_ID (number) , Name (text) , Location (text) , Seating (number) , Year_Opened (number)",
+        "Primary Keys": "race : Race_ID | track : Track_ID",
+        "Foreign Keys": "race : Track_ID equals track : Track_ID",
+        "db_id": "race_track"
+    },
+    {
+        "Schema (values (type))": "author : aid (number) , homepage (text) , name (text) , oid (number) | conference : cid (number) , homepage (text) , name (text) | domain : did (number) , name (text) | domain_author : aid (number) , did (number) | domain_conference : cid (number) , did (number) | journal : homepage (text) , jid (number) , name (text) | domain_journal : did (number) , jid (number) | keyword : keyword (text) , kid (number) | domain_keyword : did (number) , kid (number) | publication : abstract (text) , cid (text) , citation_num (number) , jid (number) , pid (number) , reference_num (number) , title (text) , year (number) | domain_publication : did (number) , pid (number) | organization : continent (text) , homepage (text) , name (text) , oid (number) | publication_keyword : pid (number) , kid (number) | writes : aid (number) , pid (number) | cite : cited (number) , citing (number)",
+        "Primary Keys": "author : aid | conference : cid | domain : did | domain_author : did | domain_conference : did | journal : jid | domain_journal : did | keyword : kid | domain_keyword : did | publication : pid | domain_publication : did | organization : oid | publication_keyword : kid | writes : aid",
+        "Foreign Keys": "domain_author : did equals domain : did | domain_author : aid equals author : aid | domain_conference : did equals domain : did | domain_conference : cid equals conference : cid | domain_journal : did equals domain : did | domain_journal : jid equals journal : jid | domain_keyword : did equals domain : did | domain_keyword : kid equals keyword : kid | publication : cid equals conference : cid | publication : jid equals journal : jid | domain_publication : did equals domain : did | domain_publication : pid equals publication : pid | publication_keyword : kid equals keyword : kid | publication_keyword : pid equals publication : pid | writes : aid equals author : aid | writes : pid equals publication : pid | cite : citing equals publication : pid | cite : cited equals publication : pid",
+        "db_id": "academic"
+    },
+    {
+        "Schema (values (type))": "Addresses : address_id (number) , address_details (text) | Staff : staff_id (number) , staff_gender (text) , staff_name (text) | Suppliers : supplier_id (number) , supplier_name (text) , supplier_phone (text) | Department_Store_Chain : dept_store_chain_id (number) , dept_store_chain_name (text) | Customers : customer_id (number) , payment_method_code (text) , customer_code (text) , customer_name (text) , customer_address (text) , customer_phone (text) , customer_email (text) | Products : product_id (number) , product_type_code (text) , product_name (text) , product_price (number) | Supplier_Addresses : supplier_id (number) , address_id (number) , date_from (time) , date_to (time) | Customer_Addresses : customer_id (number) , address_id (number) , date_from (time) , date_to (time) | Customer_Orders : order_id (number) , customer_id (number) , order_status_code (text) , order_date (time) | Department_Stores : dept_store_id (number) , dept_store_chain_id (number) , store_name (text) , store_address (text) , store_phone (text) , store_email (text) | Departments : department_id (number) , dept_store_id (number) , department_name (text) | Order_Items : order_item_id (number) , order_id (number) , product_id (number) | Product_Suppliers : product_id (number) , supplier_id (number) , date_supplied_from (time) , date_supplied_to (time) , total_amount_purchased (text) , total_value_purchased (number) | Staff_Department_Assignments : staff_id (number) , department_id (number) , date_assigned_from (time) , job_title_code (text) , date_assigned_to (time)",
+        "Primary Keys": "Addresses : address_id | Staff : staff_id | Suppliers : supplier_id | Department_Store_Chain : dept_store_chain_id | Customers : customer_id | Products : product_id | Supplier_Addresses : supplier_id | Customer_Addresses : customer_id | Customer_Orders : order_id | Department_Stores : dept_store_id | Departments : department_id | Order_Items : order_item_id | Product_Suppliers : product_id | Staff_Department_Assignments : staff_id",
+        "Foreign Keys": "Supplier_Addresses : supplier_id equals Suppliers : supplier_id | Supplier_Addresses : address_id equals Addresses : address_id | Customer_Addresses : customer_id equals Customers : customer_id | Customer_Addresses : address_id equals Addresses : address_id | Customer_Orders : customer_id equals Customers : customer_id | Department_Stores : dept_store_chain_id equals Department_Store_Chain : dept_store_chain_id | Departments : dept_store_id equals Department_Stores : dept_store_id | Order_Items : product_id equals Products : product_id | Order_Items : order_id equals Customer_Orders : order_id | Product_Suppliers : product_id equals Products : product_id | Product_Suppliers : supplier_id equals Suppliers : supplier_id | Staff_Department_Assignments : staff_id equals Staff : staff_id | Staff_Department_Assignments : department_id equals Departments : department_id",
+        "db_id": "department_store"
+    },
+    {
+        "Schema (values (type))": "artist : Artist_ID (number) , Artist (text) , Age (number) , Famous_Title (text) , Famous_Release_date (text) | volume : Volume_ID (number) , Volume_Issue (text) , Issue_Date (text) , Weeks_on_Top (number) , Song (text) , Artist_ID (number) | music_festival : ID (number) , Music_Festival (text) , Date_of_ceremony (text) , Category (text) , Volume (number) , Result (text)",
+        "Primary Keys": "artist : Artist_ID | volume : Volume_ID | music_festival : ID",
+        "Foreign Keys": "volume : Artist_ID equals artist : Artist_ID | music_festival : Volume equals volume : Volume_ID",
+        "db_id": "music_4"
+    },
+    {
+        "Schema (values (type))": "Customers : Customer_ID (number) , Customer_name (text) | Services : Service_ID (number) , Service_name (text) | Available_Policies : Policy_ID (number) , policy_type_code (text) , Customer_Phone (text) | Customers_Policies : Customer_ID (number) , Policy_ID (number) , Date_Opened (time) , Date_Closed (time) | First_Notification_of_Loss : FNOL_ID (number) , Customer_ID (number) , Policy_ID (number) , Service_ID (number) | Claims : Claim_ID (number) , FNOL_ID (number) , Effective_Date (time) | Settlements : Settlement_ID (number) , Claim_ID (number) , Effective_Date (time) , Settlement_Amount (number)",
+        "Primary Keys": "Customers : Customer_ID | Services : Service_ID | Available_Policies : Policy_ID | Customers_Policies : Customer_ID | First_Notification_of_Loss : FNOL_ID | Claims : Claim_ID | Settlements : Settlement_ID",
+        "Foreign Keys": "Customers_Policies : Policy_ID equals Available_Policies : Policy_ID | Customers_Policies : Customer_ID equals Customers : Customer_ID | First_Notification_of_Loss : Customer_ID equals Customers_Policies : Customer_ID | First_Notification_of_Loss : Policy_ID equals Customers_Policies : Policy_ID | First_Notification_of_Loss : Service_ID equals Services : Service_ID | Claims : FNOL_ID equals First_Notification_of_Loss : FNOL_ID | Settlements : Claim_ID equals Claims : Claim_ID",
+        "db_id": "insurance_fnol"
+    },
+    {
+        "Schema (values (type))": "film : Film_ID (number) , Rank_in_series (number) , Number_in_season (number) , Title (text) , Directed_by (text) , Original_air_date (text) , Production_code (text) | cinema : Cinema_ID (number) , Name (text) , Openning_year (number) , Capacity (number) , Location (text) | schedule : Cinema_ID (number) , Film_ID (number) , Date (text) , Show_times_per_day (number) , Price (number)",
+        "Primary Keys": "film : Film_ID | cinema : Cinema_ID | schedule : Cinema_ID",
+        "Foreign Keys": "schedule : Cinema_ID equals cinema : Cinema_ID | schedule : Film_ID equals film : Film_ID",
+        "db_id": "cinema"
+    },
+    {
+        "Schema (values (type))": "college : College_ID (number) , Name (text) , Leader_Name (text) , College_Location (text) | member : Member_ID (number) , Name (text) , Country (text) , College_ID (number) | round : Round_ID (number) , Member_ID (number) , Decoration_Theme (text) , Rank_in_Round (number)",
+        "Primary Keys": "college : College_ID | member : Member_ID | round : Member_ID",
+        "Foreign Keys": "member : College_ID equals college : College_ID | round : Member_ID equals member : Member_ID",
+        "db_id": "decoration_competition"
+    },
+    {
+        "Schema (values (type))": "phone : Name (text) , Phone_ID (number) , Memory_in_G (number) , Carrier (text) , Price (number) | market : Market_ID (number) , District (text) , Num_of_employees (number) , Num_of_shops (number) , Ranking (number) | phone_market : Market_ID (number) , Phone_ID (text) , Num_of_stock (number)",
+        "Primary Keys": "phone : Phone_ID | market : Market_ID | phone_market : Market_ID",
+        "Foreign Keys": "phone_market : Phone_ID equals phone : Phone_ID | phone_market : Market_ID equals market : Market_ID",
+        "db_id": "phone_market"
+    },
+    {
+        "Schema (values (type))": "product : product_id (number) , product (text) , dimensions (text) , dpi (number) , pages_per_minute_color (number) , max_page_size (text) , interface (text) | store : Store_ID (number) , Store_Name (text) , Type (text) , Area_size (number) , Number_of_product_category (number) , Ranking (number) | district : District_ID (number) , District_name (text) , Headquartered_City (text) , City_Population (number) , City_Area (number) | store_product : Store_ID (number) , Product_ID (number) | store_district : Store_ID (number) , District_ID (number)",
+        "Primary Keys": "product : product_id | store : Store_ID | district : District_ID | store_product : Store_ID | store_district : Store_ID",
+        "Foreign Keys": "store_product : Store_ID equals store : Store_ID | store_district : District_ID equals district : District_ID | store_district : Store_ID equals store : Store_ID",
+        "db_id": "store_product"
+    },
+    {
+        "Schema (values (type))": "Third_Party_Companies : company_id (number) , company_type (text) , company_name (text) , company_address (text) , other_company_details (text) | Maintenance_Contracts : maintenance_contract_id (number) , maintenance_contract_company_id (number) , contract_start_date (time) , contract_end_date (time) , other_contract_details (text) | Parts : part_id (number) , part_name (text) , chargeable_yn (text) , chargeable_amount (text) , other_part_details (text) | Skills : skill_id (number) , skill_code (text) , skill_description (text) | Staff : staff_id (number) , staff_name (text) , gender (text) , other_staff_details (text) | Assets : asset_id (number) , maintenance_contract_id (number) , supplier_company_id (number) , asset_details (text) , asset_make (text) , asset_model (text) , asset_acquired_date (time) , asset_disposed_date (time) , other_asset_details (text) | Asset_Parts : asset_id (number) , part_id (number) | Maintenance_Engineers : engineer_id (number) , company_id (number) , first_name (text) , last_name (text) , other_details (text) | Engineer_Skills : engineer_id (number) , skill_id (number) | Fault_Log : fault_log_entry_id (number) , asset_id (number) , recorded_by_staff_id (number) , fault_log_entry_datetime (time) , fault_description (text) , other_fault_details (text) | Engineer_Visits : engineer_visit_id (number) , contact_staff_id (number) , engineer_id (number) , fault_log_entry_id (number) , fault_status (text) , visit_start_datetime (time) , visit_end_datetime (time) , other_visit_details (text) | Part_Faults : part_fault_id (number) , part_id (number) , fault_short_name (text) , fault_description (text) , other_fault_details (text) | Fault_Log_Parts : fault_log_entry_id (number) , part_fault_id (number) , fault_status (text) | Skills_Required_To_Fix : part_fault_id (number) , skill_id (number)",
+        "Primary Keys": "Third_Party_Companies : company_id | Maintenance_Contracts : maintenance_contract_id | Parts : part_id | Skills : skill_id | Staff : staff_id | Assets : asset_id | Maintenance_Engineers : engineer_id | Fault_Log : fault_log_entry_id | Engineer_Visits : engineer_visit_id | Part_Faults : part_fault_id",
+        "Foreign Keys": "Maintenance_Contracts : maintenance_contract_company_id equals Third_Party_Companies : company_id | Assets : supplier_company_id equals Third_Party_Companies : company_id | Assets : maintenance_contract_id equals Maintenance_Contracts : maintenance_contract_id | Asset_Parts : asset_id equals Assets : asset_id | Asset_Parts : part_id equals Parts : part_id | Maintenance_Engineers : company_id equals Third_Party_Companies : company_id | Engineer_Skills : skill_id equals Skills : skill_id | Engineer_Skills : engineer_id equals Maintenance_Engineers : engineer_id | Fault_Log : recorded_by_staff_id equals Staff : staff_id | Fault_Log : asset_id equals Assets : asset_id | Engineer_Visits : contact_staff_id equals Staff : staff_id | Engineer_Visits : engineer_id equals Maintenance_Engineers : engineer_id | Engineer_Visits : fault_log_entry_id equals Fault_Log : fault_log_entry_id | Part_Faults : part_id equals Parts : part_id | Fault_Log_Parts : fault_log_entry_id equals Fault_Log : fault_log_entry_id | Fault_Log_Parts : part_fault_id equals Part_Faults : part_fault_id | Skills_Required_To_Fix : skill_id equals Skills : skill_id | Skills_Required_To_Fix : part_fault_id equals Part_Faults : part_fault_id",
+        "db_id": "assets_maintenance"
+    },
+    {
+        "Schema (values (type))": "Addresses : address_id (number) , line_1 (text) , line_2 (text) , city (text) , zip_postcode (text) , state_province_county (text) , country (text) | People : person_id (number) , first_name (text) , middle_name (text) , last_name (text) , cell_mobile_number (text) , email_address (text) , login_name (text) , password (text) | Students : student_id (number) , student_details (text) | Courses : course_id (text) , course_name (text) , course_description (text) , other_details (text) | People_Addresses : person_address_id (number) , person_id (number) , address_id (number) , date_from (time) , date_to (time) | Student_Course_Registrations : student_id (number) , course_id (number) , registration_date (time) | Student_Course_Attendance : student_id (number) , course_id (number) , date_of_attendance (time) | Candidates : candidate_id (number) , candidate_details (text) | Candidate_Assessments : candidate_id (number) , qualification (text) , assessment_date (time) , asessment_outcome_code (text)",
+        "Primary Keys": "Addresses : address_id | People : person_id | Students : student_id | Courses : course_id | People_Addresses : person_address_id | Student_Course_Registrations : student_id | Student_Course_Attendance : student_id | Candidates : candidate_id | Candidate_Assessments : candidate_id",
+        "Foreign Keys": "Students : student_id equals People : person_id | People_Addresses : address_id equals Addresses : address_id | People_Addresses : person_id equals People : person_id | Student_Course_Registrations : course_id equals Courses : course_id | Student_Course_Registrations : student_id equals Students : student_id | Student_Course_Attendance : student_id equals Student_Course_Registrations : student_id | Student_Course_Attendance : course_id equals Student_Course_Registrations : course_id | Candidates : candidate_id equals People : person_id | Candidate_Assessments : candidate_id equals Candidates : candidate_id",
+        "db_id": "student_assessment"
+    },
+    {
+        "Schema (values (type))": "Breeds : breed_code (text) , breed_name (text) | Charges : charge_id (number) , charge_type (text) , charge_amount (number) | Sizes : size_code (text) , size_description (text) | Treatment_Types : treatment_type_code (text) , treatment_type_description (text) | Owners : owner_id (number) , first_name (text) , last_name (text) , street (text) , city (text) , state (text) , zip_code (text) , email_address (text) , home_phone (text) , cell_number (text) | Dogs : dog_id (number) , owner_id (number) , abandoned_yn (text) , breed_code (text) , size_code (text) , name (text) , age (text) , date_of_birth (time) , gender (text) , weight (text) , date_arrived (time) , date_adopted (time) , date_departed (time) | Professionals : professional_id (number) , role_code (text) , first_name (text) , street (text) , city (text) , state (text) , zip_code (text) , last_name (text) , email_address (text) , home_phone (text) , cell_number (text) | Treatments : treatment_id (number) , dog_id (number) , professional_id (number) , treatment_type_code (text) , date_of_treatment (time) , cost_of_treatment (number)",
+        "Primary Keys": "Breeds : breed_code | Charges : charge_id | Sizes : size_code | Treatment_Types : treatment_type_code | Owners : owner_id | Dogs : dog_id | Professionals : professional_id | Treatments : treatment_id",
+        "Foreign Keys": "Dogs : owner_id equals Owners : owner_id | Dogs : owner_id equals Owners : owner_id | Dogs : size_code equals Sizes : size_code | Dogs : breed_code equals Breeds : breed_code | Treatments : dog_id equals Dogs : dog_id | Treatments : professional_id equals Professionals : professional_id | Treatments : treatment_type_code equals Treatment_Types : treatment_type_code",
+        "db_id": "dog_kennels"
+    },
+    {
+        "Schema (values (type))": "genre : g_name (text) , rating (text) , most_popular_in (text) | artist : artist_name (text) , country (text) , gender (text) , preferred_genre (text) | files : f_id (number) , artist_name (text) , file_size (text) , duration (text) , formats (text) | song : song_name (text) , artist_name (text) , country (text) , f_id (number) , genre_is (text) , rating (number) , languages (text) , releasedate (time) , resolution (number)",
+        "Primary Keys": "genre : g_name | artist : artist_name | files : f_id | song : song_name",
+        "Foreign Keys": "artist : preferred_genre equals genre : g_name | files : artist_name equals artist : artist_name | song : genre_is equals genre : g_name | song : f_id equals files : f_id | song : artist_name equals artist : artist_name",
+        "db_id": "music_1"
+    },
+    {
+        "Schema (values (type))": "people : People_ID (number) , Age (number) , Name (text) , Nationality (text) , Graduation_College (text) | company : Company_ID (number) , Name (text) , Headquarters (text) , Industry (text) , Sales_in_Billion (number) , Profits_in_Billion (number) , Assets_in_Billion (number) , Market_Value_in_Billion (number) | employment : Company_ID (number) , People_ID (number) , Year_working (number)",
+        "Primary Keys": "people : People_ID | company : Company_ID | employment : Company_ID",
+        "Foreign Keys": "employment : People_ID equals people : People_ID | employment : Company_ID equals company : Company_ID",
+        "db_id": "company_employee"
+    },
+    {
+        "Schema (values (type))": "city : City_ID (number) , Official_Name (text) , Status (text) , Area_km_2 (number) , Population (number) , Census_Ranking (text) | farm : Farm_ID (number) , Year (number) , Total_Horses (number) , Working_Horses (number) , Total_Cattle (number) , Oxen (number) , Bulls (number) , Cows (number) , Pigs (number) , Sheep_and_Goats (number) | farm_competition : Competition_ID (number) , Year (number) , Theme (text) , Host_city_ID (number) , Hosts (text) | competition_record : Competition_ID (number) , Farm_ID (number) , Rank (number)",
+        "Primary Keys": "city : City_ID | farm : Farm_ID | farm_competition : Competition_ID | competition_record : Competition_ID",
+        "Foreign Keys": "farm_competition : Host_city_ID equals city : City_ID | competition_record : Farm_ID equals farm : Farm_ID | competition_record : Competition_ID equals farm_competition : Competition_ID",
+        "db_id": "farm"
+    },
+    {
+        "Schema (values (type))": "Addresses : Address_ID (number) , address_details (text) | Locations : Location_ID (number) , Other_Details (text) | Products : Product_ID (number) , Product_Type_Code (text) , Product_Name (text) , Product_Price (number) | Parties : Party_ID (number) , Party_Details (text) | Assets : Asset_ID (number) , Other_Details (text) | Channels : Channel_ID (number) , Other_Details (text) | Finances : Finance_ID (number) , Other_Details (text) | Events : Event_ID (number) , Address_ID (number) , Channel_ID (number) , Event_Type_Code (text) , Finance_ID (number) , Location_ID (number) | Products_in_Events : Product_in_Event_ID (number) , Event_ID (number) , Product_ID (number) | Parties_in_Events : Party_ID (number) , Event_ID (number) , Role_Code (text) | Agreements : Document_ID (number) , Event_ID (number) | Assets_in_Events : Asset_ID (number) , Event_ID (number)",
+        "Primary Keys": "Addresses : Address_ID | Locations : Location_ID | Products : Product_ID | Parties : Party_ID | Assets : Asset_ID | Channels : Channel_ID | Finances : Finance_ID | Events : Event_ID | Products_in_Events : Product_in_Event_ID | Parties_in_Events : Party_ID | Agreements : Document_ID | Assets_in_Events : Asset_ID",
+        "Foreign Keys": "Events : Finance_ID equals Finances : Finance_ID | Events : Address_ID equals Addresses : Address_ID | Events : Location_ID equals Locations : Location_ID | Products_in_Events : Product_ID equals Products : Product_ID | Products_in_Events : Event_ID equals Events : Event_ID | Parties_in_Events : Event_ID equals Events : Event_ID | Parties_in_Events : Party_ID equals Parties : Party_ID | Agreements : Event_ID equals Events : Event_ID | Assets_in_Events : Event_ID equals Events : Event_ID | Assets_in_Events : Event_ID equals Events : Event_ID",
+        "db_id": "solvency_ii"
+    },
+    {
+        "Schema (values (type))": "city : City_ID (number) , City (text) , Hanzi (text) , Hanyu_Pinyin (text) , Regional_Population (number) , GDP (number) | match : Match_ID (number) , Date (text) , Venue (text) , Score (text) , Result (text) , Competition (text) | temperature : City_ID (number) , Jan (number) , Feb (number) , Mar (number) , Apr (number) , Jun (number) , Jul (number) , Aug (number) , Sep (number) , Oct (number) , Nov (number) , Dec (number) | hosting_city : Year (number) , Match_ID (number) , Host_City (text)",
+        "Primary Keys": "city : City_ID | match : Match_ID | temperature : City_ID | hosting_city : Year",
+        "Foreign Keys": "temperature : City_ID equals city : City_ID | hosting_city : Match_ID equals match : Match_ID | hosting_city : Host_City equals city : City_ID",
+        "db_id": "city_record"
+    },
+    {
+        "Schema (values (type))": "swimmer : ID (number) , name (text) , Nationality (text) , meter_100 (number) , meter_200 (text) , meter_300 (text) , meter_400 (text) , meter_500 (text) , meter_600 (text) , meter_700 (text) , Time (text) | stadium : ID (number) , name (text) , Capacity (number) , City (text) , Country (text) , Opening_year (number) | event : ID (number) , Name (text) , Stadium_ID (number) , Year (text) | record : ID (number) , Result (text) , Swimmer_ID (number) , Event_ID (number)",
+        "Primary Keys": "swimmer : ID | stadium : ID | event : ID | record : Swimmer_ID",
+        "Foreign Keys": "event : Stadium_ID equals stadium : ID | record : Swimmer_ID equals swimmer : ID | record : Event_ID equals event : ID",
+        "db_id": "swimming"
+    },
+    {
+        "Schema (values (type))": "airlines : uid (number) , Airline (text) , Abbreviation (text) , Country (text) | airports : City (text) , AirportCode (text) , AirportName (text) , Country (text) , CountryAbbrev (text) | flights : Airline (number) , FlightNo (number) , SourceAirport (text) , DestAirport (text)",
+        "Primary Keys": "airlines : uid | airports : AirportCode | flights : Airline",
+        "Foreign Keys": "flights : DestAirport equals airports : AirportCode | flights : SourceAirport equals airports : AirportCode",
+        "db_id": "flight_2"
+    },
+    {
+        "Schema (values (type))": "county : County_Id (number) , County_name (text) , Population (number) , Zip_code (text) | party : Party_ID (number) , Year (number) , Party (text) , Governor (text) , Lieutenant_Governor (text) , Comptroller (text) , Attorney_General (text) , US_Senate (text) | election : Election_ID (number) , Counties_Represented (text) , District (number) , Delegate (text) , Party (number) , First_Elected (number) , Committee (text)",
+        "Primary Keys": "county : County_Id | party : Party_ID | election : Election_ID",
+        "Foreign Keys": "election : District equals county : County_Id | election : Party equals party : Party_ID",
+        "db_id": "election"
+    },
+    {
+        "Schema (values (type))": "Manufacturers : Code (number) , Name (text) , Headquarter (text) , Founder (text) , Revenue (number) | Products : Code (number) , Name (text) , Price (number) , Manufacturer (number)",
+        "Primary Keys": "Manufacturers : Code | Products : Code",
+        "Foreign Keys": "Products : Manufacturer equals Manufacturers : Code",
+        "db_id": "manufactory_1"
+    },
+    {
+        "Schema (values (type))": "people : People_ID (number) , District (text) , Name (text) , Party (text) , Age (number) | debate : Debate_ID (number) , Date (text) , Venue (text) , Num_of_Audience (number) | debate_people : Debate_ID (number) , Affirmative (number) , Negative (number) , If_Affirmative_Win (others)",
+        "Primary Keys": "people : People_ID | debate : Debate_ID | debate_people : Debate_ID",
+        "Foreign Keys": "debate_people : Negative equals people : People_ID | debate_people : Affirmative equals people : People_ID | debate_people : Debate_ID equals debate : Debate_ID",
+        "db_id": "debate"
+    },
+    {
+        "Schema (values (type))": "Person : name (text) , age (number) , city (text) , gender (text) , job (text) | PersonFriend : name (text) , friend (text) , year (number)",
+        "Primary Keys": "Person : name",
+        "Foreign Keys": "PersonFriend : friend equals Person : name | PersonFriend : name equals Person : name",
+        "db_id": "network_2"
+    },
+    {
+        "Schema (values (type))": "Services : Service_ID (number) , Service_Type_Code (text) | Participants : Participant_ID (number) , Participant_Type_Code (text) , Participant_Details (text) | Events : Event_ID (number) , Service_ID (number) , Event_Details (text) | Participants_in_Events : Event_ID (number) , Participant_ID (number)",
+        "Primary Keys": "Services : Service_ID | Participants : Participant_ID | Events : Event_ID | Participants_in_Events : Event_ID",
+        "Foreign Keys": "Events : Service_ID equals Services : Service_ID | Participants_in_Events : Event_ID equals Events : Event_ID | Participants_in_Events : Participant_ID equals Participants : Participant_ID",
+        "db_id": "local_govt_in_alabama"
+    },
+    {
+        "Schema (values (type))": "mountain : Mountain_ID (number) , Name (text) , Height (number) , Prominence (number) , Range (text) , Country (text) | climber : Climber_ID (number) , Name (text) , Country (text) , Time (text) , Points (number) , Mountain_ID (number)",
+        "Primary Keys": "mountain : Mountain_ID | climber : Climber_ID",
+        "Foreign Keys": "climber : Mountain_ID equals mountain : Mountain_ID",
+        "db_id": "climbing"
+    },
+    {
+        "Schema (values (type))": "Course_Authors_and_Tutors : author_id (number) , author_tutor_ATB (text) , login_name (text) , password (text) , personal_name (text) , middle_name (text) , family_name (text) , gender_mf (text) , address_line_1 (text) | Students : student_id (number) , date_of_registration (time) , date_of_latest_logon (time) , login_name (text) , password (text) , personal_name (text) , middle_name (text) , family_name (text) | Subjects : subject_id (number) , subject_name (text) | Courses : course_id (number) , author_id (number) , subject_id (number) , course_name (text) , course_description (text) | Student_Course_Enrolment : registration_id (number) , student_id (number) , course_id (number) , date_of_enrolment (time) , date_of_completion (time) | Student_Tests_Taken : registration_id (number) , date_test_taken (time) , test_result (text)",
+        "Primary Keys": "Course_Authors_and_Tutors : author_id | Students : student_id | Subjects : subject_id | Courses : course_id | Student_Course_Enrolment : registration_id",
+        "Foreign Keys": "Courses : subject_id equals Subjects : subject_id | Courses : author_id equals Course_Authors_and_Tutors : author_id | Student_Course_Enrolment : student_id equals Students : student_id | Student_Course_Enrolment : course_id equals Courses : course_id | Student_Tests_Taken : registration_id equals Student_Course_Enrolment : registration_id",
+        "db_id": "e_learning"
+    },
+    {
+        "Schema (values (type))": "Scientists : SSN (number) , Name (text) | Projects : Code (text) , Name (text) , Hours (number) | AssignedTo : Scientist (number) , Project (text)",
+        "Primary Keys": "Scientists : SSN | Projects : Code | AssignedTo : Scientist",
+        "Foreign Keys": "AssignedTo : Project equals Projects : Code | AssignedTo : Scientist equals Scientists : SSN",
+        "db_id": "scientist_1"
+    },
+    {
+        "Schema (values (type))": "captain : Captain_ID (number) , Name (text) , Ship_ID (number) , age (text) , Class (text) , Rank (text) | Ship : Ship_ID (number) , Name (text) , Type (text) , Built_Year (number) , Class (text) , Flag (text)",
+        "Primary Keys": "captain : Captain_ID | Ship : Ship_ID",
+        "Foreign Keys": "captain : Ship_ID equals Ship : Ship_ID",
+        "db_id": "ship_1"
+    },
+    {
+        "Schema (values (type))": "festival_detail : Festival_ID (number) , Festival_Name (text) , Chair_Name (text) , Location (text) , Year (number) , Num_of_Audience (number) | artwork : Artwork_ID (number) , Type (text) , Name (text) | nomination : Artwork_ID (number) , Festival_ID (number) , Result (text)",
+        "Primary Keys": "festival_detail : Festival_ID | artwork : Artwork_ID | nomination : Artwork_ID",
+        "Foreign Keys": "nomination : Festival_ID equals festival_detail : Festival_ID | nomination : Artwork_ID equals artwork : Artwork_ID",
+        "db_id": "entertainment_awards"
+    },
+    {
+        "Schema (values (type))": "Allergy_Type : Allergy (text) , AllergyType (text) | Has_Allergy : StuID (number) , Allergy (text) | Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text)",
+        "Primary Keys": "Allergy_Type : Allergy | Student : StuID",
+        "Foreign Keys": "Has_Allergy : Allergy equals Allergy_Type : Allergy | Has_Allergy : StuID equals Student : StuID",
+        "db_id": "allergy_1"
+    },
+    {
+        "Schema (values (type))": "actor : aid (number) , gender (text) , name (text) , nationality (text) , birth_city (text) , birth_year (number) | copyright : id (number) , msid (number) , cid (number) | cast : id (number) , msid (number) , aid (number) , role (number) | genre : gid (number) , genre (text) | classification : id (number) , msid (number) , gid (number) | company : id (number) , name (text) , country_code (text) | director : did (number) , gender (text) , name (text) , nationality (text) , birth_city (text) , birth_year (number) | producer : pid (number) , gender (text) , name (text) , nationality (text) , birth_city (text) , birth_year (number) | directed_by : id (number) , msid (number) , did (number) | keyword : id (number) , keyword (text) | made_by : id (number) , msid (number) , pid (number) | movie : mid (number) , title (text) , release_year (number) , title_aka (text) , budget (text) | tags : id (number) , msid (number) , kid (number) | tv_series : sid (number) , title (text) , release_year (number) , num_of_seasons (number) , num_of_episodes (number) , title_aka (text) , budget (text) | writer : wid (number) , gender (text) , name (number) , nationality (number) , num_of_episodes (number) , birth_city (text) , birth_year (number) | written_by : id (number) , msid (number) , wid (number)",
+        "Primary Keys": "actor : aid | copyright : id | cast : id | genre : gid | classification : id | company : id | director : did | producer : pid | directed_by : id | keyword : id | made_by : id | movie : mid | tags : id | tv_series : sid | writer : wid",
+        "Foreign Keys": "cast : msid equals copyright : msid | cast : aid equals actor : aid | classification : msid equals copyright : msid | classification : gid equals genre : gid | directed_by : did equals director : did | directed_by : msid equals copyright : msid | made_by : pid equals producer : pid | made_by : msid equals copyright : msid | tags : msid equals copyright : msid | written_by : wid equals writer : wid | written_by : msid equals copyright : msid",
+        "db_id": "imdb"
+    },
+    {
+        "Schema (values (type))": "Discount_Coupons : coupon_id (number) , date_issued (time) , coupon_amount (number) | Customers : customer_id (number) , coupon_id (number) , good_or_bad_customer (text) , first_name (text) , last_name (text) , gender_mf (text) , date_became_customer (time) , date_last_hire (time) | Bookings : booking_id (number) , customer_id (number) , booking_status_code (text) , returned_damaged_yn (text) , booking_start_date (time) , booking_end_date (time) , count_hired (text) , amount_payable (number) , amount_of_discount (number) , amount_outstanding (number) , amount_of_refund (number) | Products_for_Hire : product_id (number) , product_type_code (text) , daily_hire_cost (number) , product_name (text) , product_description (text) | Payments : payment_id (number) , booking_id (number) , customer_id (number) , payment_type_code (text) , amount_paid_in_full_yn (text) , payment_date (time) , amount_due (number) , amount_paid (number) | Products_Booked : booking_id (number) , product_id (number) , returned_yn (text) , returned_late_yn (text) , booked_count (number) , booked_amount (number) | View_Product_Availability : product_id (number) , booking_id (number) , status_date (time) , available_yn (text)",
+        "Primary Keys": "Discount_Coupons : coupon_id | Customers : customer_id | Bookings : booking_id | Products_for_Hire : product_id | Payments : payment_id | Products_Booked : booking_id | View_Product_Availability : status_date",
+        "Foreign Keys": "Customers : coupon_id equals Discount_Coupons : coupon_id | Bookings : customer_id equals Customers : customer_id | Payments : customer_id equals Customers : customer_id | Payments : booking_id equals Bookings : booking_id | Products_Booked : product_id equals Products_for_Hire : product_id | Products_Booked : booking_id equals Bookings : booking_id | View_Product_Availability : product_id equals Products_for_Hire : product_id | View_Product_Availability : booking_id equals Bookings : booking_id",
+        "db_id": "products_for_hire"
+    },
+    {
+        "Schema (values (type))": "candidate : Candidate_ID (number) , People_ID (number) , Poll_Source (text) , Date (text) , Support_rate (number) , Consider_rate (number) , Oppose_rate (number) , Unsure_rate (number) | people : People_ID (number) , Sex (text) , Name (text) , Date_of_Birth (text) , Height (number) , Weight (number)",
+        "Primary Keys": "candidate : Candidate_ID | people : People_ID",
+        "Foreign Keys": "candidate : People_ID equals people : People_ID",
+        "db_id": "candidate_poll"
+    },
+    {
+        "Schema (values (type))": "Album : AlbumId (number) , Title (text) , ArtistId (number) | Artist : ArtistId (number) , Name (text) | Customer : CustomerId (number) , FirstName (text) , LastName (text) , Company (text) , Address (text) , City (text) , State (text) , Country (text) , PostalCode (text) , Phone (text) , Fax (text) , Email (text) , SupportRepId (number) | Employee : EmployeeId (number) , LastName (text) , FirstName (text) , Title (text) , ReportsTo (number) , BirthDate (time) , HireDate (time) , Address (text) , City (text) , State (text) , Country (text) , PostalCode (text) , Phone (text) , Fax (text) , Email (text) | Genre : GenreId (number) , Name (text) | Invoice : InvoiceId (number) , CustomerId (number) , InvoiceDate (time) , BillingAddress (text) , BillingCity (text) , BillingState (text) , BillingCountry (text) , BillingPostalCode (text) , Total (number) | InvoiceLine : InvoiceLineId (number) , InvoiceId (number) , TrackId (number) , UnitPrice (number) , Quantity (number) | MediaType : MediaTypeId (number) , Name (text) | Playlist : PlaylistId (number) , Name (text) | PlaylistTrack : PlaylistId (number) , TrackId (number) | Track : TrackId (number) , Name (text) , AlbumId (number) , MediaTypeId (number) , GenreId (number) , Composer (text) , Milliseconds (number) , Bytes (number) , UnitPrice (number)",
+        "Primary Keys": "Album : AlbumId | Artist : ArtistId | Customer : CustomerId | Employee : EmployeeId | Genre : GenreId | Invoice : InvoiceId | InvoiceLine : InvoiceLineId | MediaType : MediaTypeId | Playlist : PlaylistId | PlaylistTrack : PlaylistId | Track : TrackId",
+        "Foreign Keys": "Album : ArtistId equals Artist : ArtistId | Customer : SupportRepId equals Employee : EmployeeId | Employee : ReportsTo equals Employee : EmployeeId | Invoice : CustomerId equals Customer : CustomerId | InvoiceLine : TrackId equals Track : TrackId | InvoiceLine : InvoiceId equals Invoice : InvoiceId | PlaylistTrack : TrackId equals Track : TrackId | PlaylistTrack : PlaylistId equals Playlist : PlaylistId | Track : MediaTypeId equals MediaType : MediaTypeId | Track : GenreId equals Genre : GenreId | Track : AlbumId equals Album : AlbumId",
+        "db_id": "chinook_1"
+    },
+    {
+        "Schema (values (type))": "routes : rid (number) , dst_apid (number) , dst_ap (text) , src_apid (number) , src_ap (text) , alid (number) , airline (text) , codeshare (text) | airports : apid (number) , name (text) , city (text) , country (text) , x (number) , y (number) , elevation (number) , iata (text) , icao (text) | airlines : alid (number) , name (text) , iata (text) , icao (text) , callsign (text) , country (text) , active (text)",
+        "Primary Keys": "routes : rid | airports : apid | airlines : alid",
+        "Foreign Keys": "routes : alid equals airlines : alid | routes : src_apid equals airports : apid | routes : dst_apid equals airports : apid",
+        "db_id": "flight_4"
+    },
+    {
+        "Schema (values (type))": "Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text) | Has_Pet : StuID (number) , PetID (number) | Pets : PetID (number) , PetType (text) , pet_age (number) , weight (number)",
+        "Primary Keys": "Student : StuID | Pets : PetID",
+        "Foreign Keys": "Has_Pet : StuID equals Student : StuID | Has_Pet : PetID equals Pets : PetID",
+        "db_id": "pets_1"
+    },
+    {
+        "Schema (values (type))": "Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text) | Dorm : dormid (number) , dorm_name (text) , student_capacity (number) , gender (text) | Dorm_amenity : amenid (number) , amenity_name (text) | Has_amenity : dormid (number) , amenid (number) | Lives_in : stuid (number) , dormid (number) , room_number (number)",
+        "Primary Keys": "Student : StuID",
+        "Foreign Keys": "Has_amenity : amenid equals Dorm_amenity : amenid | Has_amenity : dormid equals Dorm : dormid | Lives_in : dormid equals Dorm : dormid | Lives_in : stuid equals Student : StuID",
+        "db_id": "dorm_1"
+    },
+    {
+        "Schema (values (type))": "journal : Journal_ID (number) , Date (text) , Theme (text) , Sales (number) | editor : Editor_ID (number) , Name (text) , Age (number) | journal_committee : Editor_ID (number) , Journal_ID (number) , Work_Type (text)",
+        "Primary Keys": "journal : Journal_ID | editor : Editor_ID | journal_committee : Editor_ID",
+        "Foreign Keys": "journal_committee : Journal_ID equals journal : Journal_ID | journal_committee : Editor_ID equals editor : Editor_ID",
+        "db_id": "journal_committee"
+    },
+    {
+        "Schema (values (type))": "flight : flno (number) , origin (text) , destination (text) , distance (number) , departure_date (time) , arrival_date (time) , price (number) , aid (number) | aircraft : aid (number) , name (text) , distance (number) | employee : eid (number) , name (text) , salary (number) | certificate : eid (number) , aid (number)",
+        "Primary Keys": "flight : flno | aircraft : aid | employee : eid | certificate : eid",
+        "Foreign Keys": "flight : aid equals aircraft : aid | certificate : aid equals aircraft : aid | certificate : eid equals employee : eid",
+        "db_id": "flight_1"
+    },
+    {
+        "Schema (values (type))": "medicine : id (number) , name (text) , Trade_Name (text) , FDA_approved (text) | enzyme : id (number) , name (text) , Location (text) , Product (text) , Chromosome (text) , OMIM (number) , Porphyria (text) | medicine_enzyme_interaction : enzyme_id (number) , medicine_id (number) , interaction_type (text)",
+        "Primary Keys": "medicine : id | enzyme : id | medicine_enzyme_interaction : enzyme_id",
+        "Foreign Keys": "medicine_enzyme_interaction : medicine_id equals medicine : id | medicine_enzyme_interaction : enzyme_id equals enzyme : id",
+        "db_id": "medicine_enzyme_interaction"
+    },
+    {
+        "Schema (values (type))": "Customers : customer_id (number) , customer_details (text) | Properties : property_id (number) , property_type_code (text) , property_address (text) , other_details (text) | Residents : resident_id (number) , property_id (number) , date_moved_in (time) , date_moved_out (time) , other_details (text) | Organizations : organization_id (number) , parent_organization_id (number) , organization_details (text) | Services : service_id (number) , organization_id (number) , service_type_code (text) , service_details (text) | Residents_Services : resident_id (number) , service_id (number) , date_moved_in (time) , property_id (number) , date_requested (time) , date_provided (time) , other_details (text) | Things : thing_id (number) , organization_id (number) , Type_of_Thing_Code (text) , service_type_code (text) , service_details (text) | Customer_Events : Customer_Event_ID (number) , customer_id (number) , date_moved_in (time) , property_id (number) , resident_id (number) , thing_id (number) | Customer_Event_Notes : Customer_Event_Note_ID (number) , Customer_Event_ID (number) , service_type_code (text) , resident_id (number) , property_id (number) , date_moved_in (time) | Timed_Status_of_Things : thing_id (number) , Date_and_Date (time) , Status_of_Thing_Code (text) | Timed_Locations_of_Things : thing_id (number) , Date_and_Time (time) , Location_Code (text)",
+        "Primary Keys": "Customers : customer_id | Properties : property_id | Residents : resident_id | Organizations : organization_id | Services : service_id | Residents_Services : resident_id | Things : thing_id | Customer_Events : Customer_Event_ID | Customer_Event_Notes : Customer_Event_Note_ID | Timed_Status_of_Things : thing_id | Timed_Locations_of_Things : thing_id",
+        "Foreign Keys": "Residents : property_id equals Properties : property_id | Services : organization_id equals Organizations : organization_id | Residents_Services : resident_id equals Residents : resident_id | Residents_Services : property_id equals Residents : property_id | Residents_Services : date_moved_in equals Residents : date_moved_in | Residents_Services : service_id equals Services : service_id | Things : organization_id equals Organizations : organization_id | Customer_Events : resident_id equals Residents : resident_id | Customer_Events : property_id equals Residents : property_id | Customer_Events : date_moved_in equals Residents : date_moved_in | Customer_Events : customer_id equals Customers : customer_id | Customer_Events : thing_id equals Things : thing_id | Customer_Event_Notes : Customer_Event_ID equals Customer_Events : Customer_Event_ID | Timed_Status_of_Things : thing_id equals Things : thing_id | Timed_Locations_of_Things : thing_id equals Things : thing_id",
+        "db_id": "local_govt_and_lot"
+    },
+    {
+        "Schema (values (type))": "train : id (number) , train_number (number) , name (text) , origin (text) , destination (text) , time (text) , interval (text) | station : id (number) , network_name (text) , services (text) , local_authority (text) | route : train_id (number) , station_id (number) | weekly_weather : station_id (number) , day_of_week (text) , high_temperature (number) , low_temperature (number) , precipitation (number) , wind_speed_mph (number)",
+        "Primary Keys": "train : id | station : id | route : train_id | weekly_weather : station_id",
+        "Foreign Keys": "route : station_id equals station : id | route : train_id equals train : id | weekly_weather : station_id equals station : id",
+        "db_id": "station_weather"
+    },
+    {
+        "Schema (values (type))": "member : Member_ID (number) , Card_Number (text) , Name (text) , Hometown (text) , Level (number) | branch : Branch_ID (number) , Name (text) , Open_year (text) , Address_road (text) , City (text) , membership_amount (text) | membership_register_branch : Member_ID (number) , Branch_ID (text) , Register_Year (text) | purchase : Member_ID (number) , Branch_ID (text) , Year (text) , Total_pounds (number)",
+        "Primary Keys": "member : Member_ID | branch : Branch_ID | membership_register_branch : Member_ID | purchase : Member_ID",
+        "Foreign Keys": "membership_register_branch : Branch_ID equals branch : Branch_ID | membership_register_branch : Member_ID equals member : Member_ID | purchase : Branch_ID equals branch : Branch_ID | purchase : Member_ID equals member : Member_ID",
+        "db_id": "shop_membership"
+    },
+    {
+        "Schema (values (type))": "Addresses : address_id (number) , line_1_number_building (text) , city (text) , zip_postcode (text) , state_province_county (text) , country (text) | Staff : staff_id (number) , staff_address_id (number) , nickname (text) , first_name (text) , middle_name (text) , last_name (text) , date_of_birth (time) , date_joined_staff (time) , date_left_staff (time) | Vehicles : vehicle_id (number) , vehicle_details (text) | Customers : customer_id (number) , customer_address_id (number) , customer_status_code (text) , date_became_customer (time) , date_of_birth (time) , first_name (text) , last_name (text) , amount_outstanding (number) , email_address (text) , phone_number (text) , cell_mobile_phone_number (text) | Customer_Payments : customer_id (number) , datetime_payment (time) , payment_method_code (text) , amount_payment (number) | Lessons : lesson_id (number) , customer_id (number) , lesson_status_code (text) , staff_id (number) , vehicle_id (number) , lesson_date (time) , lesson_time (text) , price (number)",
+        "Primary Keys": "Addresses : address_id | Staff : staff_id | Vehicles : vehicle_id | Customers : customer_id | Customer_Payments : customer_id | Lessons : lesson_id",
+        "Foreign Keys": "Staff : staff_address_id equals Addresses : address_id | Customers : customer_address_id equals Addresses : address_id | Customer_Payments : customer_id equals Customers : customer_id | Lessons : customer_id equals Customers : customer_id | Lessons : staff_id equals Staff : staff_id | Lessons : vehicle_id equals Vehicles : vehicle_id",
+        "db_id": "driving_school"
+    },
+    {
+        "Schema (values (type))": "stadium : Stadium_ID (number) , Location (text) , Name (text) , Capacity (number) , Highest (number) , Lowest (number) , Average (number) | singer : Singer_ID (number) , Name (text) , Country (text) , Song_Name (text) , Song_release_year (text) , Age (number) , Is_male (others) | concert : concert_ID (number) , concert_Name (text) , Theme (text) , Stadium_ID (text) , Year (text) | singer_in_concert : concert_ID (number) , Singer_ID (text)",
+        "Primary Keys": "stadium : Stadium_ID | singer : Singer_ID | concert : concert_ID | singer_in_concert : concert_ID",
+        "Foreign Keys": "concert : Stadium_ID equals stadium : Stadium_ID | singer_in_concert : Singer_ID equals singer : Singer_ID | singer_in_concert : concert_ID equals concert : concert_ID",
+        "db_id": "concert_singer"
+    },
+    {
+        "Schema (values (type))": "Songs : SongId (number) , Title (text) | Albums : AId (number) , Title (text) , Year (number) , Label (text) , Type (text) | Band : Id (number) , Firstname (text) , Lastname (text) | Instruments : SongId (number) , BandmateId (number) , Instrument (text) | Performance : SongId (number) , Bandmate (number) , StagePosition (text) | Tracklists : AlbumId (number) , Position (number) , SongId (number) | Vocals : SongId (number) , Bandmate (number) , Type (text)",
+        "Primary Keys": "Songs : SongId | Albums : AId | Band : Id | Instruments : SongId | Performance : SongId | Tracklists : AlbumId | Vocals : SongId",
+        "Foreign Keys": "Instruments : BandmateId equals Band : Id | Instruments : SongId equals Songs : SongId | Performance : Bandmate equals Band : Id | Performance : SongId equals Songs : SongId | Tracklists : AlbumId equals Albums : AId | Tracklists : SongId equals Songs : SongId | Vocals : Bandmate equals Band : Id | Vocals : SongId equals Songs : SongId",
+        "db_id": "music_2"
+    },
+    {
+        "Schema (values (type))": "club : Club_ID (number) , name (text) , Region (text) , Start_year (text) | club_rank : Rank (number) , Club_ID (number) , Gold (number) , Silver (number) , Bronze (number) , Total (number) | player : Player_ID (number) , name (text) , Position (text) , Club_ID (number) , Apps (number) , Tries (number) , Goals (text) , Points (number) | competition : Competition_ID (number) , Year (number) , Competition_type (text) , Country (text) | competition_result : Competition_ID (number) , Club_ID_1 (number) , Club_ID_2 (number) , Score (text)",
+        "Primary Keys": "club : Club_ID | club_rank : Rank | player : Player_ID | competition : Competition_ID | competition_result : Competition_ID",
+        "Foreign Keys": "club_rank : Club_ID equals club : Club_ID | player : Club_ID equals club : Club_ID | competition_result : Competition_ID equals competition : Competition_ID | competition_result : Club_ID_2 equals club : Club_ID | competition_result : Club_ID_1 equals club : Club_ID",
+        "db_id": "sports_competition"
+    },
+    {
+        "Schema (values (type))": "railway : Railway_ID (number) , Railway (text) , Builder (text) , Built (text) , Wheels (text) , Location (text) , ObjectNumber (text) | train : Train_ID (number) , Train_Num (text) , Name (text) , From (text) , Arrival (text) , Railway_ID (number) | manager : Manager_ID (number) , Name (text) , Country (text) , Working_year_starts (text) , Age (number) , Level (number) | railway_manage : Railway_ID (number) , Manager_ID (number) , From_Year (text)",
+        "Primary Keys": "railway : Railway_ID | train : Train_ID | manager : Manager_ID | railway_manage : Railway_ID",
+        "Foreign Keys": "train : Railway_ID equals railway : Railway_ID | railway_manage : Railway_ID equals railway : Railway_ID | railway_manage : Manager_ID equals manager : Manager_ID",
+        "db_id": "railway"
+    },
+    {
+        "Schema (values (type))": "Rooms : RoomId (text) , roomName (text) , beds (number) , bedType (text) , maxOccupancy (number) , basePrice (number) , decor (text) | Reservations : Code (number) , Room (text) , CheckIn (text) , CheckOut (text) , Rate (number) , LastName (text) , FirstName (text) , Adults (number) , Kids (number)",
+        "Primary Keys": "Rooms : RoomId | Reservations : Code",
+        "Foreign Keys": "Reservations : Room equals Rooms : RoomId",
+        "db_id": "inn_1"
+    },
+    {
+        "Schema (values (type))": "museum : Museum_ID (number) , Name (text) , Num_of_Staff (number) , Open_Year (text) | visitor : ID (number) , Name (text) , Level_of_membership (number) , Age (number) | visit : Museum_ID (number) , visitor_ID (text) , Num_of_Ticket (number) , Total_spent (number)",
+        "Primary Keys": "museum : Museum_ID | visitor : ID | visit : Museum_ID",
+        "Foreign Keys": "visit : visitor_ID equals visitor : ID | visit : Museum_ID equals museum : Museum_ID",
+        "db_id": "museum_visit"
+    },
+    {
+        "Schema (values (type))": "Web_client_accelerator : id (number) , name (text) , Operating_system (text) , Client (text) , Connection (text) | browser : id (number) , name (text) , market_share (number) | accelerator_compatible_browser : accelerator_id (number) , browser_id (number) , compatible_since_year (number)",
+        "Primary Keys": "Web_client_accelerator : id | browser : id | accelerator_compatible_browser : accelerator_id",
+        "Foreign Keys": "accelerator_compatible_browser : browser_id equals browser : id | accelerator_compatible_browser : accelerator_id equals Web_client_accelerator : id",
+        "db_id": "browser_web"
+    },
+    {
+        "Schema (values (type))": "all_star : player_id (text) , year (number) , game_num (number) , game_id (text) , team_id (text) , league_id (text) , gp (number) , starting_pos (number) | appearances : year (number) , team_id (text) , league_id (text) , player_id (text) , g_all (number) , gs (number) , g_batting (number) , g_defense (number) , g_p (number) , g_c (number) , g_1b (number) , g_2b (number) , g_3b (number) , g_ss (number) , g_lf (number) , g_cf (number) , g_rf (number) , g_of (number) , g_dh (number) , g_ph (number) , g_pr (number) | manager_award : player_id (text) , award_id (text) , year (number) , league_id (text) , tie (text) , notes (number) | player_award : player_id (text) , award_id (text) , year (number) , league_id (text) , tie (text) , notes (text) | manager_award_vote : award_id (text) , year (number) , league_id (text) , player_id (text) , points_won (number) , points_max (number) , votes_first (number) | player_award_vote : award_id (text) , year (number) , league_id (text) , player_id (text) , points_won (number) , points_max (number) , votes_first (number) | batting : player_id (text) , year (number) , stint (number) , team_id (text) , league_id (text) , g (number) , ab (number) , r (number) , h (number) , double (number) , triple (number) , hr (number) , rbi (number) , sb (number) , cs (number) , bb (number) , so (number) , ibb (number) , hbp (number) , sh (number) , sf (number) , g_idp (number) | batting_postseason : year (number) , round (text) , player_id (text) , team_id (text) , league_id (text) , g (number) , ab (number) , r (number) , h (number) , double (number) , triple (number) , hr (number) , rbi (number) , sb (number) , cs (number) , bb (number) , so (number) , ibb (number) , hbp (number) , sh (number) , sf (number) , g_idp (number) | player_college : player_id (text) , college_id (text) , year (number) | fielding : player_id (text) , year (number) , stint (number) , team_id (text) , league_id (text) , pos (text) , g (number) , gs (number) , inn_outs (number) , po (number) , a (number) , e (number) , dp (number) , pb (number) , wp (number) , sb (number) , cs (number) , zr (number) | fielding_outfield : player_id (text) , year (number) , stint (number) , glf (number) , gcf (number) , grf (number) | fielding_postseason : player_id (text) , year (number) , team_id (text) , league_id (text) , round (text) , pos (text) , g (number) , gs (number) , inn_outs (number) , po (number) , a (number) , e (number) , dp (number) , tp (number) , pb (number) , sb (number) , cs (number) | hall_of_fame : player_id (text) , yearid (number) , votedby (text) , ballots (number) , needed (number) , votes (number) , inducted (text) , category (text) , needed_note (text) | home_game : year (number) , league_id (text) , team_id (text) , park_id (text) , span_first (text) , span_last (text) , games (number) , openings (number) , attendance (number) | manager : player_id (text) , year (number) , team_id (text) , league_id (text) , inseason (number) , g (number) , w (number) , l (number) , rank (number) , plyr_mgr (text) | manager_half : player_id (text) , year (number) , team_id (text) , league_id (text) , inseason (number) , half (number) , g (number) , w (number) , l (number) , rank (number) | player : player_id (text) , birth_year (number) , birth_month (number) , birth_day (number) , birth_country (text) , birth_state (text) , birth_city (text) , death_year (number) , death_month (number) , death_day (number) , death_country (text) , death_state (text) , death_city (text) , name_first (text) , name_last (text) , name_given (text) , weight (number) , height (number) , bats (text) , throws (text) , debut (text) , final_game (text) , retro_id (text) , bbref_id (text) | park : park_id (text) , park_name (text) , park_alias (text) , city (text) , state (text) , country (text) | pitching : player_id (text) , year (number) , stint (number) , team_id (text) , league_id (text) , w (number) , l (number) , g (number) , gs (number) , cg (number) , sho (number) , sv (number) , ipouts (number) , h (number) , er (number) , hr (number) , bb (number) , so (number) , baopp (number) , era (number) , ibb (number) , wp (number) , hbp (number) , bk (number) , bfp (number) , gf (number) , r (number) , sh (number) , sf (number) , g_idp (number) | pitching_postseason : player_id (text) , year (number) , round (text) , team_id (text) , league_id (text) , w (number) , l (number) , g (number) , gs (number) , cg (number) , sho (number) , sv (number) , ipouts (number) , h (number) , er (number) , hr (number) , bb (number) , so (number) , baopp (text) , era (number) , ibb (number) , wp (number) , hbp (number) , bk (number) , bfp (number) , gf (number) , r (number) , sh (number) , sf (number) , g_idp (number) | salary : year (number) , team_id (text) , league_id (text) , player_id (text) , salary (number) | college : college_id (text) , name_full (text) , city (text) , state (text) , country (text) | postseason : year (number) , round (text) , team_id_winner (text) , league_id_winner (text) , team_id_loser (text) , league_id_loser (text) , wins (number) , losses (number) , ties (number) | team : year (number) , league_id (text) , team_id (text) , franchise_id (text) , div_id (text) , rank (number) , g (number) , ghome (number) , w (number) , l (number) , div_win (text) , wc_win (text) , lg_win (text) , ws_win (text) , r (number) , ab (number) , h (number) , double (number) , triple (number) , hr (number) , bb (number) , so (number) , sb (number) , cs (number) , hbp (number) , sf (number) , ra (number) , er (number) , era (number) , cg (number) , sho (number) , sv (number) , ipouts (number) , ha (number) , hra (number) , bba (number) , soa (number) , e (number) , dp (number) , fp (number) , name (text) , park (text) , attendance (number) , bpf (number) , ppf (number) , team_id_br (text) , team_id_lahman45 (text) , team_id_retro (text) | team_franchise : franchise_id (text) , franchise_name (text) , active (text) , na_assoc (text) | team_half : year (number) , league_id (text) , team_id (text) , half (number) , div_id (text) , div_win (text) , rank (number) , g (number) , w (number) , l (number)",
+        "Primary Keys": "",
+        "Foreign Keys": "all_star : player_id equals player : player_id | appearances : player_id equals player : player_id | appearances : team_id equals team : team_id | manager_award : player_id equals player : player_id | player_award : player_id equals player : player_id | player_award_vote : player_id equals player : player_id | batting : player_id equals player : player_id | batting_postseason : team_id equals team : team_id | batting_postseason : player_id equals player : player_id | player_college : college_id equals college : college_id | player_college : player_id equals player : player_id | fielding : player_id equals player : player_id | fielding_outfield : player_id equals player : player_id | fielding_postseason : player_id equals player : player_id | hall_of_fame : player_id equals player : player_id | home_game : park_id equals park : park_id | home_game : team_id equals team : team_id | manager : team_id equals team : team_id | manager_half : team_id equals team : team_id",
+        "db_id": "baseball_1"
+    },
+    {
+        "Schema (values (type))": "architect : id (text) , name (text) , nationality (text) , gender (text) | bridge : architect_id (number) , id (number) , name (text) , location (text) , length_meters (number) , length_feet (number) | mill : architect_id (number) , id (number) , location (text) , name (text) , type (text) , built_year (number) , notes (text)",
+        "Primary Keys": "architect : id | bridge : id | mill : id",
+        "Foreign Keys": "bridge : architect_id equals architect : id | mill : architect_id equals architect : id",
+        "db_id": "architecture"
+    },
+    {
+        "Schema (values (type))": "Campuses : Id (number) , Campus (text) , Location (text) , County (text) , Year (number) | csu_fees : Campus (number) , Year (number) , CampusFee (number) | degrees : Year (number) , Campus (number) , Degrees (number) | discipline_enrollments : Campus (number) , Discipline (number) , Year (number) , Undergraduate (number) , Graduate (number) | enrollments : Campus (number) , Year (number) , TotalEnrollment_AY (number) , FTE_AY (number) | faculty : Campus (number) , Year (number) , Faculty (number)",
+        "Primary Keys": "Campuses : Id | csu_fees : Campus | degrees : Year | discipline_enrollments : Campus | enrollments : Campus",
+        "Foreign Keys": "csu_fees : Campus equals Campuses : Id | degrees : Campus equals Campuses : Id | discipline_enrollments : Campus equals Campuses : Id | enrollments : Campus equals Campuses : Id | faculty : Campus equals Campuses : Id",
+        "db_id": "csu_1"
+    },
+    {
+        "Schema (values (type))": "Customers : customer_id (number) , customer_name (text) , customer_details (text) | Invoices : invoice_number (number) , invoice_date (time) , invoice_details (text) | Orders : order_id (number) , customer_id (number) , order_status (text) , date_order_placed (time) , order_details (text) | Products : product_id (number) , product_name (text) , product_details (text) | Order_Items : order_item_id (number) , product_id (number) , order_id (number) , order_item_status (text) , order_item_details (text) | Shipments : shipment_id (number) , order_id (number) , invoice_number (number) , shipment_tracking_number (text) , shipment_date (time) , other_shipment_details (text) | Shipment_Items : shipment_id (number) , order_item_id (number)",
+        "Primary Keys": "Customers : customer_id | Invoices : invoice_number | Orders : order_id | Products : product_id | Order_Items : order_item_id | Shipments : shipment_id",
+        "Foreign Keys": "Orders : customer_id equals Customers : customer_id | Order_Items : product_id equals Products : product_id | Order_Items : order_id equals Orders : order_id | Shipments : invoice_number equals Invoices : invoice_number | Shipments : order_id equals Orders : order_id | Shipment_Items : shipment_id equals Shipments : shipment_id | Shipment_Items : order_item_id equals Order_Items : order_item_id",
+        "db_id": "tracking_orders"
+    },
+    {
+        "Schema (values (type))": "Customers : Customer_ID (number) , Customer_Details (text) | Customer_Policies : Policy_ID (number) , Customer_ID (number) , Policy_Type_Code (text) , Start_Date (time) , End_Date (time) | Claims : Claim_ID (number) , Policy_ID (number) , Date_Claim_Made (time) , Date_Claim_Settled (time) , Amount_Claimed (number) , Amount_Settled (number) | Settlements : Settlement_ID (number) , Claim_ID (number) , Date_Claim_Made (time) , Date_Claim_Settled (time) , Amount_Claimed (number) , Amount_Settled (number) , Customer_Policy_ID (number) | Payments : Payment_ID (number) , Settlement_ID (number) , Payment_Method_Code (text) , Date_Payment_Made (time) , Amount_Payment (number)",
+        "Primary Keys": "Customers : Customer_ID | Customer_Policies : Policy_ID | Claims : Claim_ID | Settlements : Settlement_ID | Payments : Payment_ID",
+        "Foreign Keys": "Customer_Policies : Customer_ID equals Customers : Customer_ID | Claims : Policy_ID equals Customer_Policies : Policy_ID | Settlements : Claim_ID equals Claims : Claim_ID | Payments : Settlement_ID equals Settlements : Settlement_ID",
+        "db_id": "insurance_policies"
+    },
+    {
+        "Schema (values (type))": "company : Company_ID (number) , Rank (number) , Company (text) , Headquarters (text) , Main_Industry (text) , Sales_billion (number) , Profits_billion (number) , Assets_billion (number) , Market_Value (number) | gas_station : Station_ID (number) , Open_Year (number) , Location (text) , Manager_Name (text) , Vice_Manager_Name (text) , Representative_Name (text) | station_company : Station_ID (number) , Company_ID (number) , Rank_of_the_Year (number)",
+        "Primary Keys": "company : Company_ID | gas_station : Station_ID | station_company : Station_ID",
+        "Foreign Keys": "station_company : Company_ID equals company : Company_ID | station_company : Station_ID equals gas_station : Station_ID",
+        "db_id": "gas_company"
+    },
+    {
+        "Schema (values (type))": "Addresses : address_id (number) , line_1_number_building (text) , town_city (text) , zip_postcode (text) , state_province_county (text) , country (text) | Services : service_id (number) , service_type_code (text) , service_name (text) , service_descriptio (text) | Forms : form_id (number) , form_type_code (text) , service_id (number) , form_number (text) , form_name (text) , form_description (text) | Individuals : individual_id (number) , individual_first_name (text) , individual_middle_name (text) , inidividual_phone (text) , individual_email (text) , individual_address (text) , individual_last_name (text) | Organizations : organization_id (number) , date_formed (time) , organization_name (text) , uk_vat_number (text) | Parties : party_id (number) , payment_method_code (text) , party_phone (text) , party_email (text) | Organization_Contact_Individuals : individual_id (number) , organization_id (number) , date_contact_from (time) , date_contact_to (time) | Party_Addresses : party_id (number) , address_id (number) , date_address_from (time) , address_type_code (text) , date_address_to (time) | Party_Forms : party_id (number) , form_id (number) , date_completion_started (time) , form_status_code (text) , date_fully_completed (time) | Party_Services : booking_id (number) , customer_id (number) , service_id (number) , service_datetime (time) , booking_made_date (time)",
+        "Primary Keys": "Addresses : address_id | Services : service_id | Forms : form_id | Individuals : individual_id | Organizations : organization_id | Parties : party_id | Organization_Contact_Individuals : individual_id | Party_Addresses : party_id | Party_Forms : party_id",
+        "Foreign Keys": "Forms : service_id equals Services : service_id | Organization_Contact_Individuals : individual_id equals Individuals : individual_id | Organization_Contact_Individuals : organization_id equals Organizations : organization_id | Party_Addresses : party_id equals Parties : party_id | Party_Addresses : address_id equals Addresses : address_id | Party_Forms : form_id equals Forms : form_id | Party_Forms : party_id equals Parties : party_id | Party_Services : customer_id equals Parties : party_id | Party_Services : service_id equals Services : service_id",
+        "db_id": "e_government"
+    },
+    {
+        "Schema (values (type))": "driver : Driver_ID (number) , Name (text) , Party (text) , Home_city (text) , Age (number) | school : School_ID (number) , Grade (text) , School (text) , Location (text) , Type (text) | school_bus : School_ID (number) , Driver_ID (number) , Years_Working (number) , If_full_time (others)",
+        "Primary Keys": "driver : Driver_ID | school : School_ID | school_bus : School_ID",
+        "Foreign Keys": "school_bus : Driver_ID equals driver : Driver_ID | school_bus : School_ID equals school : School_ID",
+        "db_id": "school_bus"
+    },
+    {
+        "Schema (values (type))": "repair : repair_ID (number) , name (text) , Launch_Date (text) , Notes (text) | machine : Machine_ID (number) , Making_Year (number) , Class (text) , Team (text) , Machine_series (text) , value_points (number) , quality_rank (number) | technician : technician_id (number) , Name (text) , Team (text) , Starting_Year (number) , Age (number) | repair_assignment : technician_id (number) , repair_ID (number) , Machine_ID (number)",
+        "Primary Keys": "repair : repair_ID | machine : Machine_ID | technician : technician_id | repair_assignment : technician_id",
+        "Foreign Keys": "repair_assignment : Machine_ID equals machine : Machine_ID | repair_assignment : repair_ID equals repair : repair_ID | repair_assignment : technician_id equals technician : technician_id",
+        "db_id": "machine_repair"
+    },
+    {
+        "Schema (values (type))": "artist : Artist_ID (number) , Name (text) , Country (text) , Year_Join (number) , Age (number) | exhibition : Exhibition_ID (number) , Year (number) , Theme (text) , Artist_ID (number) , Ticket_Price (number) | exhibition_record : Exhibition_ID (number) , Date (text) , Attendance (number)",
+        "Primary Keys": "artist : Artist_ID | exhibition : Exhibition_ID | exhibition_record : Exhibition_ID",
+        "Foreign Keys": "exhibition : Artist_ID equals artist : Artist_ID | exhibition_record : Exhibition_ID equals exhibition : Exhibition_ID",
+        "db_id": "theme_gallery"
+    },
+    {
+        "Schema (values (type))": "film : Film_ID (number) , Title (text) , Studio (text) , Director (text) , Gross_in_dollar (number) | market : Market_ID (number) , Country (text) , Number_cities (number) | film_market_estimation : Estimation_ID (number) , Low_Estimate (number) , High_Estimate (number) , Film_ID (number) , Type (text) , Market_ID (number) , Year (number)",
+        "Primary Keys": "film : Film_ID | market : Market_ID | film_market_estimation : Estimation_ID",
+        "Foreign Keys": "film_market_estimation : Market_ID equals market : Market_ID | film_market_estimation : Film_ID equals film : Film_ID",
+        "db_id": "film_rank"
+    },
+    {
+        "Schema (values (type))": "region : Region_ID (number) , Region_name (text) , Date (text) , Label (text) , Format (text) , Catalogue (text) | party : Party_ID (number) , Minister (text) , Took_office (text) , Left_office (text) , Region_ID (number) , Party_name (text) | member : Member_ID (number) , Member_Name (text) , Party_ID (text) , In_office (text) | party_events : Event_ID (number) , Event_Name (text) , Party_ID (number) , Member_in_charge_ID (number)",
+        "Primary Keys": "region : Region_ID | party : Party_ID | member : Member_ID | party_events : Event_ID",
+        "Foreign Keys": "party : Region_ID equals region : Region_ID | member : Party_ID equals party : Party_ID | party_events : Member_in_charge_ID equals member : Member_ID | party_events : Party_ID equals party : Party_ID",
+        "db_id": "party_people"
+    },
+    {
+        "Schema (values (type))": "Physician : EmployeeID (number) , Name (text) , Position (text) , SSN (number) | Department : DepartmentID (number) , Name (text) , Head (number) | Affiliated_With : Physician (number) , Department (number) , PrimaryAffiliation (boolean) | Procedures : Code (number) , Name (text) , Cost (number) | Trained_In : Physician (number) , Treatment (number) , CertificationDate (time) , CertificationExpires (time) | Patient : SSN (number) , Name (text) , Address (text) , Phone (text) , InsuranceID (number) , PCP (number) | Nurse : EmployeeID (number) , Name (text) , Position (text) , Registered (boolean) , SSN (number) | Appointment : AppointmentID (number) , Patient (number) , PrepNurse (number) , Physician (number) , Start (time) , End (time) , ExaminationRoom (text) | Medication : Code (number) , Name (text) , Brand (text) , Description (text) | Prescribes : Physician (number) , Patient (number) , Medication (number) , Date (time) , Appointment (number) , Dose (text) | Block : BlockFloor (number) , BlockCode (number) | Room : RoomNumber (number) , RoomType (text) , BlockFloor (number) , BlockCode (number) , Unavailable (boolean) | On_Call : Nurse (number) , BlockFloor (number) , BlockCode (number) , OnCallStart (time) , OnCallEnd (time) | Stay : StayID (number) , Patient (number) , Room (number) , StayStart (time) , StayEnd (time) | Undergoes : Patient (number) , Procedures (number) , Stay (number) , DateUndergoes (time) , Physician (number) , AssistingNurse (number)",
+        "Primary Keys": "Physician : EmployeeID | Department : DepartmentID | Affiliated_With : Physician | Procedures : Code | Trained_In : Physician | Patient : SSN | Nurse : EmployeeID | Appointment : AppointmentID | Medication : Code | Prescribes : Physician | Block : BlockFloor | Room : RoomNumber | On_Call : Nurse | Stay : StayID | Undergoes : Patient",
+        "Foreign Keys": "Department : Head equals Physician : EmployeeID | Affiliated_With : Department equals Department : DepartmentID | Affiliated_With : Physician equals Physician : EmployeeID | Trained_In : Treatment equals Procedures : Code | Trained_In : Physician equals Physician : EmployeeID | Patient : PCP equals Physician : EmployeeID | Appointment : Physician equals Physician : EmployeeID | Appointment : PrepNurse equals Nurse : EmployeeID | Appointment : Patient equals Patient : SSN | Prescribes : Appointment equals Appointment : AppointmentID | Prescribes : Medication equals Medication : Code | Prescribes : Patient equals Patient : SSN | Prescribes : Physician equals Physician : EmployeeID | Room : BlockFloor equals Block : BlockFloor | Room : BlockCode equals Block : BlockCode | On_Call : BlockFloor equals Block : BlockFloor | On_Call : BlockCode equals Block : BlockCode | On_Call : Nurse equals Nurse : EmployeeID | Stay : Room equals Room : RoomNumber | Stay : Patient equals Patient : SSN | Undergoes : AssistingNurse equals Nurse : EmployeeID | Undergoes : Physician equals Physician : EmployeeID | Undergoes : Stay equals Stay : StayID | Undergoes : Procedures equals Procedures : Code | Undergoes : Patient equals Patient : SSN",
+        "db_id": "hospital_1"
+    },
+    {
+        "Schema (values (type))": "Premises : premise_id (number) , premises_type (text) , premise_details (text) | Products : product_id (number) , product_category (text) , product_name (text) | Customers : customer_id (number) , payment_method (text) , customer_name (text) , customer_phone (text) , customer_email (text) , customer_address (text) , customer_login (text) , customer_password (text) | Mailshot_Campaigns : mailshot_id (number) , product_category (text) , mailshot_name (text) , mailshot_start_date (time) , mailshot_end_date (time) | Customer_Addresses : customer_id (number) , premise_id (number) , date_address_from (time) , address_type_code (text) , date_address_to (time) | Customer_Orders : order_id (number) , customer_id (number) , order_status_code (text) , shipping_method_code (text) , order_placed_datetime (time) , order_delivered_datetime (time) , order_shipping_charges (text) | Mailshot_Customers : mailshot_id (number) , customer_id (number) , outcome_code (text) , mailshot_customer_date (time) | Order_Items : item_id (number) , order_item_status_code (text) , order_id (number) , product_id (number) , item_status_code (text) , item_delivered_datetime (time) , item_order_quantity (text)",
+        "Primary Keys": "Premises : premise_id | Products : product_id | Customers : customer_id | Mailshot_Campaigns : mailshot_id | Customer_Orders : order_id",
+        "Foreign Keys": "Customer_Addresses : customer_id equals Customers : customer_id | Customer_Addresses : premise_id equals Premises : premise_id | Customer_Orders : customer_id equals Customers : customer_id | Mailshot_Customers : mailshot_id equals Mailshot_Campaigns : mailshot_id | Mailshot_Customers : customer_id equals Customers : customer_id | Order_Items : order_id equals Customer_Orders : order_id | Order_Items : product_id equals Products : product_id",
+        "db_id": "customers_campaigns_ecommerce"
+    },
+    {
+        "Schema (values (type))": "gymnast : Gymnast_ID (number) , Floor_Exercise_Points (number) , Pommel_Horse_Points (number) , Rings_Points (number) , Vault_Points (number) , Parallel_Bars_Points (number) , Horizontal_Bar_Points (number) , Total_Points (number) | people : People_ID (number) , Name (text) , Age (number) , Height (number) , Hometown (text)",
+        "Primary Keys": "gymnast : Gymnast_ID | people : People_ID",
+        "Foreign Keys": "gymnast : Gymnast_ID equals people : People_ID",
+        "db_id": "gymnast"
+    },
+    {
+        "Schema (values (type))": "GEOGRAPHIC : CITY_NAME (text) , COUNTY (text) , REGION (text) | RESTAURANT : ID (number) , NAME (text) , FOOD_TYPE (text) , CITY_NAME (text) , RATING (number) | LOCATION : RESTAURANT_ID (number) , HOUSE_NUMBER (number) , STREET_NAME (text) , CITY_NAME (text)",
+        "Primary Keys": "GEOGRAPHIC : CITY_NAME | RESTAURANT : ID | LOCATION : RESTAURANT_ID",
+        "Foreign Keys": "RESTAURANT : CITY_NAME equals GEOGRAPHIC : CITY_NAME | LOCATION : CITY_NAME equals GEOGRAPHIC : CITY_NAME",
+        "db_id": "restaurants"
+    },
+    {
+        "Schema (values (type))": "mountain : id (number) , name (text) , Height (number) , Prominence (number) , Range (text) , Country (text) | camera_lens : id (number) , brand (text) , name (text) , focal_length_mm (number) , max_aperture (number) | photos : id (number) , camera_lens_id (number) , mountain_id (number) , color (text) , name (text)",
+        "Primary Keys": "mountain : id | camera_lens : id | photos : id",
+        "Foreign Keys": "photos : mountain_id equals mountain : id | photos : camera_lens_id equals camera_lens : id",
+        "db_id": "mountain_photos"
+    },
+    {
+        "Schema (values (type))": "battle : id (number) , name (text) , date (text) , bulgarian_commander (text) , latin_commander (text) , result (text) | ship : lost_in_battle (number) , id (number) , name (text) , tonnage (text) , ship_type (text) , location (text) , disposition_of_ship (text) | death : caused_by_ship_id (number) , id (number) , note (text) , killed (number) , injured (number)",
+        "Primary Keys": "battle : id | ship : id | death : id",
+        "Foreign Keys": "ship : lost_in_battle equals battle : id | death : caused_by_ship_id equals ship : id",
+        "db_id": "battle_death"
+    },
+    {
+        "Schema (values (type))": "Ref_Document_Types : document_type_code (text) , document_type_description (text) | Roles : role_code (text) , role_description (text) | Addresses : address_id (number) , address_details (text) | Ref_Document_Status : document_status_code (text) , document_status_description (text) | Ref_Shipping_Agents : shipping_agent_code (text) , shipping_agent_name (text) , shipping_agent_description (text) | Documents : document_id (number) , document_status_code (text) , document_type_code (text) , shipping_agent_code (text) , receipt_date (time) , receipt_number (text) , other_details (text) | Employees : employee_id (number) , role_code (text) , employee_name (text) , other_details (text) | Document_Drafts : document_id (number) , draft_number (number) , draft_details (text) | Draft_Copies : document_id (number) , draft_number (number) , copy_number (number) | Circulation_History : document_id (number) , draft_number (number) , copy_number (number) , employee_id (number) | Documents_Mailed : document_id (number) , mailed_to_address_id (number) , mailing_date (time)",
+        "Primary Keys": "Ref_Document_Types : document_type_code | Roles : role_code | Addresses : address_id | Ref_Document_Status : document_status_code | Ref_Shipping_Agents : shipping_agent_code | Documents : document_id | Employees : employee_id | Document_Drafts : document_id | Draft_Copies : document_id | Circulation_History : document_id | Documents_Mailed : document_id",
+        "Foreign Keys": "Documents : shipping_agent_code equals Ref_Shipping_Agents : shipping_agent_code | Documents : document_status_code equals Ref_Document_Status : document_status_code | Documents : document_type_code equals Ref_Document_Types : document_type_code | Employees : role_code equals Roles : role_code | Document_Drafts : document_id equals Documents : document_id | Draft_Copies : document_id equals Document_Drafts : document_id | Draft_Copies : draft_number equals Document_Drafts : draft_number | Circulation_History : employee_id equals Employees : employee_id | Circulation_History : document_id equals Draft_Copies : document_id | Circulation_History : draft_number equals Draft_Copies : draft_number | Circulation_History : copy_number equals Draft_Copies : copy_number | Documents_Mailed : mailed_to_address_id equals Addresses : address_id | Documents_Mailed : document_id equals Documents : document_id",
+        "db_id": "cre_Doc_Control_Systems"
+    },
+    {
+        "Schema (values (type))": "Investors : investor_id (number) , Investor_details (text) | Lots : lot_id (number) , investor_id (number) , lot_details (text) | Ref_Transaction_Types : transaction_type_code (text) , transaction_type_description (text) | Transactions : transaction_id (number) , investor_id (number) , transaction_type_code (text) , date_of_transaction (time) , amount_of_transaction (number) , share_count (text) , other_details (text) | Sales : sales_transaction_id (number) , sales_details (text) | Purchases : purchase_transaction_id (number) , purchase_details (text) | Transactions_Lots : transaction_id (number) , lot_id (number)",
+        "Primary Keys": "Investors : investor_id | Lots : lot_id | Ref_Transaction_Types : transaction_type_code | Transactions : transaction_id | Sales : sales_transaction_id",
+        "Foreign Keys": "Lots : investor_id equals Investors : investor_id | Transactions : transaction_type_code equals Ref_Transaction_Types : transaction_type_code | Transactions : investor_id equals Investors : investor_id | Sales : sales_transaction_id equals Transactions : transaction_id | Purchases : purchase_transaction_id equals Transactions : transaction_id | Transactions_Lots : transaction_id equals Transactions : transaction_id | Transactions_Lots : lot_id equals Lots : lot_id",
+        "db_id": "tracking_share_transactions"
+    },
+    {
+        "Schema (values (type))": "Apartment_Buildings : building_id (number) , building_short_name (text) , building_full_name (text) , building_description (text) , building_address (text) , building_manager (text) , building_phone (text) | Apartments : apt_id (number) , building_id (number) , apt_type_code (text) , apt_number (text) , bathroom_count (number) , bedroom_count (number) , room_count (text) | Apartment_Facilities : apt_id (number) , facility_code (text) | Guests : guest_id (number) , gender_code (text) , guest_first_name (text) , guest_last_name (text) , date_of_birth (time) | Apartment_Bookings : apt_booking_id (number) , apt_id (number) , guest_id (number) , booking_status_code (text) , booking_start_date (time) , booking_end_date (time) | View_Unit_Status : apt_id (number) , apt_booking_id (number) , status_date (time) , available_yn (others)",
+        "Primary Keys": "Apartment_Buildings : building_id | Apartments : apt_id | Apartment_Facilities : apt_id | Guests : guest_id | Apartment_Bookings : apt_booking_id | View_Unit_Status : status_date",
+        "Foreign Keys": "Apartments : building_id equals Apartment_Buildings : building_id | Apartment_Facilities : apt_id equals Apartments : apt_id | Apartment_Bookings : guest_id equals Guests : guest_id | Apartment_Bookings : apt_id equals Apartments : apt_id | View_Unit_Status : apt_booking_id equals Apartment_Bookings : apt_booking_id | View_Unit_Status : apt_id equals Apartments : apt_id",
+        "db_id": "apartment_rentals"
+    },
+    {
+        "Schema (values (type))": "Addresses : address_id (number) , line_1 (text) , line_2 (text) , line_3 (text) , city (text) , zip_postcode (text) , state_province_county (text) , country (text) , other_address_details (text) | Courses : course_id (number) , course_name (text) , course_description (text) , other_details (text) | Departments : department_id (number) , department_name (text) , department_description (text) , other_details (text) | Degree_Programs : degree_program_id (number) , department_id (number) , degree_summary_name (text) , degree_summary_description (text) , other_details (text) | Sections : section_id (number) , course_id (number) , section_name (text) , section_description (text) , other_details (text) | Semesters : semester_id (number) , semester_name (text) , semester_description (text) , other_details (text) | Students : student_id (number) , current_address_id (number) , permanent_address_id (number) , first_name (text) , middle_name (text) , last_name (text) , cell_mobile_number (text) , email_address (text) , ssn (text) , date_first_registered (time) , date_left (time) , other_student_details (text) | Student_Enrolment : student_enrolment_id (number) , degree_program_id (number) , semester_id (number) , student_id (number) , other_details (text) | Student_Enrolment_Courses : student_course_id (number) , course_id (number) , student_enrolment_id (number) | Transcripts : transcript_id (number) , transcript_date (time) , other_details (text) | Transcript_Contents : student_course_id (number) , transcript_id (number)",
+        "Primary Keys": "Addresses : address_id | Courses : course_id | Departments : department_id | Degree_Programs : degree_program_id | Sections : section_id | Semesters : semester_id | Students : student_id | Student_Enrolment : student_enrolment_id | Student_Enrolment_Courses : student_course_id | Transcripts : transcript_id",
+        "Foreign Keys": "Degree_Programs : department_id equals Departments : department_id | Sections : course_id equals Courses : course_id | Students : permanent_address_id equals Addresses : address_id | Students : current_address_id equals Addresses : address_id | Student_Enrolment : student_id equals Students : student_id | Student_Enrolment : semester_id equals Semesters : semester_id | Student_Enrolment : degree_program_id equals Degree_Programs : degree_program_id | Student_Enrolment_Courses : student_enrolment_id equals Student_Enrolment : student_enrolment_id | Student_Enrolment_Courses : course_id equals Courses : course_id | Transcript_Contents : transcript_id equals Transcripts : transcript_id | Transcript_Contents : student_course_id equals Student_Enrolment_Courses : student_course_id",
+        "db_id": "student_transcripts_tracking"
+    },
+    {
+        "Schema (values (type))": "Ref_Document_Types : Document_Type_Code (text) , Document_Type_Name (text) , Document_Type_Description (text) | Ref_Budget_Codes : Budget_Type_Code (text) , Budget_Type_Description (text) | Projects : Project_ID (number) , Project_Details (text) | Documents : Document_ID (number) , Document_Type_Code (text) , Project_ID (number) , Document_Date (time) , Document_Name (text) , Document_Description (text) , Other_Details (text) | Statements : Statement_ID (number) , Statement_Details (text) | Documents_with_Expenses : Document_ID (number) , Budget_Type_Code (text) , Document_Details (text) | Accounts : Account_ID (number) , Statement_ID (number) , Account_Details (text)",
+        "Primary Keys": "Ref_Document_Types : Document_Type_Code | Ref_Budget_Codes : Budget_Type_Code | Projects : Project_ID | Documents : Document_ID | Statements : Statement_ID | Documents_with_Expenses : Document_ID | Accounts : Account_ID",
+        "Foreign Keys": "Documents : Project_ID equals Projects : Project_ID | Documents : Document_Type_Code equals Ref_Document_Types : Document_Type_Code | Statements : Statement_ID equals Documents : Document_ID | Documents_with_Expenses : Document_ID equals Documents : Document_ID | Documents_with_Expenses : Budget_Type_Code equals Ref_Budget_Codes : Budget_Type_Code | Accounts : Statement_ID equals Statements : Statement_ID",
+        "db_id": "cre_Docs_and_Epenses"
+    },
+    {
+        "Schema (values (type))": "mission : Mission_ID (number) , Ship_ID (number) , Code (text) , Launched_Year (number) , Location (text) , Speed_knots (number) , Fate (text) | ship : Ship_ID (number) , Name (text) , Type (text) , Nationality (text) , Tonnage (number)",
+        "Primary Keys": "mission : Mission_ID | ship : Ship_ID",
+        "Foreign Keys": "mission : Ship_ID equals ship : Ship_ID",
+        "db_id": "ship_mission"
+    },
+    {
+        "Schema (values (type))": "buildings : id (number) , name (text) , City (text) , Height (number) , Stories (number) , Status (text) | Companies : id (number) , name (text) , Headquarters (text) , Industry (text) , Sales_billion (number) , Profits_billion (number) , Assets_billion (number) , Market_Value_billion (text) | Office_locations : building_id (number) , company_id (number) , move_in_year (number)",
+        "Primary Keys": "buildings : id | Companies : id | Office_locations : building_id",
+        "Foreign Keys": "Office_locations : company_id equals Companies : id | Office_locations : building_id equals buildings : id",
+        "db_id": "company_office"
+    },
+    {
+        "Schema (values (type))": "Problem_Category_Codes : problem_category_code (text) , problem_category_description (text) | Problem_Log : problem_log_id (number) , assigned_to_staff_id (number) , problem_id (number) , problem_category_code (text) , problem_status_code (text) , log_entry_date (time) , log_entry_description (text) , log_entry_fix (text) , other_log_details (text) | Problem_Status_Codes : problem_status_code (text) , problem_status_description (text) | Product : product_id (number) , product_name (text) , product_details (text) | Staff : staff_id (number) , staff_first_name (text) , staff_last_name (text) , other_staff_details (text) | Problems : problem_id (number) , product_id (number) , closure_authorised_by_staff_id (number) , reported_by_staff_id (number) , date_problem_reported (time) , date_problem_closed (time) , problem_description (text) , other_problem_details (text)",
+        "Primary Keys": "Problem_Category_Codes : problem_category_code | Problem_Log : problem_log_id | Problem_Status_Codes : problem_status_code | Product : product_id | Staff : staff_id | Problems : problem_id",
+        "Foreign Keys": "Problem_Log : problem_status_code equals Problem_Status_Codes : problem_status_code | Problem_Log : problem_id equals Problems : problem_id | Problem_Log : assigned_to_staff_id equals Staff : staff_id | Problem_Log : problem_category_code equals Problem_Category_Codes : problem_category_code | Problems : reported_by_staff_id equals Staff : staff_id | Problems : product_id equals Product : product_id | Problems : closure_authorised_by_staff_id equals Staff : staff_id",
+        "db_id": "tracking_software_problems"
+    },
+    {
+        "Schema (values (type))": "Ref_Characteristic_Types : characteristic_type_code (text) , characteristic_type_description (text) | Ref_Colors : color_code (text) , color_description (text) | Ref_Product_Categories : product_category_code (text) , product_category_description (text) , unit_of_measure (text) | Characteristics : characteristic_id (number) , characteristic_type_code (text) , characteristic_data_type (text) , characteristic_name (text) , other_characteristic_details (text) | Products : product_id (number) , color_code (text) , product_category_code (text) , product_name (text) , typical_buying_price (text) , typical_selling_price (text) , product_description (text) , other_product_details (text) | Product_Characteristics : product_id (number) , characteristic_id (number) , product_characteristic_value (text)",
+        "Primary Keys": "Ref_Characteristic_Types : characteristic_type_code | Ref_Colors : color_code | Ref_Product_Categories : product_category_code | Characteristics : characteristic_id | Products : product_id",
+        "Foreign Keys": "Characteristics : characteristic_type_code equals Ref_Characteristic_Types : characteristic_type_code | Products : color_code equals Ref_Colors : color_code | Products : product_category_code equals Ref_Product_Categories : product_category_code | Product_Characteristics : product_id equals Products : product_id | Product_Characteristics : characteristic_id equals Characteristics : characteristic_id",
+        "db_id": "products_gen_characteristics"
+    },
+    {
+        "Schema (values (type))": "shop : Shop_ID (number) , Address (text) , Num_of_staff (text) , Score (number) , Open_Year (text) | member : Member_ID (number) , Name (text) , Membership_card (text) , Age (number) , Time_of_purchase (number) , Level_of_membership (number) , Address (text) | happy_hour : HH_ID (number) , Shop_ID (number) , Month (text) , Num_of_shaff_in_charge (number) | happy_hour_member : HH_ID (number) , Member_ID (number) , Total_amount (number)",
+        "Primary Keys": "shop : Shop_ID | member : Member_ID | happy_hour : HH_ID | happy_hour_member : HH_ID",
+        "Foreign Keys": "happy_hour : Shop_ID equals shop : Shop_ID | happy_hour_member : Member_ID equals member : Member_ID",
+        "db_id": "coffee_shop"
+    },
+    {
+        "Schema (values (type))": "player : Player_ID (number) , Sponsor_name (text) , Player_name (text) , Gender (text) , Residence (text) , Occupation (text) , Votes (number) , Rank (text) | club : Club_ID (number) , Club_name (text) , Region (text) , Start_year (number) | coach : Coach_ID (number) , Coach_name (text) , Gender (text) , Club_ID (number) , Rank (number) | player_coach : Player_ID (number) , Coach_ID (number) , Starting_year (number) | match_result : Rank (number) , Club_ID (number) , Gold (number) , Big_Silver (number) , Small_Silver (number) , Bronze (number) , Points (number)",
+        "Primary Keys": "player : Player_ID | club : Club_ID | coach : Coach_ID | player_coach : Player_ID | match_result : Rank",
+        "Foreign Keys": "coach : Club_ID equals club : Club_ID | player_coach : Coach_ID equals coach : Coach_ID | player_coach : Player_ID equals player : Player_ID | match_result : Club_ID equals club : Club_ID",
+        "db_id": "riding_club"
+    },
+    {
+        "Schema (values (type))": "Accounts : account_id (number) , customer_id (number) , account_name (text) , other_account_details (text) | Customers : customer_id (number) , customer_first_name (text) , customer_last_name (text) , customer_address (text) , customer_phone (text) , customer_email (text) , other_customer_details (text) | Customers_Cards : card_id (number) , customer_id (number) , card_type_code (text) , card_number (text) , date_valid_from (time) , date_valid_to (time) , other_card_details (text) | Financial_Transactions : transaction_id (number) , previous_transaction_id (number) , account_id (number) , card_id (number) , transaction_type (text) , transaction_date (time) , transaction_amount (number) , transaction_comment (text) , other_transaction_details (text)",
+        "Primary Keys": "Accounts : account_id | Customers : customer_id | Customers_Cards : card_id",
+        "Foreign Keys": "Financial_Transactions : account_id equals Accounts : account_id | Financial_Transactions : card_id equals Customers_Cards : card_id",
+        "db_id": "customers_card_transactions"
+    },
+    {
+        "Schema (values (type))": "county_public_safety : County_ID (number) , Name (text) , Population (number) , Police_officers (number) , Residents_per_officer (number) , Case_burden (number) , Crime_rate (number) , Police_force (text) , Location (text) | city : City_ID (number) , County_ID (number) , Name (text) , White (number) , Black (number) , Amerindian (number) , Asian (number) , Multiracial (number) , Hispanic (number)",
+        "Primary Keys": "county_public_safety : County_ID | city : City_ID",
+        "Foreign Keys": "city : County_ID equals county_public_safety : County_ID",
+        "db_id": "county_public_safety"
+    },
+    {
+        "Schema (values (type))": "member : Member_ID (text) , Name (text) , Nationality (text) , Role (text) | performance : Performance_ID (number) , Date (text) , Host (text) , Location (text) , Attendance (number) | member_attendance : Member_ID (number) , Performance_ID (number) , Num_of_Pieces (number)",
+        "Primary Keys": "member : Member_ID | performance : Performance_ID | member_attendance : Member_ID",
+        "Foreign Keys": "member_attendance : Performance_ID equals performance : Performance_ID | member_attendance : Member_ID equals member : Member_ID",
+        "db_id": "performance_attendance"
+    },
+    {
+        "Schema (values (type))": "Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text) | Club : ClubID (number) , ClubName (text) , ClubDesc (text) , ClubLocation (text) | Member_of_club : StuID (number) , ClubID (number) , Position (text)",
+        "Primary Keys": "Student : StuID | Club : ClubID",
+        "Foreign Keys": "Member_of_club : ClubID equals Club : ClubID | Member_of_club : StuID equals Student : StuID",
+        "db_id": "club_1"
+    },
+    {
+        "Schema (values (type))": "singer : Singer_ID (number) , Name (text) , Birth_Year (number) , Net_Worth_Millions (number) , Citizenship (text) | song : Song_ID (number) , Title (text) , Singer_ID (number) , Sales (number) , Highest_Position (number)",
+        "Primary Keys": "singer : Singer_ID | song : Song_ID",
+        "Foreign Keys": "song : Singer_ID equals singer : Singer_ID",
+        "db_id": "singer"
+    },
+    {
+        "Schema (values (type))": "book_club : book_club_id (number) , Year (number) , Author_or_Editor (text) , Book_Title (text) , Publisher (text) , Category (text) , Result (text) | movie : movie_id (number) , Title (text) , Year (number) , Director (text) , Budget_million (number) , Gross_worldwide (number) | culture_company : Company_name (text) , Type (text) , Incorporated_in (text) , Group_Equity_Shareholding (number) , book_club_id (text) , movie_id (text)",
+        "Primary Keys": "book_club : book_club_id | movie : movie_id | culture_company : Company_name",
+        "Foreign Keys": "culture_company : movie_id equals movie : movie_id | culture_company : book_club_id equals book_club : book_club_id",
+        "db_id": "culture_company"
+    },
+    {
+        "Schema (values (type))": "Ref_Template_Types : Template_Type_Code (text) , Template_Type_Description (text) | Templates : Template_ID (number) , Version_Number (number) , Template_Type_Code (text) , Date_Effective_From (time) , Date_Effective_To (time) , Template_Details (text) | Documents : Document_ID (number) , Template_ID (number) , Document_Name (text) , Document_Description (text) , Other_Details (text) | Paragraphs : Paragraph_ID (number) , Document_ID (number) , Paragraph_Text (text) , Other_Details (text)",
+        "Primary Keys": "Ref_Template_Types : Template_Type_Code | Templates : Template_ID | Documents : Document_ID | Paragraphs : Paragraph_ID",
+        "Foreign Keys": "Templates : Template_Type_Code equals Ref_Template_Types : Template_Type_Code | Documents : Template_ID equals Templates : Template_ID | Paragraphs : Document_ID equals Documents : Document_ID",
+        "db_id": "cre_Doc_Template_Mgt"
+    },
+    {
+        "Schema (values (type))": "musical : Musical_ID (number) , Name (text) , Year (number) , Award (text) , Category (text) , Nominee (text) , Result (text) | actor : Actor_ID (number) , Name (text) , Musical_ID (number) , Character (text) , Duration (text) , age (number)",
+        "Primary Keys": "musical : Musical_ID | actor : Actor_ID",
+        "Foreign Keys": "actor : Musical_ID equals actor : Actor_ID",
+        "db_id": "musical"
+    },
+    {
+        "Schema (values (type))": "city : ID (number) , Name (text) , CountryCode (text) , District (text) , Population (number) | sqlite_sequence : name (text) , seq (text) | country : Code (text) , Name (text) , Continent (text) , Region (text) , SurfaceArea (number) , IndepYear (number) , Population (number) , LifeExpectancy (number) , GNP (number) , GNPOld (number) , LocalName (text) , GovernmentForm (text) , HeadOfState (text) , Capital (number) , Code2 (text) | countrylanguage : CountryCode (text) , Language (text) , IsOfficial (text) , Percentage (number)",
+        "Primary Keys": "city : ID | country : Code | countrylanguage : CountryCode",
+        "Foreign Keys": "city : CountryCode equals country : Code | countrylanguage : CountryCode equals country : Code",
+        "db_id": "world_1"
+    },
+    {
+        "Schema (values (type))": "device : Device_ID (number) , Device (text) , Carrier (text) , Package_Version (text) , Applications (text) , Software_Platform (text) | shop : Shop_ID (number) , Shop_Name (text) , Location (text) , Open_Date (text) , Open_Year (number) | stock : Shop_ID (number) , Device_ID (number) , Quantity (number)",
+        "Primary Keys": "device : Device_ID | shop : Shop_ID | stock : Shop_ID",
+        "Foreign Keys": "stock : Device_ID equals device : Device_ID | stock : Shop_ID equals shop : Shop_ID",
+        "db_id": "device"
+    },
+    {
+        "Schema (values (type))": "Document_Types : document_type_code (text) , document_description (text) | Documents : document_id (number) , document_type_code (text) , grant_id (number) , sent_date (time) , response_received_date (time) , other_details (text) | Grants : grant_id (number) , organisation_id (number) , grant_amount (number) , grant_start_date (time) , grant_end_date (time) , other_details (text) | Organisation_Types : organisation_type (text) , organisation_type_description (text) | Organisations : organisation_id (number) , organisation_type (text) , organisation_details (text) | Project_Outcomes : project_id (number) , outcome_code (text) , outcome_details (text) | Project_Staff : staff_id (number) , project_id (number) , role_code (text) , date_from (time) , date_to (time) , other_details (text) | Projects : project_id (number) , organisation_id (number) , project_details (text) | Research_Outcomes : outcome_code (text) , outcome_description (text) | Research_Staff : staff_id (number) , employer_organisation_id (number) , staff_details (text) | Staff_Roles : role_code (text) , role_description (text) | Tasks : task_id (number) , project_id (number) , task_details (text) , eg Agree Objectives (text)",
+        "Primary Keys": "Document_Types : document_type_code | Documents : document_id | Grants : grant_id | Organisation_Types : organisation_type | Organisations : organisation_id | Project_Staff : staff_id | Projects : project_id | Research_Outcomes : outcome_code | Research_Staff : staff_id | Staff_Roles : role_code | Tasks : task_id",
+        "Foreign Keys": "Documents : grant_id equals Grants : grant_id | Documents : document_type_code equals Document_Types : document_type_code | Grants : organisation_id equals Organisations : organisation_id | Organisations : organisation_type equals Organisation_Types : organisation_type | Project_Outcomes : outcome_code equals Research_Outcomes : outcome_code | Project_Outcomes : project_id equals Projects : project_id | Project_Staff : role_code equals Staff_Roles : role_code | Project_Staff : project_id equals Projects : project_id | Projects : organisation_id equals Organisations : organisation_id | Research_Staff : employer_organisation_id equals Organisations : organisation_id | Tasks : project_id equals Projects : project_id",
+        "db_id": "tracking_grants_for_research"
+    },
+    {
+        "Schema (values (type))": "employee : Employee_ID (number) , Name (text) , Age (number) , City (text) | shop : Shop_ID (number) , Name (text) , Location (text) , District (text) , Number_products (number) , Manager_name (text) | hiring : Shop_ID (number) , Employee_ID (number) , Start_from (text) , Is_full_time (others) | evaluation : Employee_ID (text) , Year_awarded (text) , Bonus (number)",
+        "Primary Keys": "employee : Employee_ID | shop : Shop_ID | hiring : Employee_ID | evaluation : Employee_ID",
+        "Foreign Keys": "hiring : Employee_ID equals employee : Employee_ID | hiring : Shop_ID equals shop : Shop_ID | evaluation : Employee_ID equals employee : Employee_ID",
+        "db_id": "employee_hire_evaluation"
+    },
+    {
+        "Schema (values (type))": "Movie : mID (number) , title (text) , year (number) , director (text) | Reviewer : rID (number) , name (text) | Rating : rID (number) , mID (number) , stars (number) , ratingDate (time)",
+        "Primary Keys": "Movie : mID | Reviewer : rID",
+        "Foreign Keys": "Rating : rID equals Reviewer : rID | Rating : mID equals Movie : mID",
+        "db_id": "movie_1"
+    },
+    {
+        "Schema (values (type))": "Highschooler : ID (number) , name (text) , grade (number) | Friend : student_id (number) , friend_id (number) | Likes : student_id (number) , liked_id (number)",
+        "Primary Keys": "Highschooler : ID | Friend : student_id | Likes : student_id",
+        "Foreign Keys": "Friend : friend_id equals Highschooler : ID | Friend : student_id equals Highschooler : ID | Likes : student_id equals Highschooler : ID | Likes : liked_id equals Highschooler : ID",
+        "db_id": "network_1"
+    },
+    {
+        "Schema (values (type))": "poker_player : Poker_Player_ID (number) , People_ID (number) , Final_Table_Made (number) , Best_Finish (number) , Money_Rank (number) , Earnings (number) | people : People_ID (number) , Nationality (text) , Name (text) , Birth_Date (text) , Height (number)",
+        "Primary Keys": "poker_player : Poker_Player_ID | people : People_ID",
+        "Foreign Keys": "poker_player : People_ID equals people : People_ID",
+        "db_id": "poker_player"
+    },
+    {
+        "Schema (values (type))": "program : Program_ID (number) , Name (text) , Origin (text) , Launch (number) , Owner (text) | channel : Channel_ID (number) , Name (text) , Owner (text) , Share_in_percent (number) , Rating_in_percent (number) | broadcast : Channel_ID (number) , Program_ID (number) , Time_of_day (text) | broadcast_share : Channel_ID (number) , Program_ID (number) , Date (text) , Share_in_percent (number)",
+        "Primary Keys": "program : Program_ID | channel : Channel_ID | broadcast : Channel_ID | broadcast_share : Channel_ID",
+        "Foreign Keys": "broadcast : Program_ID equals program : Program_ID | broadcast : Channel_ID equals channel : Channel_ID | broadcast_share : Program_ID equals program : Program_ID | broadcast_share : Channel_ID equals channel : Channel_ID",
+        "db_id": "program_share"
+    },
+    {
+        "Schema (values (type))": "pilot : Pilot_Id (number) , Name (text) , Age (number) | aircraft : Aircraft_ID (number) , Aircraft (text) , Description (text) , Max_Gross_Weight (text) , Total_disk_area (text) , Max_disk_Loading (text) | match : Round (number) , Location (text) , Country (text) , Date (text) , Fastest_Qualifying (text) , Winning_Pilot (text) , Winning_Aircraft (text) | airport : Airport_ID (number) , Airport_Name (text) , Total_Passengers (number) , %_Change_2007 (text) , International_Passengers (number) , Domestic_Passengers (number) , Transit_Passengers (number) , Aircraft_Movements (number) , Freight_Metric_Tonnes (number) | airport_aircraft : ID (number) , Airport_ID (number) , Aircraft_ID (number)",
+        "Primary Keys": "pilot : Pilot_Id | aircraft : Aircraft_ID | match : Round | airport : Airport_ID | airport_aircraft : Airport_ID",
+        "Foreign Keys": "match : Winning_Pilot equals pilot : Pilot_Id | match : Winning_Aircraft equals aircraft : Aircraft_ID | airport_aircraft : Aircraft_ID equals aircraft : Aircraft_ID | airport_aircraft : Airport_ID equals airport : Airport_ID",
+        "db_id": "aircraft"
+    },
+    {
+        "Schema (values (type))": "Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text) | Restaurant : ResID (number) , ResName (text) , Address (text) , Rating (number) | Type_Of_Restaurant : ResID (number) , ResTypeID (number) | Restaurant_Type : ResTypeID (number) , ResTypeName (text) , ResTypeDescription (text) | Visits_Restaurant : StuID (number) , ResID (number) , Time (time) , Spent (number)",
+        "Primary Keys": "Student : StuID | Restaurant : ResID | Restaurant_Type : ResTypeID",
+        "Foreign Keys": "Type_Of_Restaurant : ResTypeID equals Restaurant_Type : ResTypeID | Type_Of_Restaurant : ResID equals Restaurant : ResID | Visits_Restaurant : ResID equals Restaurant : ResID | Visits_Restaurant : StuID equals Student : StuID",
+        "db_id": "restaurant_1"
+    },
+    {
+        "Schema (values (type))": "Customers : customer_id (number) , customer_first_name (text) , customer_middle_initial (text) , customer_last_name (text) , gender (text) , email_address (text) , login_name (text) , login_password (text) , phone_number (text) , town_city (text) , state_county_province (text) , country (text) | Orders : order_id (number) , customer_id (number) , date_order_placed (time) , order_details (text) | Invoices : invoice_number (number) , order_id (number) , invoice_date (time) | Accounts : account_id (number) , customer_id (number) , date_account_opened (time) , account_name (text) , other_account_details (text) | Product_Categories : production_type_code (text) , product_type_description (text) , vat_rating (number) | Products : product_id (number) , parent_product_id (number) , production_type_code (text) , unit_price (number) , product_name (text) , product_color (text) , product_size (text) | Financial_Transactions : transaction_id (number) , account_id (number) , invoice_number (number) , transaction_type (text) , transaction_date (time) , transaction_amount (number) , transaction_comment (text) , other_transaction_details (text) | Order_Items : order_item_id (number) , order_id (number) , product_id (number) , product_quantity (text) , other_order_item_details (text) | Invoice_Line_Items : order_item_id (number) , invoice_number (number) , product_id (number) , product_title (text) , product_quantity (text) , product_price (number) , derived_product_cost (number) , derived_vat_payable (number) , derived_total_cost (number)",
+        "Primary Keys": "Customers : customer_id | Orders : order_id | Invoices : invoice_number | Accounts : account_id | Product_Categories : production_type_code | Products : product_id | Order_Items : order_item_id",
+        "Foreign Keys": "Orders : customer_id equals Customers : customer_id | Invoices : order_id equals Orders : order_id | Accounts : customer_id equals Customers : customer_id | Products : production_type_code equals Product_Categories : production_type_code | Financial_Transactions : account_id equals Accounts : account_id | Financial_Transactions : invoice_number equals Invoices : invoice_number | Order_Items : order_id equals Orders : order_id | Order_Items : product_id equals Products : product_id | Invoice_Line_Items : product_id equals Products : product_id | Invoice_Line_Items : invoice_number equals Invoices : invoice_number | Invoice_Line_Items : order_item_id equals Order_Items : order_item_id",
+        "db_id": "customers_and_invoices"
+    },
+    {
+        "Schema (values (type))": "Customers : Customer_ID (number) , Customer_Details (text) | Staff : Staff_ID (number) , Staff_Details (text) | Policies : Policy_ID (number) , Customer_ID (number) , Policy_Type_Code (text) , Start_Date (time) , End_Date (time) | Claim_Headers : Claim_Header_ID (number) , Claim_Status_Code (text) , Claim_Type_Code (text) , Policy_ID (number) , Date_of_Claim (time) , Date_of_Settlement (time) , Amount_Claimed (number) , Amount_Piad (number) | Claims_Documents : Claim_ID (number) , Document_Type_Code (text) , Created_by_Staff_ID (number) , Created_Date (number) | Claims_Processing_Stages : Claim_Stage_ID (number) , Next_Claim_Stage_ID (number) , Claim_Status_Name (text) , Claim_Status_Description (text) | Claims_Processing : Claim_Processing_ID (number) , Claim_ID (number) , Claim_Outcome_Code (text) , Claim_Stage_ID (number) , Staff_ID (number)",
+        "Primary Keys": "Customers : Customer_ID | Staff : Staff_ID | Policies : Policy_ID | Claim_Headers : Claim_Header_ID | Claims_Documents : Claim_ID | Claims_Processing_Stages : Claim_Stage_ID | Claims_Processing : Claim_Processing_ID",
+        "Foreign Keys": "Policies : Customer_ID equals Customers : Customer_ID | Claim_Headers : Policy_ID equals Policies : Policy_ID | Claims_Documents : Created_by_Staff_ID equals Staff : Staff_ID | Claims_Documents : Claim_ID equals Claim_Headers : Claim_Header_ID | Claims_Processing : Staff_ID equals Staff : Staff_ID | Claims_Processing : Claim_ID equals Claim_Headers : Claim_Header_ID",
+        "db_id": "insurance_and_eClaims"
+    },
+    {
+        "Schema (values (type))": "CLASS : CLASS_CODE (text) , CRS_CODE (text) , CLASS_SECTION (text) , CLASS_TIME (text) , CLASS_ROOM (text) , PROF_NUM (number) | COURSE : CRS_CODE (text) , DEPT_CODE (text) , CRS_DESCRIPTION (text) , CRS_CREDIT (number) | DEPARTMENT : DEPT_CODE (text) , DEPT_NAME (text) , SCHOOL_CODE (text) , EMP_NUM (number) , DEPT_ADDRESS (text) , DEPT_EXTENSION (text) | EMPLOYEE : EMP_NUM (number) , EMP_LNAME (text) , EMP_FNAME (text) , EMP_INITIAL (text) , EMP_JOBCODE (text) , EMP_HIREDATE (time) , EMP_DOB (time) | ENROLL : CLASS_CODE (text) , STU_NUM (number) , ENROLL_GRADE (text) | PROFESSOR : EMP_NUM (number) , DEPT_CODE (text) , PROF_OFFICE (text) , PROF_EXTENSION (text) , PROF_HIGH_DEGREE (text) | STUDENT : STU_NUM (number) , STU_LNAME (text) , STU_FNAME (text) , STU_INIT (text) , STU_DOB (time) , STU_HRS (number) , STU_CLASS (text) , STU_GPA (number) , STU_TRANSFER (number) , DEPT_CODE (text) , STU_PHONE (text) , PROF_NUM (number)",
+        "Primary Keys": "CLASS : CLASS_CODE | COURSE : CRS_CODE | DEPARTMENT : DEPT_CODE | EMPLOYEE : EMP_NUM | STUDENT : STU_NUM",
+        "Foreign Keys": "CLASS : PROF_NUM equals EMPLOYEE : EMP_NUM | CLASS : CRS_CODE equals COURSE : CRS_CODE | COURSE : DEPT_CODE equals DEPARTMENT : DEPT_CODE | DEPARTMENT : EMP_NUM equals EMPLOYEE : EMP_NUM | ENROLL : STU_NUM equals STUDENT : STU_NUM | ENROLL : CLASS_CODE equals CLASS : CLASS_CODE | PROFESSOR : DEPT_CODE equals DEPARTMENT : DEPT_CODE | PROFESSOR : EMP_NUM equals EMPLOYEE : EMP_NUM | STUDENT : DEPT_CODE equals DEPARTMENT : DEPT_CODE",
+        "db_id": "college_1"
+    },
+    {
+        "Schema (values (type))": "Customer_Master_Index : master_customer_id (number) , cmi_details (text) | CMI_Cross_References : cmi_cross_ref_id (number) , master_customer_id (number) , source_system_code (text) | Council_Tax : council_tax_id (number) , cmi_cross_ref_id (number) | Business_Rates : business_rates_id (number) , cmi_cross_ref_id (number) | Benefits_Overpayments : council_tax_id (number) , cmi_cross_ref_id (number) | Parking_Fines : council_tax_id (number) , cmi_cross_ref_id (number) | Rent_Arrears : council_tax_id (number) , cmi_cross_ref_id (number) | Electoral_Register : electoral_register_id (number) , cmi_cross_ref_id (number)",
+        "Primary Keys": "Customer_Master_Index : master_customer_id | CMI_Cross_References : cmi_cross_ref_id | Council_Tax : council_tax_id | Business_Rates : business_rates_id | Benefits_Overpayments : council_tax_id | Parking_Fines : council_tax_id | Rent_Arrears : council_tax_id | Electoral_Register : electoral_register_id",
+        "Foreign Keys": "CMI_Cross_References : master_customer_id equals Customer_Master_Index : master_customer_id | Council_Tax : cmi_cross_ref_id equals CMI_Cross_References : cmi_cross_ref_id | Business_Rates : cmi_cross_ref_id equals CMI_Cross_References : cmi_cross_ref_id | Benefits_Overpayments : cmi_cross_ref_id equals CMI_Cross_References : cmi_cross_ref_id | Parking_Fines : cmi_cross_ref_id equals CMI_Cross_References : cmi_cross_ref_id | Rent_Arrears : cmi_cross_ref_id equals CMI_Cross_References : cmi_cross_ref_id | Electoral_Register : cmi_cross_ref_id equals CMI_Cross_References : cmi_cross_ref_id",
+        "db_id": "local_govt_mdm"
+    },
+    {
+        "Schema (values (type))": "publication : Publication_ID (number) , Book_ID (number) , Publisher (text) , Publication_Date (text) , Price (number) | book : Book_ID (number) , Title (text) , Issues (number) , Writer (text)",
+        "Primary Keys": "publication : Publication_ID | book : Book_ID",
+        "Foreign Keys": "publication : Book_ID equals book : Book_ID",
+        "db_id": "book_2"
+    },
+    {
+        "Schema (values (type))": "regions : REGION_ID (number) , REGION_NAME (text) | countries : COUNTRY_ID (text) , COUNTRY_NAME (text) , REGION_ID (number) | departments : DEPARTMENT_ID (number) , DEPARTMENT_NAME (text) , MANAGER_ID (number) , LOCATION_ID (number) | jobs : JOB_ID (text) , JOB_TITLE (text) , MIN_SALARY (number) , MAX_SALARY (number) | employees : EMPLOYEE_ID (number) , FIRST_NAME (text) , LAST_NAME (text) , EMAIL (text) , PHONE_NUMBER (text) , HIRE_DATE (time) , JOB_ID (text) , SALARY (number) , COMMISSION_PCT (number) , MANAGER_ID (number) , DEPARTMENT_ID (number) | job_history : EMPLOYEE_ID (number) , START_DATE (time) , END_DATE (time) , JOB_ID (text) , DEPARTMENT_ID (number) | locations : LOCATION_ID (number) , STREET_ADDRESS (text) , POSTAL_CODE (text) , CITY (text) , STATE_PROVINCE (text) , COUNTRY_ID (text)",
+        "Primary Keys": "regions : REGION_ID | countries : COUNTRY_ID | departments : DEPARTMENT_ID | jobs : JOB_ID | employees : EMPLOYEE_ID | job_history : EMPLOYEE_ID | locations : LOCATION_ID",
+        "Foreign Keys": "countries : REGION_ID equals regions : REGION_ID | employees : JOB_ID equals jobs : JOB_ID | employees : DEPARTMENT_ID equals departments : DEPARTMENT_ID | job_history : JOB_ID equals jobs : JOB_ID | job_history : DEPARTMENT_ID equals departments : DEPARTMENT_ID | job_history : EMPLOYEE_ID equals employees : EMPLOYEE_ID | locations : COUNTRY_ID equals countries : COUNTRY_ID",
+        "db_id": "hr_1"
+    },
+    {
+        "Schema (values (type))": "Player_Attributes : id (number) , player_fifa_api_id (number) , player_api_id (number) , date (text) , overall_rating (number) , potential (number) , preferred_foot (text) , attacking_work_rate (text) , defensive_work_rate (text) , crossing (number) , finishing (number) , heading_accuracy (number) , short_passing (number) , volleys (number) , dribbling (number) , curve (number) , free_kick_accuracy (number) , long_passing (number) , ball_control (number) , acceleration (number) , sprint_speed (number) , agility (number) , reactions (number) , balance (number) , shot_power (number) , jumping (number) , stamina (number) , strength (number) , long_shots (number) , aggression (number) , interceptions (number) , positioning (number) , vision (number) , penalties (number) , marking (number) , standing_tackle (number) , sliding_tackle (number) , gk_diving (number) , gk_handling (number) , gk_kicking (number) , gk_positioning (number) , gk_reflexes (number) | sqlite_sequence : name (text) , seq (text) | Player : id (number) , player_api_id (number) , player_name (text) , player_fifa_api_id (number) , birthday (text) , height (number) , weight (number) | League : id (number) , country_id (number) , name (text) | Country : id (number) , name (text) | Team : id (number) , team_api_id (number) , team_fifa_api_id (number) , team_long_name (text) , team_short_name (text) | Team_Attributes : id (number) , team_fifa_api_id (number) , team_api_id (number) , date (text) , buildUpPlaySpeed (number) , buildUpPlaySpeedClass (text) , buildUpPlayDribbling (number) , buildUpPlayDribblingClass (text) , buildUpPlayPassing (number) , buildUpPlayPassingClass (text) , buildUpPlayPositioningClass (text) , chanceCreationPassing (number) , chanceCreationPassingClass (text) , chanceCreationCrossing (number) , chanceCreationCrossingClass (text) , chanceCreationShooting (number) , chanceCreationShootingClass (text) , chanceCreationPositioningClass (text) , defencePressure (number) , defencePressureClass (text) , defenceAggression (number) , defenceAggressionClass (text) , defenceTeamWidth (number) , defenceTeamWidthClass (text) , defenceDefenderLineClass (text)",
+        "Primary Keys": "Player_Attributes : id | Player : id | League : id | Country : id | Team : id | Team_Attributes : id",
+        "Foreign Keys": "Player_Attributes : player_api_id equals Player : player_api_id | Player_Attributes : player_fifa_api_id equals Player : player_fifa_api_id | League : country_id equals Country : id | Team_Attributes : team_api_id equals Team : team_api_id | Team_Attributes : team_fifa_api_id equals Team : team_fifa_api_id",
+        "db_id": "soccer_1"
+    },
+    {
+        "Schema (values (type))": "actor : actor_id (number) , first_name (text) , last_name (text) , last_update (time) | address : address_id (number) , address (text) , address2 (text) , district (text) , city_id (number) , postal_code (text) , phone (text) , last_update (time) | category : category_id (number) , name (text) , last_update (time) | city : city_id (number) , city (text) , country_id (number) , last_update (time) | country : country_id (number) , country (text) , last_update (time) | customer : customer_id (number) , store_id (number) , first_name (text) , last_name (text) , email (text) , address_id (number) , active (boolean) , create_date (time) , last_update (time) | film : film_id (number) , title (text) , description (text) , release_year (time) , language_id (number) , original_language_id (number) , rental_duration (number) , rental_rate (number) , length (number) , replacement_cost (number) , rating (text) , special_features (text) , last_update (time) | film_actor : actor_id (number) , film_id (number) , last_update (time) | film_category : film_id (number) , category_id (number) , last_update (time) | film_text : film_id (number) , title (text) , description (text) | inventory : inventory_id (number) , film_id (number) , store_id (number) , last_update (time) | language : language_id (number) , name (text) , last_update (time) | payment : payment_id (number) , customer_id (number) , staff_id (number) , rental_id (number) , amount (number) , payment_date (time) , last_update (time) | rental : rental_id (number) , rental_date (time) , inventory_id (number) , customer_id (number) , return_date (time) , staff_id (number) , last_update (time) | staff : staff_id (number) , first_name (text) , last_name (text) , address_id (number) , picture (others) , email (text) , store_id (number) , active (boolean) , username (text) , password (text) , last_update (time) | store : store_id (number) , manager_staff_id (number) , address_id (number) , last_update (time)",
+        "Primary Keys": "actor : actor_id | address : address_id | category : category_id | city : city_id | country : country_id | customer : customer_id | film : film_id | film_actor : actor_id | film_category : film_id | film_text : film_id | inventory : inventory_id | language : language_id | payment : payment_id | rental : rental_id | staff : staff_id | store : store_id",
+        "Foreign Keys": "address : city_id equals city : city_id | city : country_id equals country : country_id | customer : store_id equals store : store_id | customer : address_id equals address : address_id | film : original_language_id equals language : language_id | film : language_id equals language : language_id | film_actor : film_id equals film : film_id | film_actor : actor_id equals actor : actor_id | film_category : category_id equals category : category_id | film_category : film_id equals film : film_id | inventory : film_id equals film : film_id | inventory : store_id equals store : store_id | payment : staff_id equals staff : staff_id | payment : customer_id equals customer : customer_id | payment : rental_id equals rental : rental_id | rental : customer_id equals customer : customer_id | rental : inventory_id equals inventory : inventory_id | rental : staff_id equals staff : staff_id | staff : address_id equals address : address_id | store : address_id equals address : address_id | store : manager_staff_id equals staff : staff_id",
+        "db_id": "sakila_1"
+    },
+    {
+        "Schema (values (type))": "Ref_Feature_Types : feature_type_code (text) , feature_type_name (text) | Ref_Property_Types : property_type_code (text) , property_type_description (text) | Other_Available_Features : feature_id (number) , feature_type_code (text) , feature_name (text) , feature_description (text) | Properties : property_id (number) , property_type_code (text) , date_on_market (time) , date_sold (time) , property_name (text) , property_address (text) , room_count (number) , vendor_requested_price (number) , buyer_offered_price (number) , agreed_selling_price (number) , apt_feature_1 (text) , apt_feature_2 (text) , apt_feature_3 (text) , fld_feature_1 (text) , fld_feature_2 (text) , fld_feature_3 (text) , hse_feature_1 (text) , hse_feature_2 (text) , hse_feature_3 (text) , oth_feature_1 (text) , oth_feature_2 (text) , oth_feature_3 (text) , shp_feature_1 (text) , shp_feature_2 (text) , shp_feature_3 (text) , other_property_details (text) | Other_Property_Features : property_id (number) , feature_id (number) , property_feature_description (text)",
+        "Primary Keys": "Ref_Feature_Types : feature_type_code | Ref_Property_Types : property_type_code | Other_Available_Features : feature_id | Properties : property_id",
+        "Foreign Keys": "Other_Available_Features : feature_type_code equals Ref_Feature_Types : feature_type_code | Properties : property_type_code equals Ref_Property_Types : property_type_code | Other_Property_Features : property_id equals Properties : property_id | Other_Property_Features : feature_id equals Other_Available_Features : feature_id",
+        "db_id": "real_estate_properties"
+    },
+    {
+        "Schema (values (type))": "Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text) | Faculty : FacID (number) , Lname (text) , Fname (text) , Rank (text) , Sex (text) , Phone (number) , Room (text) , Building (text) | Department : DNO (number) , Division (text) , DName (text) , Room (text) , Building (text) , DPhone (number) | Member_of : FacID (number) , DNO (number) , Appt_Type (text) | Course : CID (text) , CName (text) , Credits (number) , Instructor (number) , Days (text) , Hours (text) , DNO (number) | Minor_in : StuID (number) , DNO (number) | Enrolled_in : StuID (number) , CID (text) , Grade (text) | Gradeconversion : lettergrade (text) , gradepoint (number)",
+        "Primary Keys": "Student : StuID | Faculty : FacID | Department : DNO | Course : CID | Gradeconversion : lettergrade",
+        "Foreign Keys": "Member_of : DNO equals Department : DNO | Member_of : FacID equals Faculty : FacID | Course : DNO equals Department : DNO | Course : Instructor equals Faculty : FacID | Minor_in : DNO equals Department : DNO | Minor_in : StuID equals Student : StuID | Enrolled_in : Grade equals Gradeconversion : lettergrade | Enrolled_in : CID equals Course : CID | Enrolled_in : StuID equals Student : StuID",
+        "db_id": "college_3"
+    },
+    {
+        "Schema (values (type))": "course : Course_ID (number) , Staring_Date (text) , Course (text) | teacher : Teacher_ID (number) , Name (text) , Age (text) , Hometown (text) | course_arrange : Course_ID (number) , Teacher_ID (number) , Grade (number)",
+        "Primary Keys": "course : Course_ID | teacher : Teacher_ID | course_arrange : Course_ID",
+        "Foreign Keys": "course_arrange : Teacher_ID equals teacher : Teacher_ID | course_arrange : Course_ID equals course : Course_ID",
+        "db_id": "course_teach"
+    },
+    {
+        "Schema (values (type))": "roller_coaster : Roller_Coaster_ID (number) , Name (text) , Park (text) , Country_ID (number) , Length (number) , Height (number) , Speed (text) , Opened (text) , Status (text) | country : Country_ID (number) , Name (text) , Population (number) , Area (number) , Languages (text)",
+        "Primary Keys": "roller_coaster : Roller_Coaster_ID | country : Country_ID",
+        "Foreign Keys": "roller_coaster : Country_ID equals country : Country_ID",
+        "db_id": "roller_coaster"
+    },
+    {
+        "Schema (values (type))": "Products : product_id (number) , product_name (text) , product_price (number) , product_description (text) | Addresses : address_id (number) , address_details (text) , city (text) , zip_postcode (text) , state_province_county (text) , country (text) | Customers : customer_id (number) , payment_method (text) , customer_name (text) , customer_phone (text) , customer_email (text) , date_became_customer (time) | Regular_Orders : regular_order_id (number) , distributer_id (number) | Regular_Order_Products : regular_order_id (number) , product_id (number) | Actual_Orders : actual_order_id (number) , order_status_code (text) , regular_order_id (number) , actual_order_date (time) | Actual_Order_Products : actual_order_id (number) , product_id (number) | Customer_Addresses : customer_id (number) , address_id (number) , date_from (time) , address_type (text) , date_to (time) | Delivery_Routes : route_id (number) , route_name (text) , other_route_details (text) | Delivery_Route_Locations : location_code (text) , route_id (number) , location_address_id (number) , location_name (text) | Trucks : truck_id (number) , truck_licence_number (text) , truck_details (text) | Employees : employee_id (number) , employee_address_id (number) , employee_name (text) , employee_phone (text) | Order_Deliveries : location_code (text) , actual_order_id (number) , delivery_status_code (text) , driver_employee_id (number) , truck_id (number) , delivery_date (time)",
+        "Primary Keys": "Products : product_id | Addresses : address_id | Customers : customer_id | Regular_Orders : regular_order_id | Actual_Orders : actual_order_id | Delivery_Routes : route_id | Delivery_Route_Locations : location_code | Trucks : truck_id | Employees : employee_id",
+        "Foreign Keys": "Regular_Orders : distributer_id equals Customers : customer_id | Regular_Order_Products : regular_order_id equals Regular_Orders : regular_order_id | Regular_Order_Products : product_id equals Products : product_id | Actual_Orders : regular_order_id equals Regular_Orders : regular_order_id | Actual_Order_Products : actual_order_id equals Actual_Orders : actual_order_id | Actual_Order_Products : product_id equals Products : product_id | Customer_Addresses : address_id equals Addresses : address_id | Customer_Addresses : customer_id equals Customers : customer_id | Delivery_Route_Locations : route_id equals Delivery_Routes : route_id | Delivery_Route_Locations : location_address_id equals Addresses : address_id | Employees : employee_address_id equals Addresses : address_id | Order_Deliveries : driver_employee_id equals Employees : employee_id | Order_Deliveries : location_code equals Delivery_Route_Locations : location_code | Order_Deliveries : actual_order_id equals Actual_Orders : actual_order_id | Order_Deliveries : truck_id equals Trucks : truck_id",
+        "db_id": "customer_deliveries"
+    },
+    {
+        "Schema (values (type))": "stadium : id (number) , name (text) , Home_Games (number) , Average_Attendance (number) , Total_Attendance (number) , Capacity_Percentage (number) | game : stadium_id (number) , id (number) , Season (number) , Date (text) , Home_team (text) , Away_team (text) , Score (text) , Competition (text) | injury_accident : game_id (number) , id (number) , Player (text) , Injury (text) , Number_of_matches (text) , Source (text)",
+        "Primary Keys": "stadium : id | game : id | injury_accident : id",
+        "Foreign Keys": "game : stadium_id equals stadium : id | injury_accident : game_id equals game : id",
+        "db_id": "game_injury"
+    },
+    {
+        "Schema (values (type))": "School : School_id (text) , School_name (text) , Location (text) , Mascot (text) , Enrollment (number) , IHSAA_Class (text) , IHSAA_Football_Class (text) , County (text) | budget : School_id (number) , Year (number) , Budgeted (number) , total_budget_percent_budgeted (number) , Invested (number) , total_budget_percent_invested (number) , Budget_invested_percent (text) | endowment : endowment_id (number) , School_id (number) , donator_name (text) , amount (number)",
+        "Primary Keys": "School : School_id | budget : School_id | endowment : endowment_id",
+        "Foreign Keys": "budget : School_id equals School : School_id | endowment : School_id equals School : School_id",
+        "db_id": "school_finance"
+    },
+    {
+        "Schema (values (type))": "venue : venueId (number) , venueName (text) | author : authorId (number) , authorName (text) | dataset : datasetId (number) , datasetName (text) | journal : journalId (number) , journalName (text) | keyphrase : keyphraseId (number) , keyphraseName (text) | paper : paperId (number) , title (text) , venueId (number) , year (number) , numCiting (number) , numCitedBy (number) , journalId (number) | cite : citingPaperId (number) , citedPaperId (number) | paperDataset : paperId (number) , datasetId (number) | paperKeyphrase : paperId (number) , keyphraseId (number) | writes : paperId (number) , authorId (number)",
+        "Primary Keys": "venue : venueId | author : authorId | dataset : datasetId | journal : journalId | keyphrase : keyphraseId | paper : paperId | cite : citingPaperId | paperDataset : datasetId | paperKeyphrase : keyphraseId | writes : paperId",
+        "Foreign Keys": "paper : venueId equals venue : venueId | paper : journalId equals journal : journalId | cite : citingPaperId equals paper : paperId | cite : citedPaperId equals paper : paperId | paperKeyphrase : keyphraseId equals keyphrase : keyphraseId | paperKeyphrase : paperId equals paper : paperId | writes : authorId equals author : authorId | writes : paperId equals paper : paperId",
+        "db_id": "scholar"
+    },
+    {
+        "Schema (values (type))": "AREA_CODE_STATE : area_code (number) , state (text) | CONTESTANTS : contestant_number (number) , contestant_name (text) | VOTES : vote_id (number) , phone_number (number) , state (text) , contestant_number (number) , created (time)",
+        "Primary Keys": "AREA_CODE_STATE : area_code | CONTESTANTS : contestant_number | VOTES : vote_id",
+        "Foreign Keys": "VOTES : contestant_number equals CONTESTANTS : contestant_number | VOTES : state equals AREA_CODE_STATE : state",
+        "db_id": "voter_1"
+    },
+    {
+        "Schema (values (type))": "country : Country_id (number) , Country_name (text) , Capital (text) , Official_native_language (text) | team : Team_id (number) , Name (text) | match_season : Season (number) , Player (text) , Position (text) , Country (number) , Team (number) , Draft_Pick_Number (number) , Draft_Class (text) , College (text) | player : Player_ID (number) , Player (text) , Years_Played (text) , Total_WL (text) , Singles_WL (text) , Doubles_WL (text) , Team (number)",
+        "Primary Keys": "country : Country_id | team : Team_id | match_season : Season | player : Player_ID",
+        "Foreign Keys": "match_season : Team equals team : Team_id | match_season : Country equals country : Country_id | player : Team equals team : Team_id",
+        "db_id": "match_season"
+    },
+    {
+        "Schema (values (type))": "ACCOUNTS : custid (number) , name (text) | SAVINGS : custid (number) , balance (number) | CHECKING : custid (number) , balance (number)",
+        "Primary Keys": "ACCOUNTS : custid | SAVINGS : custid | CHECKING : custid",
+        "Foreign Keys": "SAVINGS : custid equals ACCOUNTS : custid | CHECKING : custid equals ACCOUNTS : custid",
+        "db_id": "small_bank_1"
+    },
+    {
+        "Schema (values (type))": "players : player_id (number) , first_name (text) , last_name (text) , hand (text) , birth_date (time) , country_code (text) | matches : best_of (number) , draw_size (number) , loser_age (number) , loser_entry (text) , loser_hand (text) , loser_ht (number) , loser_id (number) , loser_ioc (text) , loser_name (text) , loser_rank (number) , loser_rank_points (number) , loser_seed (number) , match_num (number) , minutes (number) , round (text) , score (text) , surface (text) , tourney_date (time) , tourney_id (text) , tourney_level (text) , tourney_name (text) , winner_age (number) , winner_entry (text) , winner_hand (text) , winner_ht (number) , winner_id (number) , winner_ioc (text) , winner_name (text) , winner_rank (number) , winner_rank_points (number) , winner_seed (number) , year (number) | rankings : ranking_date (time) , ranking (number) , player_id (number) , ranking_points (number) , tours (number)",
+        "Primary Keys": "players : player_id",
+        "Foreign Keys": "matches : winner_id equals players : player_id | matches : loser_id equals players : player_id | rankings : player_id equals players : player_id",
+        "db_id": "wta_1"
+    },
+    {
+        "Schema (values (type))": "business : bid (number) , business_id (text) , name (text) , full_address (text) , city (text) , latitude (text) , longitude (text) , review_count (number) , is_open (number) , rating (number) , state (text) | category : id (number) , business_id (text) , category_name (text) | user : uid (number) , user_id (text) , name (text) | checkin : cid (number) , business_id (text) , count (number) , day (text) | neighbourhood : id (number) , business_id (text) , neighbourhood_name (text) | review : rid (number) , business_id (text) , user_id (text) , rating (number) , text (text) , year (number) , month (text) | tip : tip_id (number) , business_id (text) , text (text) , user_id (text) , likes (number) , year (number) , month (text)",
+        "Primary Keys": "business : bid | category : id | user : uid | checkin : cid | neighbourhood : id | review : rid | tip : tip_id",
+        "Foreign Keys": "category : business_id equals business : business_id | checkin : business_id equals business : business_id | neighbourhood : business_id equals business : business_id | review : user_id equals user : user_id | review : business_id equals business : business_id | tip : user_id equals user : user_id | tip : business_id equals business : business_id",
+        "db_id": "yelp"
+    },
+    {
+        "Schema (values (type))": "list : LastName (text) , FirstName (text) , Grade (number) , Classroom (number) | teachers : LastName (text) , FirstName (text) , Classroom (number)",
+        "Primary Keys": "list : LastName | teachers : LastName",
+        "Foreign Keys": "",
+        "db_id": "student_1"
+    },
+    {
+        "Schema (values (type))": "manufacturer : Manufacturer_ID (number) , Open_Year (number) , Name (text) , Num_of_Factories (number) , Num_of_Shops (number) | furniture : Furniture_ID (number) , Name (text) , Num_of_Component (number) , Market_Rate (number) | furniture_manufacte : Manufacturer_ID (number) , Furniture_ID (number) , Price_in_Dollar (number)",
+        "Primary Keys": "manufacturer : Manufacturer_ID | furniture : Furniture_ID | furniture_manufacte : Manufacturer_ID",
+        "Foreign Keys": "furniture_manufacte : Furniture_ID equals furniture : Furniture_ID | furniture_manufacte : Manufacturer_ID equals manufacturer : Manufacturer_ID",
+        "db_id": "manufacturer"
+    },
+    {
+        "Schema (values (type))": "artists : id (number) , name (text) | sqlite_sequence : name (text) , seq (text) | albums : id (number) , title (text) , artist_id (number) | employees : id (number) , last_name (text) , first_name (text) , title (text) , reports_to (number) , birth_date (time) , hire_date (time) , address (text) , city (text) , state (text) , country (text) , postal_code (text) , phone (text) , fax (text) , email (text) | customers : id (number) , first_name (text) , last_name (text) , company (text) , address (text) , city (text) , state (text) , country (text) , postal_code (text) , phone (text) , fax (text) , email (text) , support_rep_id (number) | genres : id (number) , name (text) | invoices : id (number) , customer_id (number) , invoice_date (time) , billing_address (text) , billing_city (text) , billing_state (text) , billing_country (text) , billing_postal_code (text) , total (number) | media_types : id (number) , name (text) | tracks : id (number) , name (text) , album_id (number) , media_type_id (number) , genre_id (number) , composer (text) , milliseconds (number) , bytes (number) , unit_price (number) | invoice_lines : id (number) , invoice_id (number) , track_id (number) , unit_price (number) , quantity (number) | playlists : id (number) , name (text) | playlist_tracks : playlist_id (number) , track_id (number)",
+        "Primary Keys": "artists : id | albums : id | employees : id | customers : id | genres : id | invoices : id | media_types : id | tracks : id | invoice_lines : id | playlists : id | playlist_tracks : playlist_id",
+        "Foreign Keys": "albums : artist_id equals artists : id | employees : reports_to equals employees : id | customers : support_rep_id equals employees : id | invoices : customer_id equals customers : id | tracks : media_type_id equals media_types : id | tracks : genre_id equals genres : id | tracks : album_id equals albums : id | invoice_lines : track_id equals tracks : id | invoice_lines : invoice_id equals invoices : id | playlist_tracks : track_id equals tracks : id | playlist_tracks : playlist_id equals playlists : id",
+        "db_id": "store_1"
+    },
+    {
+        "Schema (values (type))": "station : Station_ID (number) , Name (text) , Annual_entry_exit (number) , Annual_interchanges (number) , Total_Passengers (number) , Location (text) , Main_Services (text) , Number_of_Platforms (number) | train : Train_ID (number) , Name (text) , Time (text) , Service (text) | train_station : Train_ID (number) , Station_ID (number)",
+        "Primary Keys": "station : Station_ID | train : Train_ID | train_station : Train_ID",
+        "Foreign Keys": "train_station : Station_ID equals station : Station_ID | train_station : Train_ID equals train : Train_ID",
+        "db_id": "train_station"
+    },
+    {
+        "Schema (values (type))": "Roles : role_code (text) , role_description (text) | Users : user_id (number) , role_code (text) , user_name (text) , user_login (text) , password (text) | Document_Structures : document_structure_code (text) , parent_document_structure_code (text) , document_structure_description (text) | Functional_Areas : functional_area_code (text) , parent_functional_area_code (text) , functional_area_description (text) | Images : image_id (number) , image_alt_text (text) , image_name (text) , image_url (text) | Documents : document_code (text) , document_structure_code (text) , document_type_code (text) , access_count (number) , document_name (text) | Document_Functional_Areas : document_code (text) , functional_area_code (text) | Document_Sections : section_id (number) , document_code (text) , section_sequence (number) , section_code (text) , section_title (text) | Document_Sections_Images : section_id (number) , image_id (number)",
+        "Primary Keys": "Roles : role_code | Users : user_id | Document_Structures : document_structure_code | Functional_Areas : functional_area_code | Images : image_id | Documents : document_code | Document_Sections : section_id | Document_Sections_Images : section_id",
+        "Foreign Keys": "Users : role_code equals Roles : role_code | Documents : document_structure_code equals Document_Structures : document_structure_code | Document_Functional_Areas : functional_area_code equals Functional_Areas : functional_area_code | Document_Functional_Areas : document_code equals Documents : document_code | Document_Sections : document_code equals Documents : document_code | Document_Sections_Images : image_id equals Images : image_id | Document_Sections_Images : section_id equals Document_Sections : section_id",
+        "db_id": "document_management"
+    },
+    {
+        "Schema (values (type))": "circuits : circuitId (number) , circuitRef (text) , name (text) , location (text) , country (text) , lat (number) , lng (number) , alt (number) , url (text) | races : raceId (number) , year (number) , round (number) , circuitId (number) , name (text) , date (text) , time (text) , url (text) | drivers : driverId (number) , driverRef (text) , number (number) , code (text) , forename (text) , surname (text) , dob (text) , nationality (text) , url (text) | status : statusId (number) , status (text) | seasons : year (number) , url (text) | constructors : constructorId (number) , constructorRef (text) , name (text) , nationality (text) , url (text) | constructorStandings : constructorStandingsId (number) , raceId (number) , constructorId (number) , points (number) , position (number) , positionText (text) , wins (number) | results : resultId (number) , raceId (number) , driverId (number) , constructorId (number) , number (number) , grid (number) , position (number) , positionText (text) , positionOrder (number) , points (number) , laps (number) , time (text) , milliseconds (number) , fastestLap (number) , rank (number) , fastestLapTime (text) , fastestLapSpeed (text) , statusId (number) | driverStandings : driverStandingsId (number) , raceId (number) , driverId (number) , points (number) , position (number) , positionText (text) , wins (number) | constructorResults : constructorResultsId (number) , raceId (number) , constructorId (number) , points (number) , status (number) | qualifying : qualifyId (number) , raceId (number) , driverId (number) , constructorId (number) , number (number) , position (number) , q1 (text) , q2 (text) , q3 (text) | pitStops : raceId (number) , driverId (number) , stop (number) , lap (number) , time (text) , duration (text) , milliseconds (number) | lapTimes : raceId (number) , driverId (number) , lap (number) , position (number) , time (text) , milliseconds (number)",
+        "Primary Keys": "circuits : circuitId | races : raceId | drivers : driverId | status : statusId | seasons : year | constructors : constructorId | constructorStandings : constructorStandingsId | results : resultId | driverStandings : driverStandingsId | constructorResults : constructorResultsId | qualifying : qualifyId | pitStops : raceId | lapTimes : raceId",
+        "Foreign Keys": "races : circuitId equals circuits : circuitId | constructorStandings : raceId equals races : raceId | constructorStandings : constructorId equals constructors : constructorId | results : driverId equals drivers : driverId | results : raceId equals races : raceId | results : constructorId equals constructors : constructorId | driverStandings : driverId equals drivers : driverId | driverStandings : raceId equals races : raceId | constructorResults : raceId equals races : raceId | constructorResults : constructorId equals constructors : constructorId | qualifying : driverId equals drivers : driverId | qualifying : raceId equals races : raceId | qualifying : constructorId equals constructors : constructorId | pitStops : driverId equals drivers : driverId | pitStops : raceId equals races : raceId | lapTimes : driverId equals drivers : driverId | lapTimes : raceId equals races : raceId",
+        "db_id": "formula_1"
+    },
+    {
+        "Schema (values (type))": "Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text) | Video_Games : GameID (number) , GName (text) , GType (text) | Plays_Games : StuID (number) , GameID (number) , Hours_Played (number) | SportsInfo : StuID (number) , SportName (text) , HoursPerWeek (number) , GamesPlayed (number) , OnScholarship (text)",
+        "Primary Keys": "Student : StuID | Video_Games : GameID",
+        "Foreign Keys": "Plays_Games : StuID equals Student : StuID | Plays_Games : GameID equals Video_Games : GameID | SportsInfo : StuID equals Student : StuID",
+        "db_id": "game_1"
+    },
+    {
+        "Schema (values (type))": "bank : branch_ID (number) , bname (text) , no_of_customers (number) , city (text) , state (text) | customer : cust_ID (text) , cust_name (text) , acc_type (text) , acc_bal (number) , no_of_loans (number) , credit_score (number) , branch_ID (number) , state (text) | loan : loan_ID (text) , loan_type (text) , cust_ID (text) , branch_ID (text) , amount (number)",
+        "Primary Keys": "bank : branch_ID | customer : cust_ID | loan : loan_ID",
+        "Foreign Keys": "customer : branch_ID equals bank : branch_ID | loan : branch_ID equals bank : branch_ID",
+        "db_id": "loan_1"
+    },
+    {
+        "Schema (values (type))": "station : id (number) , name (text) , lat (number) , long (number) , dock_count (number) , city (text) , installation_date (text) | status : station_id (number) , bikes_available (number) , docks_available (number) , time (text) | trip : id (number) , duration (number) , start_date (text) , start_station_name (text) , start_station_id (number) , end_date (text) , end_station_name (text) , end_station_id (number) , bike_id (number) , subscription_type (text) , zip_code (number) | weather : date (text) , max_temperature_f (number) , mean_temperature_f (number) , min_temperature_f (number) , max_dew_point_f (number) , mean_dew_point_f (number) , min_dew_point_f (number) , max_humidity (number) , mean_humidity (number) , min_humidity (number) , max_sea_level_pressure_inches (number) , mean_sea_level_pressure_inches (number) , min_sea_level_pressure_inches (number) , max_visibility_miles (number) , mean_visibility_miles (number) , min_visibility_miles (number) , max_wind_Speed_mph (number) , mean_wind_speed_mph (number) , max_gust_speed_mph (number) , precipitation_inches (number) , cloud_cover (number) , events (text) , wind_dir_degrees (number) , zip_code (number)",
+        "Primary Keys": "station : id | trip : id",
+        "Foreign Keys": "status : station_id equals station : id",
+        "db_id": "bike_1"
+    },
+    {
+        "Schema (values (type))": "entrepreneur : Entrepreneur_ID (number) , People_ID (number) , Company (text) , Money_Requested (number) , Investor (text) | people : People_ID (number) , Name (text) , Height (number) , Weight (number) , Date_of_Birth (text)",
+        "Primary Keys": "entrepreneur : Entrepreneur_ID | people : People_ID",
+        "Foreign Keys": "entrepreneur : People_ID equals people : People_ID",
+        "db_id": "entrepreneur"
+    },
+    {
+        "Schema (values (type))": "conductor : Conductor_ID (number) , Name (text) , Age (number) , Nationality (text) , Year_of_Work (number) | orchestra : Orchestra_ID (number) , Orchestra (text) , Conductor_ID (number) , Record_Company (text) , Year_of_Founded (number) , Major_Record_Format (text) | performance : Performance_ID (number) , Orchestra_ID (number) , Type (text) , Date (text) , Official_ratings_(millions) (number) , Weekly_rank (text) , Share (text) | show : Show_ID (number) , Performance_ID (number) , If_first_show (others) , Result (text) , Attendance (number)",
+        "Primary Keys": "conductor : Conductor_ID | orchestra : Orchestra_ID | performance : Performance_ID",
+        "Foreign Keys": "orchestra : Conductor_ID equals conductor : Conductor_ID | performance : Orchestra_ID equals orchestra : Orchestra_ID | show : Performance_ID equals performance : Performance_ID",
+        "db_id": "orchestra"
+    },
+    {
+        "Schema (values (type))": "Ref_Payment_Methods : payment_method_code (text) , payment_method_description (text) | Ref_Service_Types : Service_Type_Code (text) , Parent_Service_Type_Code (text) , Service_Type_Description (text) | Addresses : Address_ID (text) , Line_1 (text) , Line_2 (text) , City_Town (text) , State_County (text) , Other_Details (text) | Products : Product_ID (text) , Product_Name (text) , Product_Price (number) , Product_Description (text) , Other_Product_Service_Details (text) | Marketing_Regions : Marketing_Region_Code (text) , Marketing_Region_Name (text) , Marketing_Region_Descriptrion (text) , Other_Details (text) | Clients : Client_ID (number) , Address_ID (number) , Customer_Email_Address (text) , Customer_Name (text) , Customer_Phone (text) , Other_Details (text) | Drama_Workshop_Groups : Workshop_Group_ID (number) , Address_ID (number) , Currency_Code (text) , Marketing_Region_Code (text) , Store_Name (text) , Store_Phone (text) , Store_Email_Address (text) , Other_Details (text) | Performers : Performer_ID (number) , Address_ID (number) , Customer_Name (text) , Customer_Phone (text) , Customer_Email_Address (text) , Other_Details (text) | Customers : Customer_ID (text) , Address_ID (number) , Customer_Name (text) , Customer_Phone (text) , Customer_Email_Address (text) , Other_Details (text) | Stores : Store_ID (text) , Address_ID (number) , Marketing_Region_Code (text) , Store_Name (text) , Store_Phone (text) , Store_Email_Address (text) , Other_Details (text) | Bookings : Booking_ID (number) , Customer_ID (number) , Workshop_Group_ID (text) , Status_Code (text) , Store_ID (number) , Order_Date (time) , Planned_Delivery_Date (time) , Actual_Delivery_Date (time) , Other_Order_Details (text) | Performers_in_Bookings : Order_ID (number) , Performer_ID (number) | Customer_Orders : Order_ID (number) , Customer_ID (number) , Store_ID (number) , Order_Date (time) , Planned_Delivery_Date (time) , Actual_Delivery_Date (time) , Other_Order_Details (text) | Order_Items : Order_Item_ID (number) , Order_ID (number) , Product_ID (number) , Order_Quantity (text) , Other_Item_Details (text) | Invoices : Invoice_ID (number) , Order_ID (number) , payment_method_code (text) , Product_ID (number) , Order_Quantity (text) , Other_Item_Details (text) , Order_Item_ID (number) | Services : Service_ID (number) , Service_Type_Code (text) , Workshop_Group_ID (number) , Product_Description (text) , Product_Name (text) , Product_Price (number) , Other_Product_Service_Details (text) | Bookings_Services : Order_ID (number) , Product_ID (number) | Invoice_Items : Invoice_Item_ID (number) , Invoice_ID (number) , Order_ID (number) , Order_Item_ID (number) , Product_ID (number) , Order_Quantity (number) , Other_Item_Details (text)",
+        "Primary Keys": "Ref_Payment_Methods : payment_method_code | Ref_Service_Types : Service_Type_Code | Addresses : Address_ID | Products : Product_ID | Marketing_Regions : Marketing_Region_Code | Clients : Client_ID | Drama_Workshop_Groups : Workshop_Group_ID | Performers : Performer_ID | Customers : Customer_ID | Stores : Store_ID | Bookings : Booking_ID | Performers_in_Bookings : Order_ID | Customer_Orders : Order_ID | Order_Items : Order_Item_ID | Invoices : Invoice_ID | Services : Service_ID | Bookings_Services : Order_ID | Invoice_Items : Invoice_Item_ID",
+        "Foreign Keys": "Clients : Address_ID equals Addresses : Address_ID | Drama_Workshop_Groups : Address_ID equals Addresses : Address_ID | Performers : Address_ID equals Addresses : Address_ID | Customers : Address_ID equals Addresses : Address_ID | Stores : Marketing_Region_Code equals Marketing_Regions : Marketing_Region_Code | Stores : Address_ID equals Addresses : Address_ID | Bookings : Workshop_Group_ID equals Drama_Workshop_Groups : Workshop_Group_ID | Bookings : Customer_ID equals Clients : Client_ID | Performers_in_Bookings : Order_ID equals Bookings : Booking_ID | Performers_in_Bookings : Performer_ID equals Performers : Performer_ID | Customer_Orders : Store_ID equals Stores : Store_ID | Customer_Orders : Customer_ID equals Customers : Customer_ID | Order_Items : Product_ID equals Products : Product_ID | Order_Items : Order_ID equals Customer_Orders : Order_ID | Invoices : payment_method_code equals Ref_Payment_Methods : payment_method_code | Invoices : Order_ID equals Bookings : Booking_ID | Invoices : Order_ID equals Customer_Orders : Order_ID | Services : Service_Type_Code equals Ref_Service_Types : Service_Type_Code | Services : Workshop_Group_ID equals Drama_Workshop_Groups : Workshop_Group_ID | Bookings_Services : Product_ID equals Services : Service_ID | Bookings_Services : Order_ID equals Bookings : Booking_ID | Invoice_Items : Order_ID equals Bookings_Services : Order_ID | Invoice_Items : Product_ID equals Bookings_Services : Product_ID | Invoice_Items : Invoice_ID equals Invoices : Invoice_ID | Invoice_Items : Order_Item_ID equals Order_Items : Order_Item_ID",
+        "db_id": "cre_Drama_Workshop_Groups"
+    },
+    {
+        "Schema (values (type))": "continents : ContId (number) , Continent (text) | countries : CountryId (number) , CountryName (text) , Continent (number) | car_makers : Id (number) , Maker (text) , FullName (text) , Country (text) | model_list : ModelId (number) , Maker (number) , Model (text) | car_names : MakeId (number) , Model (text) , Make (text) | cars_data : Id (number) , MPG (text) , Cylinders (number) , Edispl (number) , Horsepower (text) , Weight (number) , Accelerate (number) , Year (number)",
+        "Primary Keys": "continents : ContId | countries : CountryId | car_makers : Id | model_list : ModelId | car_names : MakeId | cars_data : Id",
+        "Foreign Keys": "countries : Continent equals continents : ContId | car_makers : Country equals countries : CountryId | model_list : Maker equals car_makers : Id | car_names : Model equals model_list : Model | cars_data : Id equals car_names : MakeId",
+        "db_id": "car_1"
+    },
+    {
+        "Schema (values (type))": "state : state_name (text) , population (number) , area (number) , country_name (text) , capital (text) , density (number) | city : city_name (text) , population (number) , country_name (text) , state_name (text) | border_info : state_name (text) , border (text) | highlow : state_name (text) , highest_elevation (text) , lowest_point (text) , highest_point (text) , lowest_elevation (text) | lake : lake_name (text) , area (number) , country_name (text) , state_name (text) | mountain : mountain_name (text) , mountain_altitude (number) , country_name (text) , state_name (text) | river : river_name (text) , length (number) , country_name (text) , traverse (text)",
+        "Primary Keys": "state : state_name | city : city_name | border_info : border | highlow : state_name | mountain : mountain_name | river : river_name",
+        "Foreign Keys": "city : state_name equals state : state_name | border_info : border equals state : state_name | border_info : state_name equals state : state_name | highlow : state_name equals state : state_name | mountain : state_name equals state : state_name | river : traverse equals state : state_name",
+        "db_id": "geo"
+    },
+    {
+        "Schema (values (type))": "Ref_Address_Types : address_type_code (text) , address_type_description (text) | Ref_Detention_Type : detention_type_code (text) , detention_type_description (text) | Ref_Incident_Type : incident_type_code (text) , incident_type_description (text) | Addresses : address_id (number) , line_1 (text) , line_2 (text) , line_3 (text) , city (text) , zip_postcode (text) , state_province_county (text) , country (text) , other_address_details (text) | Students : student_id (number) , address_id (number) , first_name (text) , middle_name (text) , last_name (text) , cell_mobile_number (text) , email_address (text) , date_first_rental (time) , date_left_university (time) , other_student_details (text) | Teachers : teacher_id (number) , address_id (number) , first_name (text) , middle_name (text) , last_name (text) , gender (text) , cell_mobile_number (text) , email_address (text) , other_details (text) | Assessment_Notes : notes_id (number) , student_id (number) , teacher_id (number) , date_of_notes (time) , text_of_notes (text) , other_details (text) | Behavior_Incident : incident_id (number) , incident_type_code (text) , student_id (number) , date_incident_start (time) , date_incident_end (time) , incident_summary (text) , recommendations (text) , other_details (text) | Detention : detention_id (number) , detention_type_code (text) , teacher_id (number) , datetime_detention_start (time) , datetime_detention_end (time) , detention_summary (text) , other_details (text) | Student_Addresses : student_id (number) , address_id (number) , date_address_from (time) , date_address_to (time) , monthly_rental (number) , other_details (text) | Students_in_Detention : student_id (number) , detention_id (number) , incident_id (number)",
+        "Primary Keys": "Ref_Address_Types : address_type_code | Ref_Detention_Type : detention_type_code | Ref_Incident_Type : incident_type_code | Addresses : address_id | Students : student_id | Teachers : teacher_id | Behavior_Incident : incident_id | Detention : detention_id",
+        "Foreign Keys": "Students : address_id equals Addresses : address_id | Teachers : address_id equals Addresses : address_id | Assessment_Notes : teacher_id equals Teachers : teacher_id | Assessment_Notes : student_id equals Students : student_id | Behavior_Incident : student_id equals Students : student_id | Behavior_Incident : incident_type_code equals Ref_Incident_Type : incident_type_code | Detention : teacher_id equals Teachers : teacher_id | Detention : detention_type_code equals Ref_Detention_Type : detention_type_code | Student_Addresses : student_id equals Students : student_id | Student_Addresses : address_id equals Addresses : address_id | Students_in_Detention : student_id equals Students : student_id | Students_in_Detention : detention_id equals Detention : detention_id | Students_in_Detention : incident_id equals Behavior_Incident : incident_id",
+        "db_id": "behavior_monitoring"
+    },
+    {
+        "Schema (values (type))": "Ref_Document_Types : Document_Type_Code (text) , Document_Type_Name (text) , Document_Type_Description (text) | Ref_Calendar : Calendar_Date (time) , Day_Number (number) | Ref_Locations : Location_Code (text) , Location_Name (text) , Location_Description (text) | Roles : Role_Code (text) , Role_Name (text) , Role_Description (text) | All_Documents : Document_ID (number) , Date_Stored (time) , Document_Type_Code (text) , Document_Name (text) , Document_Description (text) , Other_Details (text) | Employees : Employee_ID (number) , Role_Code (text) , Employee_Name (text) , Gender_MFU (text) , Date_of_Birth (time) , Other_Details (text) | Document_Locations : Document_ID (number) , Location_Code (text) , Date_in_Location_From (time) , Date_in_Locaton_To (time) | Documents_to_be_Destroyed : Document_ID (number) , Destruction_Authorised_by_Employee_ID (number) , Destroyed_by_Employee_ID (number) , Planned_Destruction_Date (time) , Actual_Destruction_Date (time) , Other_Details (text)",
+        "Primary Keys": "Ref_Document_Types : Document_Type_Code | Ref_Calendar : Calendar_Date | Ref_Locations : Location_Code | Roles : Role_Code | All_Documents : Document_ID | Employees : Employee_ID | Document_Locations : Document_ID | Documents_to_be_Destroyed : Document_ID",
+        "Foreign Keys": "All_Documents : Date_Stored equals Ref_Calendar : Calendar_Date | All_Documents : Document_Type_Code equals Ref_Document_Types : Document_Type_Code | Employees : Role_Code equals Roles : Role_Code | Document_Locations : Document_ID equals All_Documents : Document_ID | Document_Locations : Date_in_Locaton_To equals Ref_Calendar : Calendar_Date | Document_Locations : Date_in_Location_From equals Ref_Calendar : Calendar_Date | Document_Locations : Location_Code equals Ref_Locations : Location_Code | Documents_to_be_Destroyed : Document_ID equals All_Documents : Document_ID | Documents_to_be_Destroyed : Actual_Destruction_Date equals Ref_Calendar : Calendar_Date | Documents_to_be_Destroyed : Planned_Destruction_Date equals Ref_Calendar : Calendar_Date | Documents_to_be_Destroyed : Destruction_Authorised_by_Employee_ID equals Employees : Employee_ID | Documents_to_be_Destroyed : Destroyed_by_Employee_ID equals Employees : Employee_ID",
+        "db_id": "cre_Doc_Tracking_DB"
+    },
+    {
+        "Schema (values (type))": "basketball_match : Team_ID (number) , School_ID (number) , Team_Name (text) , ACC_Regular_Season (text) , ACC_Percent (text) , ACC_Home (text) , ACC_Road (text) , All_Games (text) , All_Games_Percent (number) , All_Home (text) , All_Road (text) , All_Neutral (text) | university : School_ID (number) , School (text) , Location (text) , Founded (number) , Affiliation (text) , Enrollment (number) , Nickname (text) , Primary_conference (text)",
+        "Primary Keys": "basketball_match : Team_ID | university : School_ID",
+        "Foreign Keys": "basketball_match : School_ID equals university : School_ID",
+        "db_id": "university_basketball"
+    },
+    {
+        "Schema (values (type))": "College : cName (text) , state (text) , enr (number) | Player : pID (number) , pName (text) , yCard (text) , HS (number) | Tryout : pID (number) , cName (text) , pPos (text) , decision (text)",
+        "Primary Keys": "College : cName | Player : pID | Tryout : pID",
+        "Foreign Keys": "Tryout : cName equals College : cName | Tryout : pID equals Player : pID",
+        "db_id": "soccer_2"
+    },
+    {
+        "Schema (values (type))": "Activity : actid (number) , activity_name (text) | Participates_in : stuid (number) , actid (number) | Faculty_Participates_in : FacID (number) , actid (number) | Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text) | Faculty : FacID (number) , Lname (text) , Fname (text) , Rank (text) , Sex (text) , Phone (number) , Room (text) , Building (text)",
+        "Primary Keys": "Activity : actid | Student : StuID | Faculty : FacID",
+        "Foreign Keys": "Participates_in : actid equals Activity : actid | Participates_in : stuid equals Student : StuID | Faculty_Participates_in : actid equals Activity : actid | Faculty_Participates_in : FacID equals Faculty : FacID",
+        "db_id": "activity_1"
+    },
+    {
+        "Schema (values (type))": "Ref_Hotel_Star_Ratings : star_rating_code (text) , star_rating_description (text) | Locations : Location_ID (number) , Location_Name (text) , Address (text) , Other_Details (text) | Ref_Attraction_Types : Attraction_Type_Code (text) , Attraction_Type_Description (text) | Visitors : Tourist_ID (number) , Tourist_Details (text) | Features : Feature_ID (number) , Feature_Details (text) | Hotels : hotel_id (number) , star_rating_code (text) , pets_allowed_yn (text) , price_range (number) , other_hotel_details (text) | Tourist_Attractions : Tourist_Attraction_ID (number) , Attraction_Type_Code (text) , Location_ID (number) , How_to_Get_There (text) , Name (text) , Description (text) , Opening_Hours (text) , Other_Details (text) | Street_Markets : Market_ID (number) , Market_Details (text) | Shops : Shop_ID (number) , Shop_Details (text) | Museums : Museum_ID (number) , Museum_Details (text) | Royal_Family : Royal_Family_ID (number) , Royal_Family_Details (text) | Theme_Parks : Theme_Park_ID (number) , Theme_Park_Details (text) | Visits : Visit_ID (number) , Tourist_Attraction_ID (number) , Tourist_ID (number) , Visit_Date (time) , Visit_Details (text) | Photos : Photo_ID (number) , Tourist_Attraction_ID (number) , Name (text) , Description (text) , Filename (text) , Other_Details (text) | Staff : Staff_ID (number) , Tourist_Attraction_ID (number) , Name (text) , Other_Details (text) | Tourist_Attraction_Features : Tourist_Attraction_ID (number) , Feature_ID (number)",
+        "Primary Keys": "Ref_Hotel_Star_Ratings : star_rating_code | Locations : Location_ID | Ref_Attraction_Types : Attraction_Type_Code | Visitors : Tourist_ID | Features : Feature_ID | Hotels : hotel_id | Tourist_Attractions : Tourist_Attraction_ID | Street_Markets : Market_ID | Shops : Shop_ID | Museums : Museum_ID | Royal_Family : Royal_Family_ID | Theme_Parks : Theme_Park_ID | Visits : Visit_ID | Photos : Photo_ID | Staff : Staff_ID | Tourist_Attraction_Features : Tourist_Attraction_ID",
+        "Foreign Keys": "Hotels : star_rating_code equals Ref_Hotel_Star_Ratings : star_rating_code | Tourist_Attractions : Attraction_Type_Code equals Ref_Attraction_Types : Attraction_Type_Code | Tourist_Attractions : Location_ID equals Locations : Location_ID | Street_Markets : Market_ID equals Tourist_Attractions : Tourist_Attraction_ID | Shops : Shop_ID equals Tourist_Attractions : Tourist_Attraction_ID | Museums : Museum_ID equals Tourist_Attractions : Tourist_Attraction_ID | Royal_Family : Royal_Family_ID equals Tourist_Attractions : Tourist_Attraction_ID | Theme_Parks : Theme_Park_ID equals Tourist_Attractions : Tourist_Attraction_ID | Visits : Tourist_ID equals Visitors : Tourist_ID | Visits : Tourist_Attraction_ID equals Tourist_Attractions : Tourist_Attraction_ID | Photos : Tourist_Attraction_ID equals Tourist_Attractions : Tourist_Attraction_ID | Staff : Tourist_Attraction_ID equals Tourist_Attractions : Tourist_Attraction_ID | Tourist_Attraction_Features : Feature_ID equals Features : Feature_ID | Tourist_Attraction_Features : Tourist_Attraction_ID equals Tourist_Attractions : Tourist_Attraction_ID",
+        "db_id": "cre_Theme_park"
+    },
+    {
+        "Schema (values (type))": "follows : f1 (number) , f2 (number) | tweets : id (number) , uid (number) , text (text) , createdate (time) | user_profiles : uid (number) , name (text) , email (text) , partitionid (number) , followers (number)",
+        "Primary Keys": "follows : f1 | tweets : id | user_profiles : uid",
+        "Foreign Keys": "follows : f2 equals user_profiles : uid | follows : f1 equals user_profiles : uid | tweets : uid equals user_profiles : uid",
+        "db_id": "twitter_1"
+    },
+    {
+        "Schema (values (type))": "election : Election_ID (number) , Representative_ID (number) , Date (text) , Votes (number) , Vote_Percent (number) , Seats (number) , Place (number) | representative : Representative_ID (number) , Name (text) , State (text) , Party (text) , Lifespan (text)",
+        "Primary Keys": "election : Election_ID | representative : Representative_ID",
+        "Foreign Keys": "election : Representative_ID equals representative : Representative_ID",
+        "db_id": "election_representative"
+    },
+    {
+        "Schema (values (type))": "Student : StuID (number) , LName (text) , Fname (text) , Age (number) , Sex (text) , Major (number) , Advisor (number) , city_code (text) | Voting_record : StuID (number) , Registration_Date (text) , Election_Cycle (text) , President_Vote (number) , Vice_President_Vote (number) , Secretary_Vote (number) , Treasurer_Vote (number) , Class_President_Vote (number) , Class_Senator_Vote (number)",
+        "Primary Keys": "Student : StuID",
+        "Foreign Keys": "Voting_record : Class_Senator_Vote equals Student : StuID | Voting_record : Class_President_Vote equals Student : StuID | Voting_record : Treasurer_Vote equals Student : StuID | Voting_record : Secretary_Vote equals Student : StuID | Voting_record : Vice_President_Vote equals Student : StuID | Voting_record : President_Vote equals Student : StuID | Voting_record : StuID equals Student : StuID",
+        "db_id": "voter_2"
+    },
+    {
+        "Schema (values (type))": "people : People_ID (number) , Name (text) , Country (text) , Is_Male (text) , Age (number) | church : Church_ID (number) , Name (text) , Organized_by (text) , Open_Date (number) , Continuation_of (text) | wedding : Church_ID (number) , Male_ID (number) , Female_ID (number) , Year (number)",
+        "Primary Keys": "people : People_ID | church : Church_ID | wedding : Church_ID",
+        "Foreign Keys": "wedding : Female_ID equals people : People_ID | wedding : Male_ID equals people : People_ID | wedding : Church_ID equals church : Church_ID",
+        "db_id": "wedding"
+    },
+    {
+        "Schema (values (type))": "event : Event_ID (number) , Date (text) , Venue (text) , Name (text) , Event_Attendance (number) | journalist : journalist_ID (number) , Name (text) , Nationality (text) , Age (text) , Years_working (number) | news_report : journalist_ID (number) , Event_ID (number) , Work_Type (text)",
+        "Primary Keys": "event : Event_ID | journalist : journalist_ID | news_report : journalist_ID",
+        "Foreign Keys": "news_report : Event_ID equals event : Event_ID | news_report : journalist_ID equals journalist : journalist_ID",
+        "db_id": "news_report"
+    },
+    {
+        "Schema (values (type))": "grapes : ID (number) , Grape (text) , Color (text) | appellations : No (number) , Appelation (text) , County (text) , State (text) , Area (text) , isAVA (text) | wine : No (number) , Grape (text) , Winery (text) , Appelation (text) , State (text) , Name (text) , Year (number) , Price (number) , Score (number) , Cases (number) , Drink (text)",
+        "Primary Keys": "grapes : ID | appellations : No",
+        "Foreign Keys": "wine : Appelation equals appellations : Appelation | wine : Grape equals grapes : Grape",
+        "db_id": "wine_1"
+    },
+    {
+        "Schema (values (type))": "Addresses : address_id (number) , address_content (text) , city (text) , zip_postcode (text) , state_province_county (text) , country (text) , other_address_details (text) | Products : product_id (number) , product_details (text) | Customers : customer_id (number) , payment_method (text) , customer_name (text) , date_became_customer (time) , other_customer_details (text) | Customer_Addresses : customer_id (number) , address_id (number) , date_address_from (time) , address_type (text) , date_address_to (time) | Customer_Contact_Channels : customer_id (number) , channel_code (text) , active_from_date (time) , active_to_date (time) , contact_number (text) | Customer_Orders : order_id (number) , customer_id (number) , order_status (text) , order_date (time) , order_details (text) | Order_Items : order_id (number) , product_id (number) , order_quantity (text)",
+        "Primary Keys": "Addresses : address_id | Products : product_id | Customers : customer_id | Customer_Orders : order_id",
+        "Foreign Keys": "Customer_Addresses : customer_id equals Customers : customer_id | Customer_Addresses : address_id equals Addresses : address_id | Customer_Contact_Channels : customer_id equals Customers : customer_id | Customer_Orders : customer_id equals Customers : customer_id | Order_Items : order_id equals Customer_Orders : order_id | Order_Items : product_id equals Products : product_id",
+        "db_id": "customers_and_addresses"
+    },
+    {
+        "Schema (values (type))": "building : building_id (text) , Name (text) , Street_address (text) , Years_as_tallest (text) , Height_feet (number) , Floors (number) | Institution : Institution_id (text) , Institution (text) , Location (text) , Founded (number) , Type (text) , Enrollment (number) , Team (text) , Primary_Conference (text) , building_id (text) | protein : common_name (text) , protein_name (text) , divergence_from_human_lineage (number) , accession_number (text) , sequence_length (number) , sequence_identity_to_human_protein (text) , Institution_id (text)",
+        "Primary Keys": "building : building_id | Institution : Institution_id | protein : common_name",
+        "Foreign Keys": "Institution : building_id equals building : building_id | protein : Institution_id equals Institution : Institution_id",
+        "db_id": "protein_institute"
+    },
+    {
+        "Schema (values (type))": "school : School_ID (number) , School (text) , Location (text) , Enrollment (number) , Founded (number) , Denomination (text) , Boys_or_Girls (text) , Day_or_Boarding (text) , Year_Entered_Competition (number) , School_Colors (text) | school_details : School_ID (number) , Nickname (text) , Colors (text) , League (text) , Class (text) , Division (text) | school_performance : School_Id (number) , School_Year (text) , Class_A (text) , Class_AA (text) | player : Player_ID (number) , Player (text) , Team (text) , Age (number) , Position (text) , School_ID (number)",
+        "Primary Keys": "school : School_ID | school_details : School_ID | school_performance : School_Id | player : Player_ID",
+        "Foreign Keys": "school_details : School_ID equals school : School_ID | school_performance : School_Id equals school : School_ID | player : School_ID equals school : School_ID",
+        "db_id": "school_player"
+    },
+    {
+        "Schema (values (type))": "chip_model : Model_name (text) , Launch_year (number) , RAM_MiB (number) , ROM_MiB (number) , Slots (text) , WiFi (text) , Bluetooth (text) | screen_mode : Graphics_mode (number) , Char_cells (text) , Pixels (text) , Hardware_colours (number) , used_kb (number) , map (text) , Type (text) | phone : Company_name (text) , Hardware_Model_name (text) , Accreditation_type (text) , Accreditation_level (text) , Date (text) , chip_model (text) , screen_mode (text)",
+        "Primary Keys": "chip_model : Model_name | screen_mode : Graphics_mode | phone : Hardware_Model_name",
+        "Foreign Keys": "phone : chip_model equals chip_model : Model_name | phone : screen_mode equals screen_mode : Graphics_mode",
+        "db_id": "phone_1"
+    },
+    {
+        "Schema (values (type))": "TV_Channel : id (text) , series_name (text) , Country (text) , Language (text) , Content (text) , Pixel_aspect_ratio_PAR (text) , Hight_definition_TV (text) , Pay_per_view_PPV (text) , Package_Option (text) | TV_series : id (number) , Episode (text) , Air_Date (text) , Rating (text) , Share (number) , 18_49_Rating_Share (text) , Viewers_m (text) , Weekly_Rank (number) , Channel (text) | Cartoon : id (number) , Title (text) , Directed_by (text) , Written_by (text) , Original_air_date (text) , Production_code (number) , Channel (text)",
+        "Primary Keys": "TV_Channel : id | TV_series : id | Cartoon : id",
+        "Foreign Keys": "TV_series : Channel equals TV_Channel : id | Cartoon : Channel equals TV_Channel : id",
+        "db_id": "tvshow"
+    },
+    {
+        "Schema (values (type))": "wrestler : Wrestler_ID (number) , Name (text) , Reign (text) , Days_held (text) , Location (text) , Event (text) | Elimination : Elimination_ID (text) , Wrestler_ID (text) , Team (text) , Eliminated_By (text) , Elimination_Move (text) , Time (text)",
+        "Primary Keys": "wrestler : Wrestler_ID | Elimination : Elimination_ID",
+        "Foreign Keys": "Elimination : Wrestler_ID equals wrestler : Wrestler_ID",
+        "db_id": "wrestler"
+    },
+    {
+        "Schema (values (type))": "Staff : staff_id (number) , gender (text) , first_name (text) , last_name (text) , email_address (text) , phone_number (text) | Customers : customer_id (number) , customer_type_code (text) , address_line_1 (text) , address_line_2 (text) , town_city (text) , state (text) , email_address (text) , phone_number (text) | Products : product_id (number) , parent_product_id (number) , product_category_code (text) , date_product_first_available (time) , date_product_discontinued (time) , product_name (text) , product_description (text) , product_price (number) | Complaints : complaint_id (number) , product_id (number) , customer_id (number) , complaint_outcome_code (text) , complaint_status_code (text) , complaint_type_code (text) , date_complaint_raised (time) , date_complaint_closed (time) , staff_id (number)",
+        "Primary Keys": "Staff : staff_id | Customers : customer_id | Products : product_id",
+        "Foreign Keys": "Complaints : customer_id equals Customers : customer_id | Complaints : product_id equals Products : product_id | Complaints : staff_id equals Staff : staff_id",
+        "db_id": "customer_complaints"
+    },
+    {
+        "Schema (values (type))": "department : Department_ID (number) , Name (text) , Creation (text) , Ranking (number) , Budget_in_Billions (number) , Num_Employees (number) | head : head_ID (number) , name (text) , born_state (text) , age (number) | management : department_ID (number) , head_ID (number) , temporary_acting (text)",
+        "Primary Keys": "department : Department_ID | head : head_ID | management : department_ID",
+        "Foreign Keys": "management : head_ID equals head : head_ID | management : department_ID equals department : Department_ID",
+        "db_id": "department_management"
+    },
+    {
+        "Schema (values (type))": "Addresses : address_id (number) , line_1_number_building (text) , city (text) , zip_postcode (text) , state_province_county (text) , country (text) | Products : product_id (number) , product_type_code (text) , product_name (text) , product_price (number) | Customers : customer_id (number) , payment_method_code (text) , customer_number (text) , customer_name (text) , customer_address (text) , customer_phone (text) , customer_email (text) | Contacts : contact_id (number) , customer_id (number) , gender (text) , first_name (text) , last_name (text) , contact_phone (text) | Customer_Address_History : customer_id (number) , address_id (number) , date_from (time) , date_to (time) | Customer_Orders : order_id (number) , customer_id (number) , order_date (time) , order_status_code (text) | Order_Items : order_item_id (number) , order_id (number) , product_id (number) , order_quantity (text)",
+        "Primary Keys": "Addresses : address_id | Products : product_id | Customers : customer_id | Contacts : contact_id | Customer_Orders : order_id",
+        "Foreign Keys": "Customer_Address_History : address_id equals Addresses : address_id | Customer_Address_History : customer_id equals Customers : customer_id | Customer_Orders : customer_id equals Customers : customer_id | Order_Items : order_id equals Customer_Orders : order_id | Order_Items : product_id equals Products : product_id",
+        "db_id": "customers_and_products_contacts"
+    },
+    {
+        "Schema (values (type))": "works_on : Essn (number) , Pno (number) , Hours (number) | employee : Fname (text) , Minit (text) , Lname (text) , Ssn (number) , Bdate (text) , Address (text) , Sex (text) , Salary (number) , Super_ssn (number) , Dno (number) | department : Dname (text) , Dnumber (number) , Mgr_ssn (number) , Mgr_start_date (text) | project : Pname (text) , Pnumber (number) , Plocation (text) , Dnum (number) | dependent : Essn (number) , Dependent_name (text) , Sex (text) , Bdate (text) , Relationship (text) | dept_locations : Dnumber (number) , Dlocation (text)",
+        "Primary Keys": "works_on : Essn | employee : Ssn | department : Dnumber | project : Pnumber | dependent : Essn | dept_locations : Dnumber",
+        "Foreign Keys": "",
+        "db_id": "company_1"
+    },
+    {
+        "Schema (values (type))": "workshop : Workshop_ID (number) , Date (text) , Venue (text) , Name (text) | submission : Submission_ID (number) , Scores (number) , Author (text) , College (text) | Acceptance : Submission_ID (number) , Workshop_ID (number) , Result (text)",
+        "Primary Keys": "workshop : Workshop_ID | submission : Submission_ID | Acceptance : Submission_ID",
+        "Foreign Keys": "Acceptance : Workshop_ID equals workshop : Workshop_ID | Acceptance : Submission_ID equals submission : Submission_ID",
+        "db_id": "workshop_paper"
+    },
+    {
+        "Schema (values (type))": "item : i_id (number) , title (text) | review : a_id (number) , u_id (number) , i_id (number) , rating (number) , rank (number) | useracct : u_id (number) , name (text) | trust : source_u_id (number) , target_u_id (number) , trust (number)",
+        "Primary Keys": "item : i_id | review : a_id | useracct : u_id",
+        "Foreign Keys": "review : i_id equals item : i_id | review : u_id equals useracct : u_id | trust : target_u_id equals useracct : u_id | trust : source_u_id equals useracct : u_id",
+        "db_id": "epinions_1"
+    },
+    {
+        "Schema (values (type))": "party : Party_ID (number) , Party_Theme (text) , Location (text) , First_year (text) , Last_year (text) , Number_of_hosts (number) | host : Host_ID (number) , Name (text) , Nationality (text) , Age (text) | party_host : Party_ID (number) , Host_ID (number) , Is_Main_in_Charge (others)",
+        "Primary Keys": "party : Party_ID | host : Host_ID | party_host : Party_ID",
+        "Foreign Keys": "party_host : Party_ID equals party : Party_ID | party_host : Host_ID equals host : Host_ID",
+        "db_id": "party_host"
+    },
+    {
+        "Schema (values (type))": "Attribute_Definitions : attribute_id (number) , attribute_name (text) , attribute_data_type (text) | Catalogs : catalog_id (number) , catalog_name (text) , catalog_publisher (text) , date_of_publication (time) , date_of_latest_revision (time) | Catalog_Structure : catalog_level_number (number) , catalog_id (number) , catalog_level_name (text) | Catalog_Contents : catalog_entry_id (number) , catalog_level_number (number) , parent_entry_id (number) , previous_entry_id (number) , next_entry_id (number) , catalog_entry_name (text) , product_stock_number (text) , price_in_dollars (number) , price_in_euros (number) , price_in_pounds (number) , capacity (text) , length (text) , height (text) , width (text) | Catalog_Contents_Additional_Attributes : catalog_entry_id (number) , catalog_level_number (number) , attribute_id (number) , attribute_value (text)",
+        "Primary Keys": "Attribute_Definitions : attribute_id | Catalogs : catalog_id | Catalog_Structure : catalog_level_number | Catalog_Contents : catalog_entry_id",
+        "Foreign Keys": "Catalog_Structure : catalog_id equals Catalogs : catalog_id | Catalog_Contents : catalog_level_number equals Catalog_Structure : catalog_level_number | Catalog_Contents_Additional_Attributes : catalog_level_number equals Catalog_Structure : catalog_level_number | Catalog_Contents_Additional_Attributes : catalog_entry_id equals Catalog_Contents : catalog_entry_id",
+        "db_id": "product_catalog"
+    }
+]

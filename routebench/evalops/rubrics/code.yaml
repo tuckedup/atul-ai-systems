@@ -1,0 +1,113 @@
+id: code
+version: "1.0.0"
+task_class: code
+evidence_required: true
+
+source_notes: >
+  Code-correctness rubric for judging a candidate implementation against a natural-language
+  spec and a reference solution. The gold label for these cases comes from executing hidden
+  tests, so this rubric is deliberately written to predict test outcome rather than to assess
+  code quality: style, naming, efficiency and idiom are explicitly out of scope, because a
+  judge that penalises ugly-but-correct code disagrees with the test oracle and drags kappa
+  down.
+
+pass_definition: >
+  The implementation would pass a correct hidden test suite for the stated specification. Judge
+  behaviour only. Ugly, slow, unidiomatic or poorly named code that computes the right answer
+  is a PASS. Elegant code that returns the wrong value, mishandles a documented example, or
+  does not run is a FAIL.
+
+criteria:
+  - id: implements_requested_function
+    critical: true
+    weight: 1
+    question: >
+      Does the response define the function the specification asked for, with the required
+      name and a compatible parameter list?
+    pass_when: >
+      The required entry point exists and accepts the arguments the spec describes. Extra
+      helper functions, imports and default arguments are fine.
+    fail_when: >
+      The entry point is missing, renamed, has an incompatible signature, or the response
+      solved a different problem than the one stated.
+
+  - id: correct_on_documented_behaviour
+    weight: 4
+    question: >
+      For every input/output example given in the specification or docstring, does tracing the
+      code produce exactly the stated output?
+    pass_when: >
+      Every documented example is reproduced exactly, including type (a list where a list is
+      shown, not a tuple) and ordering.
+    fail_when: >
+      Any documented example yields a different value, a different type, a different order, or
+      raises.
+
+  - id: handles_specified_edge_cases
+    weight: 2
+    question: >
+      Are the edge cases the specification explicitly mentions handled as described?
+    pass_when: >
+      Cases the spec calls out -- empty input, single element, negatives, zero, duplicates,
+      bounds -- behave as the spec says.
+    fail_when: >
+      A case the spec explicitly mentions is mishandled. Do NOT fail this for edge cases the
+      spec never mentions; the hidden tests follow the spec, and inventing extra requirements
+      is a judge-side error.
+
+  - id: executes_without_error
+    weight: 2
+    question: >
+      Would the code run: valid syntax, all names defined, all used modules imported, no
+      obvious runtime error on the intended inputs?
+    pass_when: >
+      The code is syntactically valid and every referenced name is defined, imported or a
+      builtin.
+    fail_when: >
+      There is a syntax error, an undefined name, a missing import for a module it uses, an
+      off-by-one index that must raise on a documented example, or an unconditional infinite
+      loop.
+
+  - id: complete_implementation
+    weight: 1
+    question: >
+      Is the implementation complete rather than a sketch?
+    pass_when: The logic is fully written out.
+    fail_when: >
+      The body is `pass`, `...`, `raise NotImplementedError`, a TODO comment standing in for
+      logic, or prose describing what the code would do instead of code.
+
+boundary_examples:
+  - situation: >
+      The code is correct but uses a brute-force O(n^2) loop where an O(n) solution exists.
+    verdict: pass
+    why: >
+      Tests assert behaviour, not complexity, unless the spec states a limit. Penalising this
+      is the most common way a code judge disagrees with the execution oracle.
+  - situation: >
+      The function returns the right values but has no docstring and single-letter variables.
+    verdict: pass
+    why: Style is out of scope.
+  - situation: >
+      The function is correct for all documented examples but would crash on an empty list,
+      which the specification never mentions.
+    verdict: pass
+    why: >
+      Hidden tests follow the stated specification. Requirements the judge invents are not in
+      the tests, so failing here would disagree with the oracle.
+  - situation: >
+      The function returns a tuple where the documented example shows a list.
+    verdict: fail
+    why: >
+      Equality assertions in the hidden tests are type-sensitive, so this genuinely fails.
+  - situation: >
+      The response contains a correct implementation wrapped in a markdown fence with prose
+      before it.
+    verdict: pass
+    why: >
+      Judge the code, not the packaging. The harness extracts the code block.
+  - situation: >
+      The response defines a helper that is correct plus the required entry point which
+      returns the helper's result unchanged.
+    verdict: pass
+    why: Indirection is irrelevant to behaviour.

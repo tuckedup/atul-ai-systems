@@ -8,9 +8,9 @@ from __future__ import annotations
 import random
 import time
 import warnings
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import httpx
 import yaml  # type: ignore[import-untyped]
@@ -63,6 +63,26 @@ class ProviderError(RuntimeError):
     pass
 
 
+# Pass to `chat(fallback=...)` to pin a call to exactly one model, disabling configured fallback -
+# `[]` works too, this is just a documented, greppable spelling of the same thing.
+NO_FALLBACK: Final[tuple[str, ...]] = ()
+
+
+def _candidates(model: str | None, fallback: Sequence[str] | None) -> list[str]:
+    """Resolve the ordered list of models `chat()` will try.
+
+    `fallback=None` (the default) is "unspecified" and falls back to `settings.fallback_models`, for
+    back-compat with every existing caller. Any explicit sequence - including `[]`/`NO_FALLBACK` - is
+    used exactly as given: `fallback or settings.fallback_models` couldn't tell "caller wants no
+    fallback" apart from "caller didn't say", since `[]` is falsy, so `fallback=[]` silently fell back
+    to the configured models anyway. That silently mixes a second judge's outputs into a calibration
+    run that must be pinned to one model.
+    """
+    primary = model or settings.default_model
+    configured = fallback if fallback is not None else settings.fallback_models
+    return [primary] + list(configured)
+
+
 @traced(kind="llm")
 def chat(
     messages: list[dict[str, Any]],
@@ -70,11 +90,15 @@ def chat(
     tools: list[dict[str, Any]] | None = None,
     temperature: float = 0.0,
     max_tokens: int = 2048,
-    fallback: list[str] | None = None,
+    fallback: Sequence[str] | None = None,
     **extra: Any,
 ) -> ChatResult:
-    """Synchronous chat with retries (429/5xx), timeout, and ordered model fallback."""
-    candidates = [model or settings.default_model] + list(fallback or settings.fallback_models)
+    """Synchronous chat with retries (429/5xx), timeout, and ordered model fallback.
+
+    `fallback=None` uses `settings.fallback_models`; pass `[]` or `NO_FALLBACK` to disable fallback
+    entirely and pin the call to `model` (or `settings.default_model`).
+    """
+    candidates = _candidates(model, fallback)
     last_err: Exception | None = None
     for m in candidates:
         for attempt in range(settings.max_retries):

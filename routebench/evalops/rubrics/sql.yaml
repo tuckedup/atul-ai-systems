@@ -1,0 +1,130 @@
+id: sql
+version: "1.0.0"
+task_class: sql
+evidence_required: true
+
+source_notes: >
+  Text-to-SQL rubric. The gold label comes from executing both the candidate and the gold
+  query against the same database and comparing the returned result sets, not from comparing
+  query text. This rubric is written to predict that execution oracle: any query that returns
+  the same rows the gold query returns must PASS regardless of how it is written, and any
+  query that returns different rows must FAIL regardless of how close its text looks to gold.
+
+pass_definition: >
+  Executing the candidate query against the database returns the same result set the gold
+  query returns (same rows and same columns; same row order only when the question implies an
+  ordering or a top-N). Query style -- join order, table aliases, whitespace, keyword casing,
+  using IN versus an equivalent chain of OR, redundant parentheses, or writing an equivalent
+  predicate differently -- is out of scope. A query that is stylistically odd but returns the
+  right rows is a PASS; a cleanly written query that returns the wrong rows, the wrong
+  columns, or duplicate rows the question's phrasing rules out is a FAIL.
+
+criteria:
+  - id: returns_correct_result_set
+    critical: true
+    weight: 1
+    question: >
+      Would executing this query against the database return the same set of rows as the gold
+      query, for the columns the question asks for?
+    pass_when: >
+      The rows returned match gold's rows exactly in content (allowing for row order when
+      order is not implied by the question). Different but logically equivalent formulations
+      that select the same rows count as correct.
+    fail_when: >
+      The rows differ from gold's in any way that a row-set diff would catch: missing rows,
+      extra rows, or rows with different column values.
+
+  - id: correct_filter_conditions
+    weight: 4
+    question: >
+      Do the WHERE/HAVING/JOIN-ON conditions select exactly the rows the question describes --
+      no broader, no narrower?
+    pass_when: >
+      The predicate logic is equivalent to gold's even if written differently: IN (a, b) versus
+      OR chains, BETWEEN versus >= AND <=, an equivalent join condition, or extra redundant
+      parentheses.
+    fail_when: >
+      A condition is missing, inverted, uses the wrong comparison operator, filters on the
+      wrong column, or a JOIN silently drops or duplicates rows relative to what the question
+      requires (e.g. an INNER JOIN where an OUTER JOIN is needed to keep unmatched rows the
+      question asks for).
+
+  - id: correct_columns_and_aggregation
+    weight: 2
+    question: >
+      Does the query select exactly the columns the question asks for (no missing, no
+      unrequested extras that change the shape of the answer), with any aggregation (COUNT,
+      SUM, AVG, GROUP BY, DISTINCT) applied correctly?
+    pass_when: >
+      The selected columns match what the question asks for, aliases and column order aside,
+      and any grouping/aggregation/DISTINCT matches the cardinality and values gold's does.
+    fail_when: >
+      A requested column is missing, an aggregation function is wrong or missing where the
+      question requires one, GROUP BY is missing or on the wrong column, or a missing DISTINCT
+      lets duplicate rows through that change the result set.
+
+  - id: ordering_and_limit_when_implied
+    weight: 2
+    question: >
+      When the question implies an ordering or a top-N/bottom-N ("the highest", "the first
+      three", "most recent"), does the query ORDER BY the right column in the right direction
+      with a matching LIMIT?
+    pass_when: >
+      The question does not imply an ordering, or it does and the query orders and limits
+      correctly. A tie-break the question does not specify is not penalised.
+    fail_when: >
+      The question implies an ordering or a top-N and the query omits ORDER BY, orders on the
+      wrong column, orders in the wrong direction, or has a missing/wrong LIMIT.
+
+  - id: executes_without_error
+    weight: 1
+    question: >
+      Is the query syntactically valid SQL that would execute against the given schema without
+      a syntax or reference error?
+    pass_when: >
+      The query parses and every referenced table and column exists in the schema.
+    fail_when: >
+      The query has a syntax error, references a table or column not in the schema, or would
+      raise at execution time (e.g. type mismatch in a comparison).
+
+boundary_examples:
+  - situation: >
+      The candidate joins the two tables in the opposite order from gold and uses different
+      table aliases, but returns identical rows.
+    verdict: pass
+    why: >
+      Join order and aliasing do not affect the result set on an equi-join; the execution
+      oracle only compares rows.
+  - situation: >
+      The question asks "which customers are in California or Nevada" and the candidate
+      writes `WHERE state IN ('CA','NV')` where gold uses `WHERE state = 'CA' OR state = 'NV'`.
+    verdict: pass
+    why: >
+      IN and an equivalent OR chain select the same rows; this is exactly the kind of
+      textual difference the oracle ignores.
+  - situation: >
+      The question asks for "the total revenue per region" and the candidate omits GROUP BY,
+      returning one row with the grand total across all regions.
+    verdict: fail
+    why: >
+      The result set has the wrong cardinality and wrong values per row; this is a genuine
+      aggregation error the execution oracle catches.
+  - situation: >
+      The question asks for "the 3 most recent orders" and the candidate selects all matching
+      orders with no ORDER BY or LIMIT.
+    verdict: fail
+    why: >
+      The question implies a specific ordering and a top-N; returning all rows unordered
+      returns a different result set than gold's three rows in the right order.
+  - situation: >
+      The candidate selects the same rows as gold but lists an extra column the question never
+      asked for.
+    verdict: fail
+    why: >
+      An extra column changes the shape of the result set that execution returns, which no
+      longer matches gold's columns.
+  - situation: >
+      The candidate query is formatted in all lowercase with no line breaks, while gold is
+      formatted with uppercase keywords and indentation, and both return identical rows.
+    verdict: pass
+    why: Formatting and keyword casing have no bearing on the executed result set.

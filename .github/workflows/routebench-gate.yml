@@ -1,13 +1,120 @@
-name: RouteBench offline eval gate
+# Deterministic gate: no Docker, no provider key, no network. Everything here runs on the
+# committed artifacts and fixtures.
+#
+# The previous version ran `python routebench/evalops/calibrate.py`, which read the synthetic
+# self-agreement fixture and printed kappa 1.0. So CI's judge check was passing on a file whose
+# human and judge columns were written from the same variable. It now validates the frozen
+# calibration artifact instead, and asserts the negative cases too -- a gate that has never been
+# seen to reject anything is not known to be a gate.
+name: RouteBench eval gate
+
 on:
   pull_request:
-    paths: ["routebench/**", "packages/core/**"]
+    paths:
+      - "routebench/**"
+      - "packages/core/**"
+      - ".github/workflows/routebench-gate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  offline:
+  deterministic:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # No provider access in CI. Any test that needs a model must be skipped, not silently
+      # exercised against a live endpoint.
+      AISYS_OPENAI_API_KEY: ""
+      AISYS_DATABASE_URL: "sqlite:///.local/aisys.db"
+      AISYS_CACHE_BACKEND: "memory"
+      PYTHONPATH: "routebench"
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
-      - run: uv sync
-      - run: uv run pytest routebench/tests -q
-      - run: uv run python routebench/evalops/calibrate.py
+
+      - name: Install locked workspace
+        run: uv sync --frozen
+
+      - name: Unit and integration tests
+        run: uv run pytest packages/core/tests routebench/tests -q --basetemp .local/pytest-ci
+
+      - name: Rubrics load and every rubric has a critical criterion
+        run: |
+          uv run python -c "
+          from evalops import rubrics
+          rs = rubrics.load_all()
+          assert len(rs) >= 6, rs
+          for name, r in rs.items():
+              crit = [c.id for c in r.criteria if c.critical]
+              assert len(crit) == 1, (name, crit)
+          print('rubric bundle', rubrics.bundle_hash())
+          "
+
+      - name: Split integrity — no group or content leak across splits
+        run: |
+          uv run python -c "
+          from evalops.dataset import Corpus
+          from evalops.splits import SplitPlan, verify
+          c = Corpus.load('routebench/evalops/data')
+          print(verify(c.cases, SplitPlan.load('routebench/evalops/data/splits.json')))
+          "
+
+      - name: Corpus carries no fixture-provenance labels
+        run: |
+          uv run python -c "
+          from evalops.dataset import Corpus, LabelProvenance
+          c = Corpus.load('routebench/evalops/data')
+          bad = [a.case_id for a in c.annotations if a.provenance is LabelProvenance.FIXTURE]
+          assert not bad, f'fixture labels in the corpus: {bad[:5]}'
+          print(c.label_summary())
+          "
+
+      - name: Validate the frozen calibration artifact
+        run: uv run python -m evalops.calibrate routebench/evalops/data/calibration_bundle.json
+
+      - name: Negative gate cases — the gate must actually reject
+        run: |
+          uv run python -c "
+          import json, pathlib, tempfile
+          from evalops.calibrate import validate_bundle
+          src = json.loads(pathlib.Path('routebench/evalops/data/calibration_bundle.json').read_text())
+          ok, _ = validate_bundle('routebench/evalops/data/calibration_bundle.json')
+          assert ok, 'the committed artifact should pass'
+          d = pathlib.Path(tempfile.mkdtemp())
+          def check(name, mutate):
+              payload = json.loads(json.dumps(src)); mutate(payload)
+              p = d / f'{name}.json'; p.write_text(json.dumps(payload))
+              ok, reasons = validate_bundle(p)
+              assert not ok, f'{name} should have been rejected'
+              print(f'  rejected {name}: {reasons[0][:90]}')
+          check('unmeasured', lambda p: p.update(test_result=None))
+          check('rubric_drift', lambda p: p.update(rubric_bundle_hash='stale000'))
+          def below(p):
+              for t in p['test_result']['tracks'].values():
+                  t['kappa'] = 0.10
+          check('kappa_below_policy', below)
+          def undef(p):
+              for t in p['test_result']['tracks'].values():
+                  t['kappa'] = None; t['defined'] = False
+          check('kappa_undefined', undef)
+          def incomplete(p):
+              p['test_result']['completion'] = {'paired': 10, 'unjudged': 90, 'completion_rate': 0.10, 'judge_errors': {}}
+          check('incomplete_coverage', incomplete)
+          print('all negative cases rejected')
+          "
+
+      - name: Print the measured matrix
+        run: uv run python -m evalops.bench
+
+      - name: Preserve calibration artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: routebench-calibration
+          path: |
+            routebench/evalops/data/calibration_bundle.json
+            routebench/evalops/data/calibration_report.json
+            routebench/evalops/data/dev_experiments.json
+          if-no-files-found: warn

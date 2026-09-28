@@ -4,3 +4,13 @@ gpt-4o:             {input_per_1m: 2.50,  output_per_1m: 10.00}
 claude-sonnet-4-6:  {input_per_1m: 3.00,  output_per_1m: 15.00}
 claude-haiku-4-5:   {input_per_1m: 0.80,  output_per_1m: 4.00}
 vllm/local-8b:      {input_per_1m: 0.02,  output_per_1m: 0.02}   # amortized GPU cost; document your assumption
+# Added 2026-09-27 for judge calibration. Rates are USD per 1M tokens as published on the
+# provider's pricing page at that date; re-verify before quoting a cost figure externally.
+# An unpriced model is refused up front by evalops/experiments.py::require_priced rather than
+# being recorded as free, so this table is load-bearing for the spend cap.
+gpt-4.1:            {input_per_1m: 2.00,  output_per_1m: 8.00}
+gpt-4.1-mini:       {input_per_1m: 0.40,  output_per_1m: 1.60}
+gpt-4.1-nano:       {input_per_1m: 0.10,  output_per_1m: 0.40}
+gpt-5:              {input_per_1m: 1.25,  output_per_1m: 10.00}
+gpt-5-mini:         {input_per_1m: 0.25,  output_per_1m: 2.00}
+gpt-5-nano:         {input_per_1m: 0.05,  output_per_1m: 0.40}

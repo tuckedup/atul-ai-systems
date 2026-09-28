@@ -1,0 +1,134 @@
+id: extract
+version: "1.0.0"
+task_class: extract
+evidence_required: true
+
+source_notes: >
+  Structured-extraction rubric. The gold label comes from a semantic comparator that parses
+  the candidate JSON and compares it field-by-field against a gold object -- it does not diff
+  text. This rubric is written to predict that comparator: formatting, key order and
+  representation choices the comparator normalises away must be explicitly declared
+  irrelevant, or the judge will fail responses the oracle passes and destroy agreement.
+
+pass_definition: >
+  The candidate, parsed as JSON, is semantically equal to the gold object: every required
+  field is present with a value equal to gold after ordinary type coercion, and no field
+  carries an invented, non-null value. Key ordering, whitespace, indentation, trailing
+  commas-if-tolerant, and wrapping the JSON in a markdown code fence are all out of scope.
+  A response that is correct JSON wrapped in prose or a code fence is a PASS; a response with
+  the right shape but a wrong, missing or fabricated value is a FAIL.
+
+criteria:
+  - id: required_fields_correct
+    critical: true
+    weight: 1
+    question: >
+      Once the response is parsed as JSON, does every field required by the schema appear
+      with a value that is semantically equal to the gold value?
+    pass_when: >
+      Every required field is present and its value matches gold after type coercion: 3,
+      3.0 and "3" are the same value; "true" and true are the same value; a date written two
+      ways that names the same day is the same value. Extra whitespace inside a string that
+      does not change its meaning is fine.
+    fail_when: >
+      A required field is missing, null where gold has a value, or holds a value that differs
+      from gold in substance -- a different number, a different string, a different entity --
+      after coercion is applied.
+
+  - id: no_invented_fields
+    weight: 4
+    question: >
+      Does the response avoid adding fields the schema does not define with a non-null,
+      non-empty value?
+    pass_when: >
+      Every field in the output corresponds to a field in the target schema. A field the
+      schema defines that is legitimately absent from the source and set to null or omitted
+      per the schema's own rules is fine.
+    fail_when: >
+      The response includes an extra key with a real value that is not part of the schema --
+      a hallucinated attribute, a duplicate under a different name, or a field copied from a
+      different record.
+
+  - id: correct_nesting_and_types
+    weight: 2
+    question: >
+      Does the response place values in the correct nested structure and container type --
+      objects nested under the right parent key, arrays where the schema expects arrays, and
+      scalars where it expects scalars?
+    pass_when: >
+      The shape matches the schema: an array field is a JSON array (even if singleton), an
+      object field is a JSON object, and nested values sit under the correct parent rather
+      than flattened or misplaced.
+    fail_when: >
+      A value that belongs nested under a sub-object is flattened to the top level, a
+      single-item array is collapsed to a bare scalar where the schema requires an array, or a
+      value is attached to the wrong parent entity.
+
+  - id: valid_parseable_json
+    weight: 2
+    question: >
+      Does the response contain exactly one JSON object that a standard JSON parser accepts,
+      once any surrounding prose or markdown fence is stripped?
+    pass_when: >
+      Stripping leading/trailing prose and a ```json fence (if present) leaves a single valid
+      JSON document. Trailing prose after the object that does not affect extraction is fine.
+    fail_when: >
+      The response has no parseable JSON object, has multiple ambiguous candidate objects, or
+      the JSON is truncated or malformed (unterminated string, trailing comma the target
+      parser rejects, unmatched braces).
+
+  - id: no_wrong_values
+    weight: 1
+    question: >
+      Where a field is present and non-null, is its value drawn from the correct source
+      location rather than confused with a similar nearby value?
+    pass_when: >
+      Every populated field's value traces to the entity and location in the source that the
+      schema intends, even when the source contains several similar candidates.
+    fail_when: >
+      A value is correct in form but belongs to the wrong entity or field -- e.g. a second
+      phone number placed under the primary contact's field, or a total confused with a
+      subtotal.
+
+boundary_examples:
+  - situation: >
+      The response returns {"age": 3.0} where gold is {"age": 3}.
+    verdict: pass
+    why: >
+      The comparator coerces numeric types before comparing; 3 and 3.0 are the same value and
+      this is exactly the permissive rule the oracle applies.
+  - situation: >
+      The response wraps a fully correct JSON object in a ```json code fence with a sentence
+      of preamble before it.
+    verdict: pass
+    why: >
+      The harness extracts the JSON block before comparison; packaging is not part of the
+      grade.
+  - situation: >
+      The response is missing a required field that the source document never mentions, so
+      the field is legitimately null.
+    verdict: pass
+    why: >
+      If the schema allows null/absent for a field with no source value and gold reflects
+      that, the response matches gold's own null.
+  - situation: >
+      The response adds an extra top-level key "confidence": 0.92 that is not part of the
+      target schema.
+    verdict: fail
+    why: >
+      A non-null invented field is exactly what no_invented_fields exists to catch, even
+      though every schema-defined field is otherwise correct.
+  - situation: >
+      The response returns the correct phone number but places it under "secondary_contact"
+      instead of "primary_contact", where gold has it under "primary_contact".
+    verdict: fail
+    why: >
+      The comparator checks per-field, per-path equality; a correct value under the wrong key
+      does not match gold at that path.
+  - situation: >
+      Keys in the response object appear in a different order than the gold object, and dates
+      are formatted "2024-01-05" versus gold's "January 5, 2024" but name the same day.
+    verdict: pass
+    why: >
+      Key order is not semantic, and a same-day date in a different format is equal after the
+      comparator's normalisation.

@@ -7,6 +7,7 @@ that CI uses to block merges.
 from __future__ import annotations
 
 import json
+import math
 import re
 import subprocess
 from collections.abc import Callable
@@ -17,7 +18,6 @@ from typing import Any
 
 import yaml  # type: ignore[import-untyped]
 from pydantic import BaseModel, Field
-from sklearn.metrics import cohen_kappa_score  # type: ignore[import-untyped]
 
 from . import llm
 from .tracing import traced
@@ -151,11 +151,32 @@ class EvalSuite:
     cases: list[EvalCase] = field(default_factory=list)
 
     @classmethod
-    def load(cls, path: str | Path) -> EvalSuite:
-        cases = []
-        for f in sorted(Path(path).glob("**/*.y*ml")):
+    def load(cls, path: str | Path, *, strict: bool = True) -> EvalSuite:
+        """Load cases from a single YAML file or from a directory (recursively, sorted by path).
+
+        `path.glob("**/*.y*ml")` only ever matches when `path` is a directory - passing a single
+        suite file silently produced an empty suite. Accept both shapes explicitly instead.
+        """
+        p = Path(path)
+        if not p.exists():
+            raise FileNotFoundError(f"eval suite path does not exist: {p}")
+        files = [p] if p.is_file() else sorted(p.glob("**/*.y*ml"))
+        cases: list[EvalCase] = []
+        for f in files:
             data = yaml.safe_load(f.read_text())
             cases += [EvalCase(**d) for d in (data if isinstance(data, list) else [data])]
+        if not cases:
+            raise ValueError(f"eval suite at {p} loaded zero cases")
+        seen: dict[str, int] = {}
+        for c in cases:
+            seen[c.id] = seen.get(c.id, 0) + 1
+        dupes = sorted(k for k, n in seen.items() if n > 1)
+        if dupes:
+            raise ValueError(f"eval suite at {p} has duplicate case ids: {dupes}")
+        if strict:
+            unknown = sorted({c.grader for c in cases if c.grader not in GRADERS})
+            if unknown:
+                raise ValueError(f"eval suite at {p} references unknown grader(s): {unknown}")
         return cls(cases)
 
     def filter(self, tag: str) -> EvalSuite:
@@ -178,15 +199,82 @@ def run(suite: EvalSuite, fn: Callable[[EvalCase], dict[str, Any]], name: str = 
 
 
 # ---------------- judge calibration ----------------
-def calibrate(judge_scores: list[float], human_scores: list[float], threshold: float = 0.5) -> dict[str, Any]:
-    """Binarize at threshold and report Cohen's kappa + raw agreement. Require kappa >= 0.6 before trusting the judge."""
-    j = [int(s >= threshold) for s in judge_scores]
-    h = [int(s >= threshold) for s in human_scores]
-    kappa = float(cohen_kappa_score(h, j))
-    agreement = sum(a == b for a, b in zip(h, j)) / len(h)
-    confusion = {"tp": sum(a and b for a, b in zip(h, j)), "fp": sum((not a) and b for a, b in zip(h, j)),
-                 "fn": sum(a and (not b) for a, b in zip(h, j)), "tn": sum((not a) and (not b) for a, b in zip(h, j))}
-    return {"kappa": kappa, "agreement": agreement, "n": len(h), "confusion": confusion, "trusted": kappa >= 0.6}
+def calibrate(
+    judge_scores: list[float],
+    human_labels: list[int],
+    *,
+    judge_threshold: float = 0.5,
+    min_kappa: float = 0.6,
+) -> dict[str, Any]:
+    """Report judge/human agreement as Cohen's kappa, computed in closed form from the 2x2 table.
+
+    `human_labels` is the ground truth and must already be binary (0/1, bools accepted) - it is never
+    thresholded. Binarizing the human label with the same knob used to tune the judge would let tuning
+    `judge_threshold` silently redefine what "correct" means, which is exactly the bug this replaces.
+    `judge_scores` are continuous scores in [0, 1]; only they are binarized, by `judge_threshold`.
+
+    kappa is computed directly from the confusion counts instead of via `sklearn.metrics.cohen_kappa_score`
+    so the undefined case (expected agreement `pe == 1`, e.g. every label is the same class) is
+    representable as `kappa=None, defined=False` rather than silently returned as NaN - `nan >= min_kappa`
+    is False, so an undefined kappa used to pass any "reject below min_kappa" gate that only checked
+    `kappa < min_kappa`. Here `trusted` fails closed instead.
+
+    Raises `ValueError` on malformed input (mismatched lengths, empty input, a non-finite or
+    out-of-range judge score, or a human label that isn't 0/1/bool); it never returns a score for
+    malformed input.
+    """
+    if len(judge_scores) != len(human_labels):
+        raise ValueError(
+            f"judge_scores and human_labels must be the same length: {len(judge_scores)} != {len(human_labels)}"
+        )
+    if not judge_scores:
+        raise ValueError("calibrate() requires at least one (judge_score, human_label) pair")
+    for s in judge_scores:
+        if not isinstance(s, (int, float)) or isinstance(s, bool) or not math.isfinite(s) or not (0.0 <= s <= 1.0):
+            raise ValueError(f"judge score {s!r} must be a finite number in [0, 1]")
+
+    h: list[int] = []
+    for label in human_labels:
+        if isinstance(label, bool):
+            h.append(int(label))
+        elif isinstance(label, int) and label in (0, 1):
+            h.append(label)
+        elif isinstance(label, float) and label in (0.0, 1.0):
+            h.append(int(label))
+        else:
+            raise ValueError(f"human label {label!r} must be binary (0, 1, or a bool)")
+
+    j = [int(s >= judge_threshold) for s in judge_scores]
+    n = len(h)
+    tp = sum(a == 1 and b == 1 for a, b in zip(h, j))
+    tn = sum(a == 0 and b == 0 for a, b in zip(h, j))
+    fp = sum(a == 0 and b == 1 for a, b in zip(h, j))
+    fn = sum(a == 1 and b == 0 for a, b in zip(h, j))
+    confusion = {"tp": tp, "fp": fp, "fn": fn, "tn": tn}
+
+    po = (tp + tn) / n  # observed agreement
+    jp = (tp + fp) / n  # judge positive rate
+    hp = (tp + fn) / n  # human positive rate (prevalence of the human label)
+    pe = jp * hp + (1 - jp) * (1 - hp)  # expected agreement by chance
+
+    defined = abs(pe - 1.0) > 1e-12
+    kappa: float | None = (po - pe) / (1 - pe) if defined else None
+    reason = "" if defined else "expected agreement is 1.0 (judge and/or human labels are single-class); kappa is undefined"
+
+    return {
+        "kappa": kappa,
+        "defined": defined,
+        "agreement": po,
+        "expected_agreement": pe,
+        "n": n,
+        "confusion": confusion,
+        "human_prevalence": hp,
+        "judge_prevalence": jp,
+        "judge_threshold": judge_threshold,
+        "min_kappa": min_kappa,
+        "trusted": defined and kappa is not None and kappa >= min_kappa,
+        "reason": reason,
+    }
 
 
 # ---------------- regression gate ----------------

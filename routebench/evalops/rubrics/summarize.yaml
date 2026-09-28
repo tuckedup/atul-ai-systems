@@ -1,0 +1,106 @@
+id: summarize
+version: "1.0.0"
+task_class: summarize
+evidence_required: true
+
+source_notes: >
+  Groundedness rubric. Criteria are phrased to match the annotation question used by the
+  AggreFact / TofuEval family of expert-annotated factual-consistency sets: "is every claim
+  in this response supported by the source document?" Judgement is about SUPPORT, not about
+  whether the claim is true in the world, and not about style, fluency or coverage. Keeping
+  the rubric aligned with the annotation question the humans actually answered is the single
+  largest lever on judge-human agreement.
+
+pass_definition: >
+  Every factual assertion in the response is stated in the source document or follows from it
+  by direct entailment. A response that is well written but adds a detail the document does
+  not support is a FAIL. A response that is terse, awkward or omits information is a PASS so
+  long as what it does say is supported. Do not reward or penalise length, tone or ordering.
+
+criteria:
+  - id: no_contradiction
+    critical: true
+    weight: 1
+    question: >
+      Does the response avoid asserting anything that the source document contradicts?
+    pass_when: >
+      Nothing in the response conflicts with the document. If the document is silent on a
+      point, that is not a contradiction -- judge it under claims_entailed instead.
+    fail_when: >
+      The response states a fact whose opposite is stated in the document: a reversed
+      direction, a swapped actor, a negated outcome, or a different value for the same
+      quantity.
+
+  - id: claims_entailed
+    weight: 4
+    question: >
+      Is every factual assertion in the response stated in the document or directly entailed
+      by it?
+    pass_when: >
+      Each assertion can be traced to specific document text. Ordinary paraphrase, pronoun
+      resolution and combining two adjacent sentences all count as entailed.
+    fail_when: >
+      Any assertion requires information the document does not contain -- including plausible
+      world knowledge, an inference that needs an unstated premise, or a generalisation
+      stronger than the document supports ("some" becoming "all", "considered" becoming
+      "decided").
+
+  - id: specifics_grounded
+    weight: 2
+    question: >
+      Are all specific values -- numbers, dates, proper names, quantities, titles, locations
+      -- traceable to the document?
+    pass_when: >
+      Every specific appears in the document, or is an exact arithmetic consequence of values
+      that do (a total of figures the document lists).
+    fail_when: >
+      A number, name or date appears that the document does not contain, or a value from the
+      document is altered, rounded in a way that changes meaning, or attached to the wrong
+      entity.
+
+  - id: no_invented_relations
+    weight: 1
+    question: >
+      Does the response avoid inventing causal, temporal or attributive links the document
+      does not state?
+    pass_when: >
+      Any "because", "after", "in order to", "according to X" relationship is present in the
+      document.
+    fail_when: >
+      Two facts the document merely lists are joined into a cause, a sequence, or an
+      attribution to a speaker or source that the document does not make.
+
+boundary_examples:
+  - situation: >
+      The response is an accurate paraphrase but much shorter than the document, omitting
+      most of its content.
+    verdict: pass
+    why: >
+      Groundedness asks whether what is said is supported, not whether everything was
+      covered. Omission is not a factual error.
+  - situation: >
+      The response states a fact that is true in the real world but is not in the document.
+    verdict: fail
+    why: >
+      Support comes from the document only. External truth is not evidence of grounding, and
+      the human annotators were asked the same question.
+  - situation: >
+      The response says "the company will expand" where the document says the company "is
+      considering expanding".
+    verdict: fail
+    why: >
+      Removing the hedge makes a stronger claim than the document supports. This modal
+      strengthening is one of the most common real annotation disagreements, so it is pinned
+      here deliberately.
+  - situation: >
+      The response contains a grammatical error or an awkward sentence, but every claim is
+      supported.
+    verdict: pass
+    why: Fluency is not part of this rubric.
+  - situation: >
+      The response correctly reports a number but attributes it to the wrong one of two
+      entities the document discusses.
+    verdict: fail
+    why: >
+      The value is grounded but the relation is not; this fails specifics_grounded because
+      the value is attached to the wrong entity.
