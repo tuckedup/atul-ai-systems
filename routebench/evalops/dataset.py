@@ -146,6 +146,17 @@ class Judgment(BaseModel):
     evidence: list[str] = Field(default_factory=list)
     critical_errors: list[str] = Field(default_factory=list)
     rationale: str = ""
+    #: Where the judge's cited quotes were actually found, as
+    #: `{total, in_source, in_candidate, unlocated, too_short}`. Computed by
+    #: `judge.locate_evidence` and persisted here so it can be reported and used as a calibrator
+    #: feature. It used to be computed and then dropped on the floor: `ParsedJudgment` carried
+    #: `evidence_verbatim`/`evidence_total`, `judge_one` never copied them across, and the comment
+    #: claiming "the ratio is reported so the experiment table can show whether it tracks kappa"
+    #: described something no code did.
+    evidence_location: dict[str, int] = Field(default_factory=dict)
+    #: Facts the judge called supported while citing a span that is not in the source material.
+    #: Only meaningful for decompose-mode judgments.
+    support_unverified: int = 0
     #: "ok" | "parse_error" | "provider_error" | "invalid_output" | "refused"
     status: str = "ok"
     error: str | None = None

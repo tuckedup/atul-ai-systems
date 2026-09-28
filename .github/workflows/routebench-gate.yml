@@ -71,6 +71,20 @@ jobs:
           print(c.label_summary())
           "
 
+      - name: Experiment record is reproducible from this tree
+        # Diagnostic, not blocking. `config_hash` covers the prompt scaffolding, so editing a
+        # template after a dev run renames every judge in the record: the cached judgments stop
+        # being findable and `freeze` fails with "0 paired items" while blaming the dev set. This
+        # step names the drift instead. It is non-blocking because an unreproducible record is a
+        # reason to re-judge, and the artifact validation below already fails the build.
+        continue-on-error: true
+        run: uv run python -m evalops.run_calibration verify
+
+      - name: Combiner probe runs on the committed cache (no provider calls)
+        run: |
+          uv run python -m evalops.probe_combiners \
+            --out .local/combiner_probe.json --markdown .local/COMBINER_PROBE.md
+
       - name: Validate the frozen calibration artifact
         run: uv run python -m evalops.calibrate routebench/evalops/data/calibration_bundle.json
 
@@ -91,6 +105,12 @@ jobs:
               print(f'  rejected {name}: {reasons[0][:90]}')
           check('unmeasured', lambda p: p.update(test_result=None))
           check('rubric_drift', lambda p: p.update(rubric_bundle_hash='stale000'))
+          # bundle_id is a hash over the identity fields. Before the gate recomputed it, every one
+          # of these hand-edits passed: the id was ornamental.
+          check('threshold_edited', lambda p: p.update(threshold=0.05))
+          check('variant_swapped', lambda p: p.update(variant_id='some-other-judge'))
+          check('dataset_hash_edited', lambda p: p.update(dataset_hash='an-easier-corpus'))
+          check('judge_config_edited', lambda p: p.update(judge_config={'model': 'swapped'}))
           def below(p):
               for t in p['test_result']['tracks'].values():
                   t['kappa'] = 0.10
@@ -102,6 +122,14 @@ jobs:
           def incomplete(p):
               p['test_result']['completion'] = {'paired': 10, 'unjudged': 90, 'completion_rate': 0.10, 'judge_errors': {}}
           check('incomplete_coverage', incomplete)
+          # The corpus binding: an artifact whose kappa was measured on different data must not
+          # back a routing decision, even though its rubric hash still matches.
+          ok, reasons = validate_bundle(
+              'routebench/evalops/data/calibration_bundle.json',
+              expected_dataset_hash='a-different-corpus',
+          )
+          assert not ok and any('dataset hash mismatch' in r for r in reasons), reasons
+          print('  rejected dataset binding mismatch')
           print('all negative cases rejected')
           "
 
@@ -117,4 +145,6 @@ jobs:
             routebench/evalops/data/calibration_bundle.json
             routebench/evalops/data/calibration_report.json
             routebench/evalops/data/dev_experiments.json
+            routebench/evalops/data/combiner_probe.json
+            routebench/evalops/data/COMBINER_PROBE.md
           if-no-files-found: warn

@@ -64,6 +64,17 @@ class Paired:
     groups: list[str]
     tasks: list[str]
     provenance: list[str]
+    #: Which split these items came from ("train" / "dev" / "test"), or "" when the caller did
+    #: not say. The module docstring claimed the dev -> freeze -> test ordering was "enforced by
+    #: the CLI, not by documentation", but nothing in `select_threshold` or `evaluate` could see
+    #: which split it had been handed -- so the ordering was enforced by neither. Carrying the
+    #: split here lets both functions refuse the wrong one by themselves.
+    split: str = ""
+    #: `(variant_id, config_hash) -> count` over the judgments that produced `judge_scores`.
+    #: `evaluate` checks this against the frozen bundle. Without it, scoring a frozen bundle with
+    #: some *other* judge's scores -- or with two variants' scores mixed together -- was
+    #: undetectable, because `Paired` kept no record of where its numbers came from.
+    judges: dict[tuple[str, str], int] = field(default_factory=dict)
     #: Cases that had a label but no usable judgment, kept so completion can be reported.
     unjudged: list[str] = field(default_factory=list)
     #: Provenance of each entry in `unjudged`, parallel by index. Added so a `restrict()`ed
@@ -88,6 +99,8 @@ class Paired:
             groups=[self.groups[i] for i in keep],
             tasks=[self.tasks[i] for i in keep],
             provenance=[self.provenance[i] for i in keep],
+            split=self.split,
+            judges=dict(self.judges),
             unjudged=[self.unjudged[i] for i in keep_u],
             unjudged_provenance=[self.unjudged_provenance[i] for i in keep_u],
             errors=dict(self.errors),
@@ -103,6 +116,8 @@ def pair(
     cases: Sequence[CaseRecord],
     labels: dict[str, Annotation],
     judgments: Sequence[Judgment],
+    *,
+    split: str = "",
 ) -> Paired:
     """Join judgments to labels by case_id. This is the ONLY place the two meet.
 
@@ -118,7 +133,7 @@ def pair(
         else:
             errors[j.status] = errors.get(j.status, 0) + 1
 
-    out = Paired([], [], [], [], [], [])
+    out = Paired([], [], [], [], [], [], split=split)
     for case_id, annotation in sorted(labels.items()):
         case = by_case.get(case_id)
         if case is None:
@@ -139,6 +154,8 @@ def pair(
         out.groups.append(case.group_id)
         out.tasks.append(case.task_class)
         out.provenance.append(annotation.provenance.value)
+        key = (judged.variant_id, judged.config_hash)
+        out.judges[key] = out.judges.get(key, 0) + 1
     out.errors = errors
     return out
 
@@ -159,7 +176,18 @@ class ThresholdChoice:
 
 
 def select_threshold(dev: Paired, *, grid: Sequence[float] = THRESHOLD_GRID) -> ThresholdChoice:
-    """Pick the judge threshold that maximises kappa on DEV. Never call this with test data."""
+    """Pick the judge threshold that maximises kappa on DEV. Never call this with test data.
+
+    "Never call this with test data" used to be a sentence in a docstring. It is now a check: a
+    `Paired` tagged `split="test"` is refused here, so the one thing the whole dev -> freeze ->
+    test protocol exists to prevent cannot be done by calling this function directly.
+    """
+    if dev.split == "test":
+        raise CalibrationError(
+            "select_threshold was handed the TEST split. Selecting a threshold against held-out "
+            "data is the exact failure the freeze protocol exists to prevent: the number it "
+            "produces is a fit, not a measurement. Select on dev, freeze, then measure once."
+        )
     if len(dev) < 30:
         raise CalibrationError(
             f"threshold selection needs a usable dev set; got {len(dev)} paired items. "
@@ -230,6 +258,43 @@ class CalibrationBundle:
         return self.test_result is not None
 
 
+def identity_hash(
+    *,
+    variant_id: str,
+    threshold: float,
+    judge_config: dict[str, Any],
+    rubric_bundle_hash: str,
+    dataset_hash: str,
+    split_seed: int,
+) -> str:
+    """Hash the fields that define a bundle's identity. The one place `bundle_id` is computed.
+
+    Factored out so the identity can be RE-derived from a bundle on disk. Before this, `freeze`
+    computed `bundle_id` inline and nothing ever recomputed it, which made the id decorative:
+    editing `threshold` or `judge_config` in `calibration_bundle.json` by hand left a stale id
+    that no check compared against anything, and the artifact passed the release gate describing
+    a judge and a cutoff that were never measured.
+    """
+    from .dataset import content_hash
+
+    return content_hash({
+        "variant": variant_id, "threshold": threshold, "config": judge_config,
+        "rubrics": rubric_bundle_hash, "dataset": dataset_hash, "seed": split_seed,
+    })
+
+
+def expected_bundle_id(bundle: CalibrationBundle) -> str:
+    """Recompute what `bundle.bundle_id` must be, from the bundle's own recorded fields."""
+    return identity_hash(
+        variant_id=bundle.variant_id,
+        threshold=bundle.threshold,
+        judge_config=bundle.judge_config,
+        rubric_bundle_hash=bundle.rubric_bundle_hash,
+        dataset_hash=bundle.dataset_hash,
+        split_seed=bundle.split_seed,
+    )
+
+
 def freeze(
     choice: ThresholdChoice,
     *,
@@ -244,14 +309,11 @@ def freeze(
     counts: dict[str, int] = {}
     for p in dev.provenance:
         counts[p] = counts.get(p, 0) + 1
-    payload = {
-        "variant": variant_id, "threshold": choice.threshold, "config": judge_config,
-        "rubrics": bundle_hash(), "dataset": dataset_hash, "seed": split_seed,
-    }
-    from .dataset import content_hash
-
     return CalibrationBundle(
-        bundle_id=content_hash(payload),
+        bundle_id=identity_hash(
+            variant_id=variant_id, threshold=choice.threshold, judge_config=judge_config,
+            rubric_bundle_hash=bundle_hash(), dataset_hash=dataset_hash, split_seed=split_seed,
+        ),
         created_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         variant_id=variant_id,
         judge_config=judge_config,
@@ -284,9 +346,42 @@ def evaluate(
     *,
     bootstrap: int = 2000,
 ) -> dict[str, Any]:
-    """Score the frozen bundle on the held-out split. Reports every track separately."""
+    """Score the frozen bundle on the held-out split. Reports every track separately.
+
+    Three things are checked before anything is measured, because `evaluate` previously took the
+    bundle's threshold on trust and the `Paired` on faith:
+
+    *   the items came from the test split, not from dev (which would report a fitted number as a
+        held-out one);
+    *   every judgment came from the variant the bundle names, so the measurement describes the
+        judge that was frozen;
+    *   that variant's `config_hash` matches the bundle's, so a rubric or prompt edit after the
+        freeze cannot be measured as if it were the frozen judge.
+    """
     if not test.case_ids:
         raise CalibrationError("test split has no paired items; nothing to measure")
+    if test.split and test.split != "test":
+        raise CalibrationError(
+            f"evaluate() was handed the {test.split!r} split. A frozen bundle is measured on the "
+            "held-out split; scoring it on dev reports the data the threshold was fitted to and "
+            "would overstate agreement."
+        )
+    if test.judges:
+        wrong = sorted(v for (v, _) in test.judges if v != bundle.variant_id)
+        if wrong:
+            raise CalibrationError(
+                f"bundle {bundle.variant_id!r} is being measured with judgments from "
+                f"{wrong}. The reported kappa would describe a judge the bundle does not name."
+            )
+        frozen_hash = str(bundle.judge_config.get("config_hash", ""))
+        if frozen_hash:
+            drifted = sorted(h for (_, h) in test.judges if h and h != frozen_hash)
+            if drifted:
+                raise CalibrationError(
+                    f"judgments carry config_hash {drifted}, but the frozen bundle records "
+                    f"{frozen_hash!r}. Something the judge depends on changed after the freeze, "
+                    "so these judgments are not the frozen judge's output."
+                )
 
     def track(p: Paired, name: str) -> dict[str, Any] | None:
         #: How many labelled test items existed for this track (judged-and-paired plus
@@ -359,6 +454,7 @@ def validate_bundle(
     min_kappa: float = ROUTEBENCH_MIN_KAPPA,
     require_headline: bool = True,
     min_completion: float = 1.0,
+    expected_dataset_hash: str | None = None,
 ) -> tuple[bool, list[str]]:
     """Decide whether a calibration artifact may back a routing/promotion decision.
 
@@ -386,8 +482,30 @@ def validate_bundle(
     except Exception as e:  # noqa: BLE001 - a corrupt artifact must block, not crash the gate
         return False, [f"calibration artifact is unreadable: {type(e).__name__}: {e}"]
 
+    # Internal integrity first. `bundle_id` is a hash over the variant, threshold, judge config,
+    # rubric hash, dataset hash and split seed, so recomputing it detects any post-freeze edit to
+    # those fields -- which is what makes the id load-bearing rather than ornamental.
+    try:
+        recomputed = expected_bundle_id(b)
+    except Exception as e:  # noqa: BLE001 - an unhashable config is a rejection, not a crash
+        reasons.append(f"cannot recompute bundle_id: {type(e).__name__}: {e}")
+    else:
+        if b.bundle_id != recomputed:
+            reasons.append(
+                f"bundle_id mismatch: artifact says {b.bundle_id!r}, its own recorded fields hash "
+                f"to {recomputed!r}. The variant, threshold, judge config, rubric hash, dataset "
+                "hash or split seed was changed after the freeze; the measurement in this file "
+                "does not describe the configuration it now claims."
+            )
+
     if not b.frozen:
         reasons.append("artifact has no test_result: the bundle was never measured on held-out data")
+    if expected_dataset_hash is not None and b.dataset_hash != expected_dataset_hash:
+        reasons.append(
+            f"dataset hash mismatch: artifact {b.dataset_hash}, corpus {expected_dataset_hash}. "
+            "The corpus changed since calibration, so this kappa was measured on different data "
+            "than the judge is now being trusted for."
+        )
     if b.rubric_bundle_hash != bundle_hash():
         reasons.append(
             f"rubric hash mismatch: artifact {b.rubric_bundle_hash}, working tree {bundle_hash()}. "
@@ -507,15 +625,44 @@ def validate_bundle(
     return (not reasons), reasons
 
 
+def corpus_dataset_hash(data_dir: str | Path) -> str | None:
+    """The dataset hash of the corpus on disk, or None if it cannot be loaded.
+
+    Used by the CLI so `calibrate-check` (which is what CI runs) binds the artifact to the corpus
+    in the tree, not just to the rubrics. Returns None rather than raising: validating an artifact
+    on a machine without the corpus is a legitimate thing to do, and is reported as unverified
+    rather than as a rejection.
+    """
+    try:
+        from .dataset import Corpus, content_hash
+
+        corpus = Corpus.load(data_dir)
+        if not corpus.cases:
+            return None
+        return content_hash(sorted(c.fingerprint for c in corpus.cases))
+    except Exception:  # noqa: BLE001 - absence of a corpus is not a gate failure
+        return None
+
+
 def _cli() -> int:
     ap = argparse.ArgumentParser(description="Validate a RouteBench calibration artifact.")
     ap.add_argument("artifact", nargs="?", default="routebench/evalops/data/calibration_bundle.json")
     ap.add_argument("--min-kappa", type=float, default=ROUTEBENCH_MIN_KAPPA)
     ap.add_argument("--allow-oracle-track", action="store_true",
                     help="accept the gold-oracle track instead of requiring human judgments")
+    ap.add_argument("--no-dataset-check", action="store_true",
+                    help="skip binding the artifact to the corpus on disk (for validating an "
+                         "artifact on a machine that does not carry the corpus)")
     args = ap.parse_args()
+    expected = None
+    if not args.no_dataset_check:
+        expected = corpus_dataset_hash(Path(args.artifact).parent)
+        if expected is None:
+            print("note: no corpus found beside the artifact; dataset binding NOT verified",
+                  file=sys.stderr)
     ok, reasons = validate_bundle(
-        args.artifact, min_kappa=args.min_kappa, require_headline=not args.allow_oracle_track
+        args.artifact, min_kappa=args.min_kappa, require_headline=not args.allow_oracle_track,
+        expected_dataset_hash=expected,
     )
     if ok:
         b = CalibrationBundle.load(args.artifact)

@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pytest
 from aisys.audit import AuditLog
-from evalops.calibrate import validate_bundle
+from evalops.calibrate import identity_hash, validate_bundle
 from evalops.promote import promote
 from evalops.rubrics import bundle_hash
 
@@ -28,16 +28,21 @@ FIXTURE_LABELS = Path(__file__).parent.parent / "evalops" / "fixtures" / "synthe
 
 def _bundle(**overrides: object) -> dict[str, object]:
     """A minimal well-formed passing artifact, so each test can break exactly one field."""
+    # Derived, not literal: the gate recomputes `bundle_id` from these fields.
+    identity = dict(
+        variant_id="v-test", threshold=0.5, judge_config={"model": "gpt-4.1-mini"},
+        rubric_bundle_hash=bundle_hash(), dataset_hash="abc123", split_seed=20260927,
+    )
     base: dict[str, object] = {
-        "bundle_id": "test-bundle",
+        "bundle_id": identity_hash(**identity),  # type: ignore[arg-type]
         "created_at": "2026-09-27T00:00:00+00:00",
-        "variant_id": "v-test",
-        "judge_config": {"model": "gpt-4.1-mini"},
-        "threshold": 0.5,
+        "variant_id": identity["variant_id"],
+        "judge_config": identity["judge_config"],
+        "threshold": identity["threshold"],
         "min_kappa": 0.74,
-        "rubric_bundle_hash": bundle_hash(),
-        "dataset_hash": "abc123",
-        "split_seed": 20260927,
+        "rubric_bundle_hash": identity["rubric_bundle_hash"],
+        "dataset_hash": identity["dataset_hash"],
+        "split_seed": identity["split_seed"],
         "dev_kappa": 0.80,
         "dev_n": 400,
         "selection_rule": "argmax dev kappa",

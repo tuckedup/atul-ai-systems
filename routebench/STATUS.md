@@ -31,6 +31,35 @@
     `evalops/online.py` are implemented and tested but have not been run against three live
     backends, so no per-backend quality matrix is published. `make bench` prints `not measured`
     for those cells rather than a placeholder.
+- [~] M5 second round (2026-09-28) — defects fixed and the combiner question answered; the
+      measurement itself is BLOCKED for want of a provider key. κ ≥ 0.74 is NOT achieved and the
+      test split has NOT been touched. Detail:
+  - **The recorded dev experiment is not reproducible from this tree.** All 8 variants in
+    `evalops/data/dev_experiments.json` fail `make calibrate-verify`. Every stored `JudgeConfig`
+    field round-trips exactly, so the drift is in one of the two `config_hash` inputs the record
+    does not store — and `exemplars_hash` is the constant empty-path value for the variants that
+    use no exemplars, which leaves the prompt scaffolding in `judge.py`. The 2,968 cached
+    judgments were produced by prompts that are no longer in the repository, so the κ values in
+    that file describe judges that cannot be rebuilt.
+  - The concrete consequence, reproduced before the fix: `make calibrate-freeze` failed with
+    `threshold selection needs a usable dev set; got 0 paired items` while 2,968 usable judgments
+    sat in the cache. `cmd_freeze` keyed the cache off `GRID`'s reconstructed `config_hash`, so
+    every lookup missed and the error blamed the dev set. Freeze now rebuilds the judge from the
+    experiment record (the rule `cmd_test` already applied to a frozen bundle) and refuses with a
+    message that names the drift. `make calibrate-verify` answers the question without attempting
+    a freeze.
+  - Four further defects fixed, each with regression tests — see `docs/KAPPA_DESIGN.md` §10.
+  - The combiner question is **answered, negatively**, on the cached dev judgments at zero cost
+    (`make probe-combiners`, `evalops/data/COMBINER_PROBE.md`): no ensemble or learned combiner
+    beat the strongest single judge on either track backing the headline claim (margin +0.0000
+    pooled and on groundedness). Only the separately-reported gold-oracle track gained anything
+    (+0.0278). Joint coverage of the eight components is 229/371 dev cases (61.7%), far below the
+    ≥98% the release gate requires.
+  - Still outstanding, and blocked rather than unfinished: re-judging the dev split under the
+    current prompts, judging the TRAIN split at all (the cache holds zero train judgments, so no
+    combiner can be fitted under the protocol), and running the v8–v16 variants. All of these need
+    a provider key; this environment has none.
+
 - [x] M6 eval-driven promotion — regression injection automatically rolls back and writes a verified audit event; CI offline gate committed
 
 Phoenix verification: yes. Phoenix GraphQL reported five live spans in the `default` project, including successful `router.route` and `llm.chat` gateway spans at 2026-09-13 13:58:55 UTC. The Windows UI automation helper could not initialize (`failed to write kernel assets`), so trace presence was confirmed against Phoenix's live API rather than by an automated visual inspection.

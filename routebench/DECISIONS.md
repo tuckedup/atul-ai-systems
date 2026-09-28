@@ -63,3 +63,76 @@
   dev run is in flight would silently invalidate that run's cache, so it is left until after the
   current dev -> freeze -> test cycle completes. It affects cache reuse only, never a reported
   number.
+
+## Judge calibration, second round (2026-09-28)
+
+- Evidence quotes are addressed to the material they came from, not matched against one
+  concatenated haystack. The previous check searched `context + candidate_output + task_input +
+  reference` and reported a single `evidence_verbatim` count, which inverts the groundedness
+  question: a quote the judge lifted out of the candidate's own unsupported sentence counted as
+  successfully cited evidence. `EvidenceLocation` counts `in_source` and `in_candidate`
+  independently (not as a partition — a faithful summary quotes text that is in both), and in
+  decompose mode a support verdict whose span is absent from the source increments
+  `support_unverified`. Rubric mode still credits a candidate-side quote, because several criteria
+  ask about the response itself and quoting it is the honest way to answer; the fix is to address
+  quotes, not to forbid one side.
+- `decompose_addressed` makes the judge cite numbered `[S<n>]` source sentences, and the quote is
+  checked against the sentences it named rather than the whole document. Plain `decompose` can only
+  ask whether a string appears somewhere in the source, which a topically-similar sentence satisfies
+  while supporting nothing. A cited id outside the numbering is a hard parse error, not a soft
+  signal: the judge was shown the numbering, so citing S99 of a 3-sentence document means its output
+  does not describe the material it was given.
+- `contradict` is in the grid as an ensemble member with a different failure mode, not as a better
+  judge. The combiner probe found eight variants of one rubric mechanism ensembling to a margin of
+  exactly +0.0000 over the strongest single one, which is what correlated errors look like. Adding a
+  ninth rubric variant would have been more of the same; the complement question (does the source
+  *contradict* anything?) can be wrong in different places.
+- Combiners are fitted per task class, not pooled. Criterion ids belong to a task's rubric, so
+  pooling puts a mostly-absent column in the matrix for every criterion of every other task: on dev
+  a pooled criterion-feature combiner scored κ = −0.13, worse than chance, while the same features
+  fitted within the groundedness track scored 0.62.
+- `combiners.py` hand-rolls its logistic fit rather than importing sklearn, for the reason
+  `metrics.py` hand-rolls κ: the production path stays dependency-light and exactly reproducible,
+  and the tests cross-check against `sklearn.linear_model.LogisticRegression` at three
+  regularisation strengths so the hand-rolled version cannot drift.
+- An ensemble must earn its components. Coverage is multiplicative — the eight dev variants cover
+  229/371 cases jointly (61.7%) because two lost a fifth of their judgments to rate limits — and the
+  release gate requires ≥98% on the primary track. `require_coverage` raises rather than reporting a
+  κ computed over the cases where everything happened to succeed, because that subset is biased by
+  whatever made the rest fail: long inputs are both what times a judge out and what is hard to grade.
+- A tie never counts as a combiner win. `Comparison` breaks ties toward the simpler contender, so
+  "as good as the single judge for k times the cost and k times the failure surface" is recorded as
+  a loss.
+- `bundle_id` is recomputed by the release gate. It was written at freeze and never checked again,
+  so hand-editing `threshold`, `variant_id`, `dataset_hash`, `split_seed` or `judge_config` in the
+  JSON left a stale id that nothing compared against anything — the artifact's integrity identifier
+  was ornamental. The honest limit is stated in a test: a hash proves the fields were not edited, not
+  that the reported measurement used them.
+- `validate_bundle` can bind an artifact to the corpus, not just to the rubrics. A κ measured on a
+  different (smaller, easier, older) corpus is not evidence about this one. The CLI supplies the
+  corpus hash by default so CI checks it; `--no-dataset-check` exists for validating an artifact on
+  a machine that does not carry the corpus, and prints that the binding was not verified.
+- `Paired` carries its split and the `(variant_id, config_hash)` of every judgment it joined.
+  `select_threshold` refuses the test split and `evaluate` refuses anything that is not test, or
+  judgments from a variant the bundle does not name, or a `config_hash` that drifted after the
+  freeze. The module docstring claimed this ordering was "enforced by the CLI, not by
+  documentation"; it was in fact enforced by neither, only by the order in which the CLI happened to
+  call things.
+- `freeze` rebuilds the judge from the experiment record, not from `GRID` — the same rule `cmd_test`
+  already applied to a frozen bundle. Keying the cache off `GRID` meant that any change to a
+  `config_hash` input renamed every judge in the record, every lookup missed, and freeze failed with
+  "0 paired items" while blaming the dev set. `dev` now stores the full `judge_config` and
+  `prompt_template_hash` in each row so the record describes its own judge, and `make
+  calibrate-verify` answers "is this record still usable?" without attempting a freeze.
+- `prompt_template_hash` is per mode rather than one hash over every template in the module. The
+  principled reason: a variant's hash should depend on the prompt it actually renders. The practical
+  one: `generic`, `rubric` and `decompose` keep the historical five-blob scaffold set as a
+  deliberate compatibility anchor, because re-hashing them would discard the only paid judgments in
+  the repository without one of their prompts having changed. The wart this leaves — those three
+  remain sensitive to each other's templates — is over-invalidation, which can cost a needless
+  re-judge but can never attribute an old verdict to a new prompt, so it is the safe direction.
+- The combiner probe is committed as an artifact that labels itself. It fits and selects inside dev
+  by grouped cross-validation, which is NOT the acceptance protocol, because the cache holds no
+  train judgments to fit on. `COMBINER_PROBE.md` says so in its first line, the JSON carries a
+  `protocol_deviation` field, and a test asserts both are present — a deviation that is only
+  described in a commit message is one that will be read as a result later.

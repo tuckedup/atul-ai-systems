@@ -34,8 +34,9 @@ from .calibrate import (
 )
 from .dataset import HEADLINE_PROVENANCE, Corpus, LabelProvenance, content_hash
 from .experiments import JudgmentCache, RunSummary, SpendMeter, run_variant
-from .judge import JudgeConfig
+from .judge import JudgeConfig, prompt_template_hash
 from .metrics import agreement, binarize
+from .rubrics import bundle_hash
 from .splits import SplitPlan, select, verify
 from .taxonomy import canonical
 
@@ -113,6 +114,74 @@ GRID: tuple[JudgeConfig, ...] = (
         samples=3, temperature=0.4, restrict_tasks=("summarize",), max_tokens=2000,
         notes="decomposition plus 3-sample median: both mechanisms together",
     ),
+    # --- second round: matched comparison, addressed evidence, and a diverse ensemble ----------
+    # Three findings shaped this round, all of them from `data/COMBINER_PROBE.md`:
+    #
+    # 1. Combining v0-v7 beat the strongest single judge on NO track that backs the headline claim
+    #    (margin +0.0000 pooled and on groundedness). Eight variants sharing one rubric mechanism
+    #    have correlated errors, so there is nothing for a combiner to average out. An ensemble
+    #    needs components that fail DIFFERENTLY -- hence `contradict`, which asks the complement
+    #    question, rather than a ninth rubric variant.
+    # 2. A controlled study (arXiv:2603.28005) found detailed holistic judging matching or beating
+    #    single-prompt atomic decomposition on completeness-sensitive QA. So decomposition is a
+    #    hypothesis to test against a MATCHED holistic baseline, not an upgrade to assume. v16
+    #    exists only to be that baseline: identical model, scope, token budget and concurrency to
+    #    v8, differing in mechanism alone.
+    # 3. `decompose` can only check whether a quote appears SOMEWHERE in the document, which a
+    #    topically-similar sentence satisfies while supporting nothing. `decompose_addressed`
+    #    makes the judge name the sentences, so the citation itself is checkable.
+    JudgeConfig(
+        variant_id="v12-addressed-4.1", model="gpt-4.1", mode="decompose_addressed",
+        concurrency=3, restrict_tasks=("summarize",), max_tokens=2000,
+        notes="source-addressed claim verification: per-fact, with [S<n>] sentence citations",
+    ),
+    JudgeConfig(
+        variant_id="v13-addressed-4.1-mini", model="gpt-4.1-mini", mode="decompose_addressed",
+        restrict_tasks=("summarize",), max_tokens=2000,
+        notes="addressed verification on the cheap judge: mechanism or model?",
+    ),
+    JudgeConfig(
+        variant_id="v14-contradict-4.1", model="gpt-4.1", mode="contradict", concurrency=3,
+        restrict_tasks=("summarize",), max_tokens=1200,
+        notes="contradiction-focused judge; an ensemble member with a different failure mode",
+    ),
+    JudgeConfig(
+        variant_id="v15-contradict-4.1-mini", model="gpt-4.1-mini", mode="contradict",
+        restrict_tasks=("summarize",), max_tokens=1200,
+        notes="contradiction detection on the cheap judge",
+    ),
+    JudgeConfig(
+        variant_id="v16-holistic-4.1", model="gpt-4.1", mode="rubric", concurrency=3,
+        restrict_tasks=("summarize",), max_tokens=2000,
+        notes=("matched holistic baseline for v8/v12: same model, scope, token budget and "
+               "concurrency, whole-response rubric instead of per-fact decomposition"),
+    ),
+)
+
+#: Comparisons declared BEFORE the run, so "decomposition helped" is a prediction being tested
+#: rather than a pattern found afterwards. Each entry is (label, treatment, matched control) and
+#: names the single thing that differs between them.
+MATCHED_PAIRS: tuple[tuple[str, str, str, str], ...] = (
+    ("decomposition vs holistic", "v8-decompose-4.1", "v16-holistic-4.1",
+     "mechanism: per-fact verification vs one whole-response rubric judgement"),
+    ("addressed vs unaddressed decomposition", "v12-addressed-4.1", "v8-decompose-4.1",
+     "whether the judge must cite the source sentences it relies on"),
+    ("addressed: strong vs cheap model", "v12-addressed-4.1", "v13-addressed-4.1-mini",
+     "model only; the mechanism is identical"),
+)
+
+#: Ensemble candidates for the combiner, declared before fitting. Diversity is the design goal:
+#: each candidate mixes mechanisms rather than models, because the probe showed that mixing models
+#: within one mechanism buys nothing.
+ENSEMBLE_CANDIDATES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("holistic+decomposed", ("v16-holistic-4.1", "v8-decompose-4.1")),
+    ("holistic+addressed", ("v16-holistic-4.1", "v12-addressed-4.1")),
+    ("holistic+addressed+contradiction",
+     ("v16-holistic-4.1", "v12-addressed-4.1", "v14-contradict-4.1")),
+    # The negative control: three variants of one mechanism. The probe predicts this gains
+    # nothing, and an ensemble study that omits its own null case is not evidence.
+    ("three-rubric-control",
+     ("v4-rubric-4.1-mini", "v5-rubric-4.1", "v6-rubric-fewshot-4.1-mini")),
 )
 
 UNAVAILABLE = {
@@ -167,7 +236,7 @@ def cmd_dev(args: argparse.Namespace) -> int:
             concurrency=config.concurrency or args.concurrency,
         )
         summaries.append(summary)
-        p = pair(scoped, labels, judgments)
+        p = pair(scoped, labels, judgments, split="dev")
         best = None
         try:
             best = select_threshold(p)
@@ -176,6 +245,16 @@ def cmd_dev(args: argparse.Namespace) -> int:
         row: dict[str, Any] = {
             "variant_id": config.variant_id, "model": config.model, "mode": config.mode,
             "notes": config.notes, "config_hash": config.config_hash,
+            # The FULL config, so the experiment record describes the judge that produced these
+            # numbers without depending on `GRID` still saying the same thing. `cmd_freeze` used
+            # to look the variant up in `GRID`, which made the record unusable the moment any
+            # `config_hash` input changed: the cache lookup silently found nothing and freeze
+            # failed with "0 paired items" rather than naming the drift.
+            "judge_config": config.as_dict(),
+            # Recorded separately because it is one of only two `config_hash` inputs that the
+            # config dict does NOT carry (the other is `exemplars_hash`). Storing it is what makes
+            # a later hash mismatch attributable: "the prompts changed" instead of "something did".
+            "prompt_template_hash": prompt_template_hash(config.mode),
             "n_paired": len(p), "completion": p.completion, "errors": p.errors,
             "spend_after_usd": round(meter.spent_usd, 4),
             "at_0.5": _dev_row(p, 0.5) if len(p) else None,
@@ -200,6 +279,152 @@ def cmd_dev(args: argparse.Namespace) -> int:
     return 0
 
 
+def _recorded_config(row: dict[str, Any], experiments: dict[str, Any]) -> JudgeConfig:
+    """Rebuild the judge that produced a dev row, from the experiment record rather than `GRID`.
+
+    This is the same rule `cmd_test` already applies to a frozen bundle -- reconstruct the judge
+    the RECORD names, not whatever the grid currently defines under that id -- applied one step
+    earlier, because freeze had the identical hole and it had already bitten:
+
+        $ python -m evalops.run_calibration freeze
+        calibration error: threshold selection needs a usable dev set; got 0 paired items.
+
+    with 2,968 usable judgments sitting in the cache. Every recorded `config_hash` in
+    `dev_experiments.json` differed from what `GRID` reconstructed, so `cache.get(_cache_key(...))`
+    missed on every case, `pooled` came back empty, and the error blamed the dev set. The cause is
+    that `config_hash` covers every `JudgeConfig` field and the prompt scaffolding, so adding a
+    field or editing a template after a run -- which is what declaring the v8-v11 variants did --
+    renames every judge in the record.
+
+    Older records predate `judge_config`; for those the full config is recovered from
+    `run_summaries`, which always carried it. If neither has it, this refuses rather than falling
+    back to `GRID`, because a silent fallback is how the drift went unnoticed.
+    """
+    variant = row["variant_id"]
+    saved = row.get("judge_config")
+    if not saved:
+        for summary in experiments.get("run_summaries", []):
+            cfg = summary.get("config") or {}
+            if cfg.get("variant_id") == variant:
+                saved = cfg
+                break
+    if not saved:
+        raise CalibrationError(
+            f"the dev record for {variant!r} carries no judge_config, and none of its "
+            "run_summaries does either. Re-run `dev` so the record describes its own judge; "
+            "reconstructing it from GRID is what let the code and the experiment diverge "
+            "without anything noticing."
+        )
+    config = JudgeConfig.from_dict(saved)
+    recorded_hash = str(saved.get("config_hash", "") or row.get("config_hash", ""))
+    if recorded_hash and config.config_hash != recorded_hash:
+        recorded_prompt = str(row.get("prompt_template_hash", "") or "not recorded")
+        raise CalibrationError(
+            f"variant {variant!r} cannot be reconstructed.\n"
+            f"  recorded config_hash:      {recorded_hash}\n"
+            f"  rebuilt from the record:   {config.config_hash}\n"
+            f"  recorded prompt_template:  {recorded_prompt}\n"
+            f"  prompt_template now:       {prompt_template_hash(config.mode)}\n"
+            "Every stored JudgeConfig FIELD round-trips exactly, so the difference is in an input "
+            "the record does not store. `config_hash` has only two of those: the prompt scaffolding "
+            "in judge.py and the exemplar file contents. The judgments in the cache were therefore "
+            "produced by a prompt that is no longer in this repository, and the kappa recorded for "
+            "this variant describes a judge that cannot be rebuilt.\n"
+            "This is not recoverable by editing anything: the dev split has to be re-judged under "
+            "the current prompts. Nothing here will freeze a bundle naming a judge it cannot "
+            "reproduce."
+        )
+    live = next((c for c in GRID if c.variant_id == variant), None)
+    if live is not None and live.config_hash != config.config_hash:
+        print(
+            f"  note: GRID's {variant} now hashes to {live.config_hash}, but the dev record was "
+            f"measured at {config.config_hash}. Freezing the RECORDED judge. A later `dev` run "
+            "will re-judge under the new hash rather than reuse these judgments."
+        )
+    return config
+
+
+def verify_record(experiments: dict[str, Any]) -> list[dict[str, Any]]:
+    """Check every recorded variant against the code in the tree. One row per variant.
+
+    Separate from `freeze` because the answer to "can this experiment record still be used?" should
+    not require attempting a freeze and reading a misleading error. `reproducible` is False when the
+    judgments the record describes cannot be found or rebuilt from the current code.
+    """
+    rows: list[dict[str, Any]] = []
+    for row in experiments.get("variants", []):
+        variant = row.get("variant_id", "?")
+        if row.get("skipped"):
+            rows.append({"variant_id": variant, "skipped": row["skipped"]})
+            continue
+        entry: dict[str, Any] = {
+            "variant_id": variant,
+            "recorded_config_hash": row.get("config_hash"),
+            "recorded_dev_kappa": row.get("best_dev_kappa"),
+            "recorded_completion": row.get("completion"),
+        }
+        try:
+            config = _recorded_config(row, experiments)
+        except CalibrationError as e:
+            entry.update({"reproducible": False, "reason": str(e).splitlines()[0],
+                          "detail": str(e)})
+        else:
+            live = next((c for c in GRID if c.variant_id == variant), None)
+            entry.update({
+                "reproducible": True,
+                "rebuilt_config_hash": config.config_hash,
+                "grid_config_hash": live.config_hash if live else None,
+                "grid_matches_record": bool(live and live.config_hash == config.config_hash),
+            })
+        rows.append(entry)
+    return rows
+
+
+def cmd_verify(args: argparse.Namespace) -> int:
+    corpus, sp, dataset_hash = _load()
+    path = DATA / "dev_experiments.json"
+    if not path.exists():
+        print(f"{path} missing; nothing to verify", file=sys.stderr)
+        return 1
+    experiments = json.loads(path.read_text(encoding="utf-8"))
+    rows = verify_record(experiments)
+
+    recorded_dataset = experiments.get("dataset_hash")
+    dataset_ok = recorded_dataset == dataset_hash
+    print(f"corpus              {len(corpus.cases)} cases, splits verified free of group and "
+          "content leakage")
+    recorded_seed = experiments.get("split_seed")
+    print(f"split_seed          record={recorded_seed}  plan={sp.seed}  "
+          f"{'OK' if recorded_seed == sp.seed else 'MISMATCH'}")
+    print(f"dataset_hash        record={recorded_dataset}  corpus={dataset_hash}  "
+          f"{'OK' if dataset_ok else 'MISMATCH'}")
+    print(f"rubric_bundle_hash  {bundle_hash()}")
+    print()
+
+    broken = []
+    for row in rows:
+        if row.get("skipped"):
+            print(f"  {row['variant_id']:34s} skipped: {row['skipped']}")
+            continue
+        if not row.get("reproducible"):
+            broken.append(row)
+            print(f"  {row['variant_id']:34s} NOT REPRODUCIBLE")
+            continue
+        note = "" if row["grid_matches_record"] else "  (GRID has since changed)"
+        print(f"  {row['variant_id']:34s} ok  {row['rebuilt_config_hash']}{note}")
+
+    if broken:
+        print(f"\n{len(broken)} of {len(rows)} recorded variants cannot be reproduced from this "
+              "tree. The first one in detail:\n", file=sys.stderr)
+        print(broken[0]["detail"], file=sys.stderr)
+        return 1
+    if not dataset_ok:
+        print("\nthe corpus changed since the recorded run", file=sys.stderr)
+        return 1
+    print("\nevery recorded variant is reproducible from this tree")
+    return 0
+
+
 def cmd_freeze(args: argparse.Namespace) -> int:
     corpus, sp, dataset_hash = _load()
     dev = select(corpus.cases, sp, "dev")
@@ -221,7 +446,7 @@ def cmd_freeze(args: argparse.Namespace) -> int:
     else:
         chosen = max(usable, key=lambda r: r["best_dev_kappa"])
 
-    config = next(c for c in GRID if c.variant_id == chosen["variant_id"])
+    config = _recorded_config(chosen, experiments)
     # Which dev labels the threshold is optimised against. The judge serves every task class, so
     # `pooled` (one global threshold over all admissible dev labels) is the operational default.
     # `headline` optimises against human judgments of the response only, which is the track the
@@ -239,7 +464,7 @@ def cmd_freeze(args: argparse.Namespace) -> int:
 
     cache = JudgmentCache(DATA / "judgment_cache.jsonl")
     judgments = [j for j in (cache.get(_cache_key(c, config)) for c in dev) if j is not None]
-    pooled = pair(dev, labels, judgments)
+    pooled = pair(dev, labels, judgments, split="dev")
     selection = pooled if track is None else pooled.restrict(track)
     choice = select_threshold(selection)
 
@@ -348,7 +573,7 @@ def cmd_test(args: argparse.Namespace) -> int:
         scoped, config, cache=cache, meter=meter,
         concurrency=config.concurrency or args.concurrency,
     )
-    p = pair(scoped, labels, judgments)
+    p = pair(scoped, labels, judgments, split="test")
     result = evaluate(bundle, p, bootstrap=args.bootstrap)
     result["run_summary"] = summary.as_dict()
     bundle.test_result = result
@@ -384,7 +609,8 @@ def cmd_test(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name, fn in (("dev", cmd_dev), ("freeze", cmd_freeze), ("test", cmd_test)):
+    for name, fn in (("dev", cmd_dev), ("verify", cmd_verify), ("freeze", cmd_freeze),
+                     ("test", cmd_test)):
         p = sub.add_parser(name)
         p.set_defaults(fn=fn)
         p.add_argument("--budget", type=float, default=25.0, help="hard spend cap in USD")

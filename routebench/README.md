@@ -8,10 +8,19 @@ RouteBench is an OpenAI-compatible gateway whose routing and rollout inputs are 
   summarization/groundedness, coding, SQL, reasoning and tool use. See
   `evalops/data/raw/MANIFEST.json` for every source, row count and licence, and the sampling
   policy docstring in `evalops/build.py` for what was included and excluded, and why.
-- A judge calibrated against independent labels, with the measured result, confusion matrix,
-  confidence interval, per-task breakdown, completion rate and full variant grid in
-  `evalops/data/CALIBRATION_REPORT.md`. Validate the artifact the way CI does with
-  `make calibrate-check` (non-zero exit on failure).
+- A structured rubric judge, a calibration protocol and a release gate — but **no calibrated
+  judge yet, and no κ result**. The held-out split has never been scored and no bundle has been
+  frozen, so there is no `calibration_bundle.json` and `make calibrate-check` correctly exits
+  non-zero. What exists is the machinery plus a dev-only variant grid in
+  `evalops/data/dev_experiments.json`, and those recorded numbers are themselves **not
+  reproducible from this tree** — `make calibrate-verify` shows all 8 variants failing, because the
+  prompts that produced the cached judgments are no longer in the repository. The dev split has to
+  be re-judged before anything can be frozen, which needs a provider key. See `BLOCKERS.md`.
+- The ensemble and learned-combiner question is answered on the cached judgments at zero cost
+  (`make probe-combiners`, `evalops/data/COMBINER_PROBE.md`): **no combination of the eight existing
+  judges beats the strongest single one** on either track backing the headline claim. The artifact
+  labels itself a dev-internal cross-validated probe rather than a held-out measurement, because
+  the cache holds no train judgments to fit on.
 - A 100-request backend-termination chaos test reroutes with 0 failed requests.
 - Promotion tests exercise offline, shadow, 5%, 25%, full and automatic rollback with an audit
   event, **plus** the calibration gate in front of the ladder: an artifact that is unmeasured,
@@ -26,7 +35,10 @@ one variable into both the `human_score` and `judge_score` columns, so κ = 1.0 
 guaranteed and no model was ever called. The file is retained at
 `evalops/fixtures/synthetic_selfagreement_labels.csv` purely as the negative fixture that the
 gate is tested against. `docs/KAPPA_DESIGN.md` documents that defect and the three others found
-alongside it.
+alongside it, and §10 documents five more found in a second review — including the reason the
+recorded dev numbers no longer reproduce. **Nothing in this repository has demonstrated κ ≥ 0.74.**
+The best agreement measured anywhere here is a dev-internal cross-validated estimate: κ ≈ 0.64 on
+the groundedness track, ≈ 0.50 pooled.
 
 The self-hosted backend and concurrency/context/cache/quantization measurements are Docker-blocked tonight. The matrix printed by `make bench` is configuration data used to exercise the router, not a claim of freshly measured inference performance.
 

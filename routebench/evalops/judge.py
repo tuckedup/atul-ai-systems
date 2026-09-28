@@ -29,6 +29,7 @@ import hashlib
 import json
 import re
 import time
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from functools import lru_cache
 from pathlib import Path
@@ -63,6 +64,18 @@ class JudgeConfig:
     #:                information across sentences"). For a prompt-only judge it also produces a
     #:                naturally graded score -- 5/5 facts supported vs 4/5 -- which gives the dev
     #:                threshold something continuous to cut, unlike a single yes/no verdict.
+    #: "decompose_addressed" -- decompose, but the judge must name WHICH numbered source sentences
+    #:                support each assertion. The quote is then checked against those sentences
+    #:                rather than against the whole document, so a citation that points at the
+    #:                wrong place is detectable. Plain `decompose` can only ask whether a string
+    #:                appears somewhere in the source, which a topically-similar sentence
+    #:                satisfies without supporting anything.
+    #: "contradict" -- the complement question: does the source CONTRADICT anything the candidate
+    #:                says? Deliberately narrower than groundedness (silence is not
+    #:                contradiction), included as a genuinely different mechanism for the
+    #:                ensemble. The first combiner probe found that eight variants sharing one
+    #:                rubric mechanism ensemble to nothing, because their errors are correlated;
+    #:                an ensemble needs components that fail differently, not more of the same.
     mode: str = "rubric"
     #: Restrict this variant to specific task classes. A groundedness specialist (decompose mode)
     #: is not meaningful on SQL, and judging tasks it was not designed for wastes budget and
@@ -134,7 +147,7 @@ class JudgeConfig:
         payload["exemplars"] = self.exemplars_hash
         # The prompt scaffolding is as much a part of the judge as the model name. Editing
         # _ROLE or a format block changes verdicts, so it must invalidate cached judgments.
-        payload["prompt_template"] = prompt_template_hash()
+        payload["prompt_template"] = prompt_template_hash(self.mode)
         return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()[:16]
 
     def as_dict(self) -> dict[str, Any]:
@@ -143,17 +156,49 @@ class JudgeConfig:
         return d
 
 
-def prompt_template_hash() -> str:
-    """Hash of every prompt scaffold in this module.
+#: The scaffold set each mode's `config_hash` covers.
+#:
+#: Per mode rather than one hash over every template in the module, for two reasons. The
+#: principled one: a variant's hash should depend on the prompt it actually renders, so editing a
+#: contradiction template has no business invalidating a rubric judge's cached verdicts. The
+#: practical one: the three modes below were measured under a single five-blob hash, and
+#: re-hashing them would discard 2,968 paid judgments -- the only measured data in this
+#: repository -- without a single one of their prompts having changed. So those three keep the
+#: historical scaffold set as a deliberate compatibility anchor, and new modes hash their own.
+#:
+#: The wart this leaves: `generic`, `rubric` and `decompose` are each sensitive to all three of
+#: the other two's templates. That is over-invalidation, not under-invalidation -- it can cost a
+#: needless re-judge, never attribute an old verdict to a new prompt -- so it is the safe
+#: direction to be wrong in, and it is written down rather than discovered later.
+_LEGACY_SCAFFOLDS = ("_ROLE", "_FORMAT", "_GENERIC_RUBRIC", "_DECOMPOSE_INSTRUCTIONS",
+                     "_DECOMPOSE_FORMAT")
+_MODE_SCAFFOLDS: dict[str, tuple[str, ...]] = {
+    "generic": _LEGACY_SCAFFOLDS,
+    "rubric": _LEGACY_SCAFFOLDS,
+    "decompose": _LEGACY_SCAFFOLDS,
+    "decompose_addressed": ("_ROLE", "_DECOMPOSE_INSTRUCTIONS", "_DECOMPOSE_ADDRESSED_FORMAT"),
+    "contradict": ("_ROLE", "_CONTRADICT_INSTRUCTIONS", "_CONTRADICT_FORMAT"),
+}
+
+
+def prompt_template_hash(mode: str = "rubric") -> str:
+    """Hash of the prompt scaffolds `mode` renders.
 
     The judge is the model plus the scaffolding around it. A reviewer changing `_ROLE` or a
     format block changes verdicts without changing any field of `JudgeConfig`, so the templates
     are hashed into `config_hash`: old judgments stop being reused, and a frozen calibration
     bundle stops validating against an edited prompt.
+
+    An unknown mode hashes every scaffold in the module. A new mode that forgets to register here
+    is then maximally sensitive rather than silently unhashed -- failing toward a needless
+    re-judge instead of toward attributing old verdicts to a new prompt.
     """
-    blob = "\x00".join((
-        _ROLE, _FORMAT, _GENERIC_RUBRIC, _DECOMPOSE_INSTRUCTIONS, _DECOMPOSE_FORMAT,
-    ))
+    names = _MODE_SCAFFOLDS.get(mode)
+    if names is None:
+        names = tuple(sorted(set(_LEGACY_SCAFFOLDS) | {
+            n for group in _MODE_SCAFFOLDS.values() for n in group
+        }))
+    blob = "\x00".join(globals()[n] for n in names)
     return hashlib.sha256(blob.encode()).hexdigest()[:16]
 
 
@@ -201,6 +246,46 @@ _DECOMPOSE_FORMAT = """Return ONLY a JSON object, no prose and no code fence:
 List every atomic assertion you found. If the candidate makes no factual assertion at all, \
 return an empty "facts" list."""
 
+#: Source-addressed variant of the above. The judge must say WHICH numbered source sentences
+#: support each assertion, not merely that the source does somewhere. That turns the evidence
+#: check from "is this string present in the document" into "is it present in the sentences the
+#: judge actually pointed at", which is the difference between a quote existing and a quote
+#: supporting the claim it was offered for.
+_DECOMPOSE_ADDRESSED_FORMAT = """Return ONLY a JSON object, no prose and no code fence:
+{"facts": [{"assertion": "<the atomic claim>", "supported": true | false,
+            "source_sentences": [<sentence numbers, e.g. 3 or 3, 7>],
+            "evidence": "<exact quote copied from those sentences, or empty if unsupported>"}],
+ "rationale": "<one sentence>"}
+
+Rules for "source_sentences":
+- Cite the numbered [S<n>] sentences from the SOURCE MATERIAL, and only those.
+- For a supported assertion, cite at least one sentence and copy the quote from it exactly.
+- For an unsupported assertion, use an empty list and an empty quote. Do not cite a sentence that \
+merely discusses the topic.
+
+List every atomic assertion you found. If the candidate makes no factual assertion at all, \
+return an empty "facts" list."""
+
+_CONTRADICT_INSTRUCTIONS = """Your job is contradiction detection, not verification.
+
+Read the SOURCE MATERIAL, then the candidate response. Find every place the candidate states \
+something the source CONTRADICTS: a different number, a different name or entity, a reversed \
+relationship, a changed date, a negation flipped, or a claim the source states more weakly than \
+the candidate does.
+
+Do NOT report a claim merely because the source is silent about it. Silence is not \
+contradiction. This question is narrower on purpose: you are looking only for conflicts you can \
+point at in the source.
+
+Do not compute a score. The harness computes it from your findings."""
+
+_CONTRADICT_FORMAT = """Return ONLY a JSON object, no prose and no code fence:
+{"contradictions": [{"claim": "<what the candidate said>",
+                     "source_says": "<exact quote from the source that conflicts with it>"}],
+ "rationale": "<one sentence>"}
+
+Return an empty "contradictions" list if the source contradicts nothing in the response."""
+
 _FORMAT = """Return ONLY a JSON object, no prose and no code fence:
 {{"criteria": [{{"id": "<criterion id>", "verdict": "yes" | "no", "evidence": "<short verbatim quote>"}}],
  "critical_errors": ["<short description>", ...],
@@ -242,7 +327,7 @@ def build_prompt(case: CaseRecord, rubric: Rubric, config: JudgeConfig) -> str:
             ),
             "",
         ]
-    elif config.mode == "decompose":
+    elif config.mode in ("decompose", "decompose_addressed"):
         # The rubric's pass_definition still sets the standard; only the mechanism differs --
         # per-assertion verification instead of per-criterion verdicts.
         ids = ""
@@ -252,6 +337,16 @@ def build_prompt(case: CaseRecord, rubric: Rubric, config: JudgeConfig) -> str:
             f"PASS MEANS: {rubric.pass_definition.strip()}",
             "",
             _DECOMPOSE_INSTRUCTIONS,
+            "",
+        ]
+    elif config.mode == "contradict":
+        ids = ""
+        blocks += [
+            f"TASK TYPE: {rubric.task_class}",
+            "",
+            f"PASS MEANS: {rubric.pass_definition.strip()}",
+            "",
+            _CONTRADICT_INSTRUCTIONS,
             "",
         ]
     else:
@@ -273,7 +368,21 @@ def build_prompt(case: CaseRecord, rubric: Rubric, config: JudgeConfig) -> str:
 
     blocks += ["=== TASK GIVEN TO THE MODEL ===", case.task_input.strip(), ""]
     if case.context.strip():
-        blocks += ["=== SOURCE MATERIAL (the only admissible support) ===", case.context.strip(), ""]
+        if config.mode == "decompose_addressed":
+            numbered = "\n".join(
+                f"[S{n}] {text}" for n, text in enumerate(split_sentences(case.context), start=1)
+            )
+            blocks += [
+                "=== SOURCE MATERIAL (the only admissible support; sentences are numbered) ===",
+                numbered,
+                "",
+            ]
+        else:
+            blocks += [
+                "=== SOURCE MATERIAL (the only admissible support) ===",
+                case.context.strip(),
+                "",
+            ]
     if config.include_reference and case.reference.strip():
         blocks += [
             "=== VERIFIED REFERENCE ANSWER ===",
@@ -290,9 +399,36 @@ def build_prompt(case: CaseRecord, rubric: Rubric, config: JudgeConfig) -> str:
         case.candidate_output.strip(),
         "END_CANDIDATE>>>",
         "",
-        _DECOMPOSE_FORMAT if config.mode == "decompose" else _FORMAT.format(ids=ids),
+        _OUTPUT_FORMATS.get(config.mode) or _FORMAT.format(ids=ids),
     ]
     return "\n".join(blocks)
+
+
+#: Modes whose output shape is fixed rather than derived from the rubric's criterion ids.
+_OUTPUT_FORMATS: dict[str, str] = {
+    "decompose": _DECOMPOSE_FORMAT,
+    "decompose_addressed": _DECOMPOSE_ADDRESSED_FORMAT,
+    "contradict": _CONTRADICT_FORMAT,
+}
+
+
+_SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\"'(\[])")
+
+
+def split_sentences(text: str) -> list[str]:
+    """Split source material into sentences for `[S<n>]` addressing.
+
+    Deliberately simple and deliberately part of the prompt hash: the numbering the judge cites
+    against has to be reproducible from the case text alone, so that re-deriving which sentence
+    `S3` meant does not depend on a tokenizer version. An abbreviation that fools the regex
+    produces a slightly different split, which is harmless -- both the prompt and the verifier use
+    the same one, so the ids always line up with what the judge was shown.
+    """
+    stripped = text.strip()
+    if not stripped:
+        return []
+    parts = [p.strip() for p in _SENTENCE_BREAK.split(stripped)]
+    return [p for p in parts if p]
 
 
 # ---------------------------------------------------------------- parsing
@@ -340,6 +476,87 @@ def _verdict(raw: Any, cid: str) -> bool:
     raise JudgeOutputError(f"criterion {cid!r} has unreadable verdict {raw!r}; expected yes/no")
 
 
+def _normalise(text: str) -> str:
+    return re.sub(r"\s+", " ", text).lower()
+
+
+#: Quotes shorter than this are not evidence of anything -- "the", "is considering" and similar
+#: fragments appear in almost any document, so counting them as located would inflate the signal.
+_MIN_QUOTE_CHARS = 9
+
+
+@dataclass(frozen=True)
+class EvidenceLocation:
+    """Where each cited quote was actually found.
+
+    Keeping `in_source` and `in_candidate` apart is the whole point. The previous
+    implementation searched one haystack built by concatenating the source document, the
+    candidate response, the task input and the reference, and reported a single
+    `evidence_verbatim` count. For a groundedness judgment that is backwards: the question is
+    whether the SOURCE supports a claim, so a quote the judge lifted out of the candidate's own
+    unsupported sentence would be counted as successfully cited evidence. A judge can score a
+    perfect evidence ratio while having quoted nothing but the text it was meant to be checking.
+
+    `in_source` and `in_candidate` are not exclusive -- a faithful summary quotes text that
+    appears in both -- so they are counted independently rather than partitioned.
+    """
+
+    total: int = 0
+    in_source: int = 0
+    in_candidate: int = 0
+    #: Quotes found in neither: the judge paraphrased, or invented the span.
+    unlocated: int = 0
+    #: Quotes too short to check. Reported rather than silently counted as located.
+    too_short: int = 0
+
+    @property
+    def source_rate(self) -> float | None:
+        checkable = self.total - self.too_short
+        return self.in_source / checkable if checkable else None
+
+    def as_dict(self) -> dict[str, int]:
+        return {
+            "total": self.total, "in_source": self.in_source,
+            "in_candidate": self.in_candidate, "unlocated": self.unlocated,
+            "too_short": self.too_short,
+        }
+
+    def __add__(self, other: EvidenceLocation) -> EvidenceLocation:
+        return EvidenceLocation(
+            total=self.total + other.total,
+            in_source=self.in_source + other.in_source,
+            in_candidate=self.in_candidate + other.in_candidate,
+            unlocated=self.unlocated + other.unlocated,
+            too_short=self.too_short + other.too_short,
+        )
+
+
+def locate_evidence(
+    quotes: Sequence[str], *, source: str, candidate: str
+) -> EvidenceLocation:
+    """Address each quote to the material it came from.
+
+    `source` is everything the judge was entitled to treat as ground truth (the document, the
+    task input, the verified reference). `candidate` is the response under judgement. A quote is
+    checked against each independently.
+    """
+    haystack_source = _normalise(source)
+    haystack_candidate = _normalise(candidate)
+    total = in_source = in_candidate = unlocated = too_short = 0
+    for quote in quotes:
+        total += 1
+        needle = _normalise(quote)
+        if len(needle) < _MIN_QUOTE_CHARS:
+            too_short += 1
+            continue
+        found_source = needle in haystack_source
+        found_candidate = needle in haystack_candidate
+        in_source += int(found_source)
+        in_candidate += int(found_candidate)
+        unlocated += int(not found_source and not found_candidate)
+    return EvidenceLocation(total, in_source, in_candidate, unlocated, too_short)
+
+
 @dataclass
 class ParsedJudgment:
     verdicts: dict[str, bool]
@@ -350,6 +567,11 @@ class ParsedJudgment:
     evidence_verbatim: int = 0
     evidence_total: int = 0
     criteria_detail: list[dict[str, Any]] = field(default_factory=list)
+    location: EvidenceLocation = field(default_factory=EvidenceLocation)
+    #: Facts the judge called SUPPORTED while citing a quote that is not in the source material.
+    #: The judge's own stated ground for the verdict does not check out, which is a different and
+    #: much more serious failure than a paraphrased quote on a criterion answered "no".
+    support_unverified: int = 0
 
 
 def _parse_decomposed(text: str, case: CaseRecord) -> ParsedJudgment:
@@ -386,19 +608,183 @@ def _parse_decomposed(text: str, case: CaseRecord) -> ParsedJudgment:
             unsupported.append(assertion[:200])
 
     value = 1.0 if not facts else (len(facts) - len(unsupported)) / len(facts)
-    joined = " ".join((case.context, case.candidate_output))  # noqa: FLY002 - tuple is data
-    haystack = re.sub(r"\s+", " ", joined).lower()
+
+    # Source-addressed verification. In decompose mode the judge's claim is "the SOURCE supports
+    # this assertion", so its quote has to be in the source -- not in the candidate it is
+    # checking. `case.context` is the document; `task_input` and `reference` are the other
+    # material the judge is entitled to treat as given.
+    source = f"{case.context} {case.task_input} {case.reference}"
     quotes = [q.split(": ", 1)[-1] for q in evidence]
-    verbatim = sum(1 for q in quotes if len(q) > 8 and re.sub(r"\s+", " ", q).lower() in haystack)
+    location = locate_evidence(quotes, source=source, candidate=case.candidate_output)
+
+    # A fact called supported whose cited span is not in the source is a verdict whose own stated
+    # grounds do not check out. Counted per fact rather than pooled with the paraphrase rate,
+    # because it is the failure that would let an ungrounded claim through.
+    support_unverified = 0
+    for entry in detail:
+        if not entry["verdict"]:
+            continue
+        quote = entry.get("evidence") or ""
+        needle = _normalise(quote)
+        if len(needle) < _MIN_QUOTE_CHARS or needle not in _normalise(source):
+            support_unverified += 1
+
     return ParsedJudgment(
         verdicts={d["id"]: bool(d["verdict"]) for d in detail},
         evidence=evidence,
         critical_errors=unsupported[:10],
         rationale=str(data.get("rationale", ""))[:500],
         score=value,
-        evidence_verbatim=verbatim,
-        evidence_total=len(quotes),
+        evidence_verbatim=location.in_source,
+        evidence_total=location.total,
         criteria_detail=detail,
+        location=location,
+        support_unverified=support_unverified,
+    )
+
+
+def _parse_addressed(text: str, case: CaseRecord) -> ParsedJudgment:
+    """Validate a source-addressed decomposition: every support must name its source sentences.
+
+    The verification the plain `decompose` path cannot do. There, a supported fact's quote is
+    checked against the whole document, so a quote lifted from a sentence about the same topic
+    passes while supporting nothing. Here the judge has to commit to `[S<n>]` ids, and the quote is
+    checked against the union of the sentences it named -- a mislocated citation is caught.
+
+    A cited id outside the numbering is a `JudgeOutputError`, not a soft signal: the judge was shown
+    the numbering, so citing `S99` of a 12-sentence document means its output does not describe the
+    material it was given, and scoring that is scoring noise.
+    """
+    data = _extract_json(text)
+    facts = data.get("facts")
+    if not isinstance(facts, list):
+        raise JudgeOutputError("addressed decomposition response has no 'facts' list")
+
+    sentences = split_sentences(case.context)
+    detail: list[dict[str, Any]] = []
+    evidence: list[str] = []
+    unsupported: list[str] = []
+    mislocated = 0
+
+    for index, entry in enumerate(facts):
+        if not isinstance(entry, dict) or "supported" not in entry:
+            raise JudgeOutputError(f"fact entry {index} missing 'supported': {entry!r}")
+        assertion = str(entry.get("assertion", "")).strip()
+        ok = _verdict(entry["supported"], f"fact[{index}]")
+        quote = str(entry.get("evidence", "")).strip()
+
+        raw_ids = entry.get("source_sentences", [])
+        if isinstance(raw_ids, (int, str)):
+            raw_ids = [raw_ids]
+        if not isinstance(raw_ids, list):
+            raise JudgeOutputError(
+                f"fact entry {index} has 'source_sentences' of type "
+                f"{type(raw_ids).__name__}; expected a list of sentence numbers"
+            )
+        cited: list[int] = []
+        for value in raw_ids:
+            try:
+                n = int(str(value).strip().lstrip("Ss"))
+            except (TypeError, ValueError) as e:
+                raise JudgeOutputError(
+                    f"fact entry {index} cites unreadable sentence id {value!r}"
+                ) from e
+            if not 1 <= n <= len(sentences):
+                raise JudgeOutputError(
+                    f"fact entry {index} cites sentence S{n}, but the source material shown to "
+                    f"the judge has {len(sentences)} numbered sentences"
+                )
+            cited.append(n)
+
+        if ok and not cited:
+            # A support verdict with no address is exactly the unverifiable claim this mode
+            # exists to eliminate. Recorded rather than raised: the judgment is still readable,
+            # and the count is what the calibrator gets to weigh.
+            mislocated += 1
+        elif ok:
+            addressed = " ".join(sentences[n - 1] for n in sorted(set(cited)))
+            needle = _normalise(quote)
+            if len(needle) < _MIN_QUOTE_CHARS or needle not in _normalise(addressed):
+                mislocated += 1
+
+        if quote:
+            evidence.append(f"fact_{index}: {quote}")
+        if not ok:
+            unsupported.append(assertion[:200])
+        detail.append({
+            "id": f"fact_{index}", "verdict": ok, "assertion": assertion[:300],
+            "evidence": quote[:300], "source_sentences": sorted(set(cited)),
+        })
+
+    value = 1.0 if not facts else (len(facts) - len(unsupported)) / len(facts)
+    source = f"{case.context} {case.task_input} {case.reference}"
+    quotes = [q.split(": ", 1)[-1] for q in evidence]
+    location = locate_evidence(quotes, source=source, candidate=case.candidate_output)
+    return ParsedJudgment(
+        verdicts={d["id"]: bool(d["verdict"]) for d in detail},
+        evidence=evidence,
+        critical_errors=unsupported[:10],
+        rationale=str(data.get("rationale", ""))[:500],
+        score=value,
+        evidence_verbatim=location.in_source,
+        evidence_total=location.total,
+        criteria_detail=detail,
+        location=location,
+        support_unverified=mislocated,
+    )
+
+
+def _parse_contradictions(text: str, case: CaseRecord) -> ParsedJudgment:
+    """Validate a contradiction report. Score is 1.0 when the source contradicts nothing.
+
+    Binary by construction, unlike the decompose fraction: a response either conflicts with the
+    source or it does not, and "half contradicted" is not a coherent reading. The dev threshold
+    therefore has only one place to cut on this component, which is fine -- it is here as an
+    ensemble member with a different failure mode, not as a standalone judge.
+    """
+    data = _extract_json(text)
+    found = data.get("contradictions")
+    if not isinstance(found, list):
+        raise JudgeOutputError("contradiction response has no 'contradictions' list")
+
+    detail: list[dict[str, Any]] = []
+    evidence: list[str] = []
+    claims: list[str] = []
+    for index, entry in enumerate(found):
+        if not isinstance(entry, dict):
+            raise JudgeOutputError(f"contradiction entry {index} is {type(entry).__name__}")
+        claim = str(entry.get("claim", "")).strip()
+        quote = str(entry.get("source_says", "")).strip()
+        if not claim:
+            raise JudgeOutputError(f"contradiction entry {index} names no claim")
+        claims.append(claim[:200])
+        if quote:
+            evidence.append(f"contradiction_{index}: {quote}")
+        detail.append({"id": f"contradiction_{index}", "verdict": False,
+                       "assertion": claim[:300], "evidence": quote[:300]})
+
+    # One stable criterion id so the combiner has a cross-case feature; the per-contradiction
+    # entries are per-case and are filtered out of the design matrix like decompose's fact ids.
+    detail.insert(0, {"id": "no_contradiction_found", "verdict": not found, "evidence": ""})
+    location = locate_evidence(
+        [q.split(": ", 1)[-1] for q in evidence],
+        source=f"{case.context} {case.task_input} {case.reference}",
+        candidate=case.candidate_output,
+    )
+    # A reported contradiction whose cited source span is not in the source is an invented
+    # conflict -- the same class of failure as unverified support, so it lands in the same signal.
+    unverified = location.total - location.in_source
+    return ParsedJudgment(
+        verdicts={d["id"]: bool(d["verdict"]) for d in detail},
+        evidence=evidence,
+        critical_errors=claims[:10],
+        rationale=str(data.get("rationale", ""))[:500],
+        score=0.0 if found else 1.0,
+        evidence_verbatim=location.in_source,
+        evidence_total=location.total,
+        criteria_detail=detail,
+        location=location,
+        support_unverified=max(0, unverified),
     )
 
 
@@ -420,7 +806,7 @@ def aggregate(samples: list[ParsedJudgment], rubric: Rubric, config: JudgeConfig
     if len(samples) == 1:
         return samples[0]
 
-    if config.mode == "decompose":
+    if config.mode in ("decompose", "decompose_addressed"):
         # Fact lists differ across samples (different decompositions), so voting per fact id is
         # not meaningful. Use the median score instead: it is robust to one sample splitting the
         # response differently, without inventing a correspondence between fact lists.
@@ -435,6 +821,9 @@ def aggregate(samples: list[ParsedJudgment], rubric: Rubric, config: JudgeConfig
             rationale=f"median of {len(samples)} samples; " + base.rationale,
             score=median, evidence_verbatim=base.evidence_verbatim,
             evidence_total=base.evidence_total, criteria_detail=base.criteria_detail,
+            # The representative sample's own location counts, not a sum across samples: the
+            # reported score is that sample's, so the evidence beside it has to be too.
+            location=base.location, support_unverified=base.support_unverified,
         )
 
     ids = sorted({cid for s in samples for cid in s.verdicts})
@@ -442,10 +831,14 @@ def aggregate(samples: list[ParsedJudgment], rubric: Rubric, config: JudgeConfig
     for cid in ids:
         votes = [s.verdicts[cid] for s in samples if cid in s.verdicts]
         voted[cid] = sum(votes) * 2 > len(votes)  # strict majority; ties -> False
-    value = (
-        (1.0 if voted.get("generic_overall") else 0.0)
-        if config.mode == "generic" else score(rubric, voted)
-    )
+    if config.mode == "generic":
+        value = 1.0 if voted.get("generic_overall") else 0.0
+    elif config.mode == "contradict":
+        # Contradiction ids are this mode's own, not the rubric's, so `score()` cannot be used.
+        # A majority of samples finding no contradiction is a pass.
+        value = 1.0 if voted.get("no_contradiction_found") else 0.0
+    else:
+        value = score(rubric, voted)
     first = samples[0]
     return ParsedJudgment(
         verdicts=voted,
@@ -457,6 +850,10 @@ def aggregate(samples: list[ParsedJudgment], rubric: Rubric, config: JudgeConfig
         evidence_total=sum(s.evidence_total for s in samples),
         criteria_detail=[{"id": cid, "verdict": voted[cid],
                           "votes": [s.verdicts.get(cid) for s in samples]} for cid in ids],
+        # Summed across samples, matching `evidence_verbatim`/`evidence_total` directly above: the
+        # voted verdict is backed by every sample's citations, so the denominator is all of them.
+        location=sum((s.location for s in samples), EvidenceLocation()),
+        support_unverified=sum(s.support_unverified for s in samples),
     )
 
 
@@ -469,6 +866,10 @@ def parse(text: str, rubric: Rubric, config: JudgeConfig, case: CaseRecord) -> P
     """
     if config.mode == "decompose":
         return _parse_decomposed(text, case)
+    if config.mode == "decompose_addressed":
+        return _parse_addressed(text, case)
+    if config.mode == "contradict":
+        return _parse_contradictions(text, case)
 
     data = _extract_json(text)
     entries = data.get("criteria")
@@ -507,11 +908,17 @@ def parse(text: str, rubric: Rubric, config: JudgeConfig, case: CaseRecord) -> P
 
     # Evidence grounding is measured, not enforced. A judge that paraphrases its quote is less
     # trustworthy but not necessarily wrong, and hard-failing on it would throw away usable
-    # judgments; the ratio is reported so the experiment table can show whether it tracks kappa.
-    haystack = f"{case.context} {case.candidate_output} {case.task_input} {case.reference}"
-    normalised = re.sub(r"\s+", " ", haystack).lower()
+    # judgments; the ratios are reported so the experiment table can show whether they track kappa.
+    #
+    # Unlike decompose mode, a candidate-side quote is legitimate here: several rubric criteria ask
+    # about the response itself ("does it call the right function"), and the honest way to cite
+    # that is to quote the response. So the two locations are recorded separately instead of being
+    # merged into one haystack, and `evidence_verbatim` stays the "found anywhere" count it has
+    # always been, so the number keeps its meaning across the cached runs that already used it.
+    source = f"{case.context} {case.task_input} {case.reference}"
     quotes = [q.split(": ", 1)[-1] for q in evidence]
-    verbatim = sum(1 for q in quotes if len(q) > 8 and re.sub(r"\s+", " ", q).lower() in normalised)
+    location = locate_evidence(quotes, source=source, candidate=case.candidate_output)
+    verbatim = location.total - location.too_short - location.unlocated
 
     return ParsedJudgment(
         verdicts=verdicts,
@@ -520,8 +927,9 @@ def parse(text: str, rubric: Rubric, config: JudgeConfig, case: CaseRecord) -> P
         rationale=str(data.get("rationale", ""))[:500],
         score=value,
         evidence_verbatim=verbatim,
-        evidence_total=len(quotes),
+        evidence_total=location.total,
         criteria_detail=detail,
+        location=location,
     )
 
 
@@ -569,6 +977,8 @@ def judge_case(case: CaseRecord, config: JudgeConfig) -> Judgment:
     base.evidence = parsed.evidence
     base.critical_errors = parsed.critical_errors
     base.rationale = parsed.rationale
+    base.evidence_location = parsed.location.as_dict()
+    base.support_unverified = parsed.support_unverified
     return base
 
 

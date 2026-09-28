@@ -30,7 +30,7 @@ Operator UI ──────────────┘          │          
 | Model routing | Quality × cost × latency × SLA × budget scoring |
 | vLLM / KV / prefix cache / quantization | Config/dashboard surface present; live proof correctly Docker-blocked |
 | Offline/online evals | 200-case suite, quality matrix, rolling online window |
-| LLM-as-judge calibration | 50-label calibration pipeline with Cohen's kappa gate |
+| LLM-as-judge calibration | 1,232-case corpus, rubric judge and kappa release gate; held-out kappa NOT yet measured (see `BLOCKERS.md`) |
 | Shadow/canary/rollback | Offline → shadow → 5% → 25% → full state machine with audited rollback |
 | OpenTelemetry | Stable decorator attributes with console and JSONL exporters |
 | Circuit breakers/backpressure | Breaker reroute, bounded admission, 429 + Retry-After |

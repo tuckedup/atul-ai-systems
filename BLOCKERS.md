@@ -30,3 +30,34 @@
 - Inter-annotator agreement on the groundedness labels — NOT MEASURED HERE. The published
   subsets ship adjudicated labels without per-rater votes, so human-human agreement cannot be
   recomputed from what was fetched. It is therefore not quoted as a ceiling on judge agreement.
+
+## Judge calibration, second round (2026-09-28)
+
+- **RouteBench κ ≥ 0.74 — NOT ACHIEVED and not measurable in this environment.** No provider
+  credential is present (`OPENAI_API_KEY` / `AISYS_OPENAI_API_KEY` unset), so no judge variant can
+  be run. The held-out test split was NOT touched, and no calibration bundle was frozen. The best
+  agreement measured anywhere in this repository remains a dev-internal estimate well below the
+  target: κ ≈ 0.64 on the groundedness track and κ ≈ 0.50 pooled.
+- **The recorded dev experiment cannot be reproduced from the committed tree.** All 8 variants in
+  `evalops/data/dev_experiments.json` fail `make calibrate-verify`. The stored `JudgeConfig` fields
+  round-trip exactly, so the divergence is in the prompt scaffolding in `judge.py`, which
+  `config_hash` covers but the record does not store. The 2,968 cached judgments were produced by
+  prompts no longer in the repository. This is not repairable by editing anything: the dev split
+  has to be re-judged under the current prompts, which needs a provider key. Diagnosable with
+  `make calibrate-verify`; the failure now names the drift instead of reporting "0 paired items".
+- **No TRAIN judgments exist at all.** The judgment cache holds dev judgments only (0 train, 0
+  test at the recorded config hashes). The acceptance protocol fits any learned combiner on train
+  groups, so a combiner cannot be fitted under the protocol until the train split is judged. The
+  probe in `evalops/data/COMBINER_PROBE.md` works around this with dev-internal grouped
+  cross-validation and is labelled, in the artifact itself, as not a held-out result.
+- **v8–v16 never run.** The decomposition, source-addressed, contradiction and matched-holistic
+  variants are declared in `run_calibration.GRID` with unit-tested prompt construction and parsing,
+  but none has been executed. Same blocker: no provider key.
+- **Evidence-validity signals are untested as features.** 0 of 5,470 cached judgments carry
+  `evidence_location`, because `judge_one` never copied it onto `Judgment` before this round's fix.
+  The combiner probe therefore reports the evidence feature family as all-zero and says so; whether
+  those signals help is an open question, not a negative result.
+- Human-human agreement on the groundedness labels and local hand-labelling remain as previously
+  recorded: not measured, pending human input, not fabricated.
+- The no-Docker amendment above is unchanged: nothing in this round needed or assumed a container
+  runtime, and no Docker-blocked item was reopened or worked around.

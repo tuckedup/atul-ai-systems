@@ -24,7 +24,7 @@ import math
 from pathlib import Path
 
 import pytest
-from evalops.calibrate import validate_bundle
+from evalops.calibrate import identity_hash, validate_bundle
 from evalops.rubrics import bundle_hash
 
 PRIMARY = "human_judgment_of_response"
@@ -50,16 +50,22 @@ def _track(**overrides: object) -> dict[str, object]:
 
 def _bundle(**overrides: object) -> dict[str, object]:
     """A minimal well-formed, passing calibration artifact so each test can break one field."""
+    # `bundle_id` is derived, not literal: the gate recomputes it from the fields below, so a
+    # hardcoded id would make every test here fail for the wrong reason.
+    identity = dict(
+        variant_id="v1", threshold=0.5, judge_config={"model": "test"},
+        rubric_bundle_hash=bundle_hash(), dataset_hash="dh", split_seed=1,
+    )
     base: dict[str, object] = {
-        "bundle_id": "b1",
+        "bundle_id": identity_hash(**identity),  # type: ignore[arg-type]
         "created_at": "2026-09-27T00:00:00+00:00",
-        "variant_id": "v1",
-        "judge_config": {"model": "test"},
-        "threshold": 0.5,
+        "variant_id": identity["variant_id"],
+        "judge_config": identity["judge_config"],
+        "threshold": identity["threshold"],
         "min_kappa": 0.74,
-        "rubric_bundle_hash": bundle_hash(),
-        "dataset_hash": "dh",
-        "split_seed": 1,
+        "rubric_bundle_hash": identity["rubric_bundle_hash"],
+        "dataset_hash": identity["dataset_hash"],
+        "split_seed": identity["split_seed"],
         "dev_kappa": 0.8,
         "dev_n": 400,
         "selection_rule": "r",

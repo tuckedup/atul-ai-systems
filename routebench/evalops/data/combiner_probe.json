@@ -1,0 +1,1341 @@
+{
+  "cache_entries_skipped": {
+    "stale config_hash": 2502
+  },
+  "components": [
+    "v0-generic-4o-mini",
+    "v1-rubric-4o-mini",
+    "v2-rubric-noref-4o-mini",
+    "v3-rubric-noboundary-4o-mini",
+    "v4-rubric-4.1-mini",
+    "v5-rubric-4.1",
+    "v6-rubric-fewshot-4.1-mini",
+    "v7-rubric-fewshot-4.1"
+  ],
+  "coverage": {
+    "components": [
+      "v0-generic-4o-mini",
+      "v1-rubric-4o-mini",
+      "v2-rubric-noref-4o-mini",
+      "v3-rubric-noboundary-4o-mini",
+      "v4-rubric-4.1-mini",
+      "v5-rubric-4.1",
+      "v6-rubric-fewshot-4.1-mini",
+      "v7-rubric-fewshot-4.1"
+    ],
+    "coverage": 0.6172506738544474,
+    "missing_by_component": {
+      "v1-rubric-4o-mini": 11,
+      "v2-rubric-noref-4o-mini": 7,
+      "v3-rubric-noboundary-4o-mini": 14,
+      "v4-rubric-4.1-mini": 2,
+      "v5-rubric-4.1": 51,
+      "v6-rubric-fewshot-4.1-mini": 6,
+      "v7-rubric-fewshot-4.1": 82
+    },
+    "n_complete": 229,
+    "n_offered": 371
+  },
+  "evidence_features": {
+    "judgments_loaded": 2968,
+    "judgments_with_evidence_location": 0,
+    "note": "0/2968 loaded judgments carry evidence_location. The evidence-validity feature family is therefore all-zero here: this probe does NOT test whether those signals help. Re-judging with the current code is required to test it."
+  },
+  "n_dev_cases_with_labels": 371,
+  "probe": "dev-internal grouped cross-validation; NOT a held-out measurement",
+  "protocol_deviation": "The acceptance protocol fits on TRAIN and measures once on TEST. The judgment cache holds dev judgments only -- the train split was never judged -- so this probe fits and selects inside dev by grouped k-fold CV. Its numbers are optimistic relative to a held-out measurement and must not be used to freeze a bundle or to claim a kappa.",
+  "provider_calls": 0,
+  "tracks": [
+    {
+      "comparison": {
+        "best_overall": {
+          "kappa": 0.4998610173529763,
+          "kind": "single",
+          "n": 229,
+          "name": "v5-rubric-4.1",
+          "threshold": 0.5
+        },
+        "best_single": {
+          "kappa": 0.4998610173529763,
+          "kind": "single",
+          "n": 229,
+          "name": "v5-rubric-4.1",
+          "threshold": 0.5
+        },
+        "combiner_helps": false,
+        "contenders": [
+          {
+            "kappa": 0.1070418227693248,
+            "kind": "single",
+            "n": 229,
+            "name": "v0-generic-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.3737962192367137,
+            "kind": "single",
+            "n": 229,
+            "name": "v1-rubric-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.2770762506070908,
+            "kind": "single",
+            "n": 229,
+            "name": "v2-rubric-noref-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.2956097950705069,
+            "kind": "single",
+            "n": 229,
+            "name": "v3-rubric-noboundary-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.46888995521433136,
+            "kind": "single",
+            "n": 229,
+            "name": "v4-rubric-4.1-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4998610173529763,
+            "kind": "single",
+            "n": 229,
+            "name": "v5-rubric-4.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.45701884820962096,
+            "kind": "single",
+            "n": 229,
+            "name": "v6-rubric-fewshot-4.1-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.44419687263756824,
+            "kind": "single",
+            "n": 229,
+            "name": "v7-rubric-fewshot-4.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4751857120278173,
+            "kind": "unweighted",
+            "n": 229,
+            "name": "mean-score",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4645503903618276,
+            "kind": "unweighted",
+            "n": 229,
+            "name": "majority-vote",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4678259475919544,
+            "kind": "learned",
+            "n": 229,
+            "name": "logistic[score]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4796077024279392,
+            "kind": "learned",
+            "n": 229,
+            "name": "logistic[score]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": -0.12586037364798436,
+            "kind": "learned",
+            "n": 229,
+            "name": "logistic[criteria]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": -0.12586037364798436,
+            "kind": "learned",
+            "n": 229,
+            "name": "logistic[criteria]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.48617677698533535,
+            "kind": "learned",
+            "n": 229,
+            "name": "logistic[score+criteria]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4796077024279392,
+            "kind": "learned",
+            "n": 229,
+            "name": "logistic[score+criteria]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.48617677698533535,
+            "kind": "learned",
+            "n": 229,
+            "name": "logistic[score+criteria+evidence]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4796077024279392,
+            "kind": "learned",
+            "n": 229,
+            "name": "logistic[score+criteria+evidence]C=1.0",
+            "threshold": 0.5
+          }
+        ],
+        "margin_over_best_single": 0.0
+      },
+      "folds": 5,
+      "human_prevalence": 0.5545851528384279,
+      "n": 229,
+      "n_groups": 160,
+      "results": [
+        {
+          "confusion": {
+            "fn": 56,
+            "fp": 46,
+            "n": 229,
+            "tn": 56,
+            "tp": 71
+          },
+          "defined": true,
+          "kappa": 0.1070418227693248,
+          "kind": "single",
+          "n": 229,
+          "name": "v0-generic-4o-mini",
+          "observed_agreement": 0.5545851528384279
+        },
+        {
+          "confusion": {
+            "fn": 21,
+            "fp": 48,
+            "n": 229,
+            "tn": 54,
+            "tp": 106
+          },
+          "defined": true,
+          "kappa": 0.3737962192367137,
+          "kind": "single",
+          "n": 229,
+          "name": "v1-rubric-4o-mini",
+          "observed_agreement": 0.6986899563318777
+        },
+        {
+          "confusion": {
+            "fn": 15,
+            "fp": 63,
+            "n": 229,
+            "tn": 39,
+            "tp": 112
+          },
+          "defined": true,
+          "kappa": 0.2770762506070908,
+          "kind": "single",
+          "n": 229,
+          "name": "v2-rubric-noref-4o-mini",
+          "observed_agreement": 0.6593886462882096
+        },
+        {
+          "confusion": {
+            "fn": 21,
+            "fp": 56,
+            "n": 229,
+            "tn": 46,
+            "tp": 106
+          },
+          "defined": true,
+          "kappa": 0.2956097950705069,
+          "kind": "single",
+          "n": 229,
+          "name": "v3-rubric-noboundary-4o-mini",
+          "observed_agreement": 0.6637554585152838
+        },
+        {
+          "confusion": {
+            "fn": 11,
+            "fp": 47,
+            "n": 229,
+            "tn": 55,
+            "tp": 116
+          },
+          "defined": true,
+          "kappa": 0.46888995521433136,
+          "kind": "single",
+          "n": 229,
+          "name": "v4-rubric-4.1-mini",
+          "observed_agreement": 0.7467248908296943
+        },
+        {
+          "confusion": {
+            "fn": 13,
+            "fp": 42,
+            "n": 229,
+            "tn": 60,
+            "tp": 114
+          },
+          "defined": true,
+          "kappa": 0.4998610173529763,
+          "kind": "single",
+          "n": 229,
+          "name": "v5-rubric-4.1",
+          "observed_agreement": 0.759825327510917
+        },
+        {
+          "confusion": {
+            "fn": 9,
+            "fp": 50,
+            "n": 229,
+            "tn": 52,
+            "tp": 118
+          },
+          "defined": true,
+          "kappa": 0.45701884820962096,
+          "kind": "single",
+          "n": 229,
+          "name": "v6-rubric-fewshot-4.1-mini",
+          "observed_agreement": 0.74235807860262
+        },
+        {
+          "confusion": {
+            "fn": 15,
+            "fp": 46,
+            "n": 229,
+            "tn": 56,
+            "tp": 112
+          },
+          "defined": true,
+          "kappa": 0.44419687263756824,
+          "kind": "single",
+          "n": 229,
+          "name": "v7-rubric-fewshot-4.1",
+          "observed_agreement": 0.7336244541484717
+        },
+        {
+          "confusion": {
+            "fn": 17,
+            "fp": 41,
+            "n": 229,
+            "tn": 61,
+            "tp": 110
+          },
+          "defined": true,
+          "kappa": 0.4751857120278173,
+          "kind": "unweighted",
+          "n": 229,
+          "name": "mean-score",
+          "observed_agreement": 0.7467248908296943
+        },
+        {
+          "confusion": {
+            "fn": 16,
+            "fp": 43,
+            "n": 229,
+            "tn": 59,
+            "tp": 111
+          },
+          "defined": true,
+          "kappa": 0.4645503903618276,
+          "kind": "unweighted",
+          "n": 229,
+          "name": "majority-vote",
+          "observed_agreement": 0.74235807860262
+        },
+        {
+          "confusion": {
+            "fn": 10,
+            "fp": 48,
+            "n": 229,
+            "tn": 54,
+            "tp": 117
+          },
+          "defined": true,
+          "kappa": 0.4678259475919544,
+          "kind": "learned",
+          "n": 229,
+          "name": "logistic[score]C=0.1",
+          "observed_agreement": 0.7467248908296943
+        },
+        {
+          "confusion": {
+            "fn": 12,
+            "fp": 45,
+            "n": 229,
+            "tn": 57,
+            "tp": 115
+          },
+          "defined": true,
+          "kappa": 0.4796077024279392,
+          "kind": "learned",
+          "n": 229,
+          "name": "logistic[score]C=1.0",
+          "observed_agreement": 0.7510917030567685
+        },
+        {
+          "confusion": {
+            "fn": 30,
+            "fp": 90,
+            "n": 229,
+            "tn": 12,
+            "tp": 97
+          },
+          "defined": true,
+          "kappa": -0.12586037364798436,
+          "kind": "learned",
+          "n": 229,
+          "name": "logistic[criteria]C=0.1",
+          "observed_agreement": 0.4759825327510917
+        },
+        {
+          "confusion": {
+            "fn": 30,
+            "fp": 90,
+            "n": 229,
+            "tn": 12,
+            "tp": 97
+          },
+          "defined": true,
+          "kappa": -0.12586037364798436,
+          "kind": "learned",
+          "n": 229,
+          "name": "logistic[criteria]C=1.0",
+          "observed_agreement": 0.4759825327510917
+        },
+        {
+          "confusion": {
+            "fn": 9,
+            "fp": 47,
+            "n": 229,
+            "tn": 55,
+            "tp": 118
+          },
+          "defined": true,
+          "kappa": 0.48617677698533535,
+          "kind": "learned",
+          "n": 229,
+          "name": "logistic[score+criteria]C=0.1",
+          "observed_agreement": 0.7554585152838428
+        },
+        {
+          "confusion": {
+            "fn": 12,
+            "fp": 45,
+            "n": 229,
+            "tn": 57,
+            "tp": 115
+          },
+          "defined": true,
+          "kappa": 0.4796077024279392,
+          "kind": "learned",
+          "n": 229,
+          "name": "logistic[score+criteria]C=1.0",
+          "observed_agreement": 0.7510917030567685
+        },
+        {
+          "confusion": {
+            "fn": 9,
+            "fp": 47,
+            "n": 229,
+            "tn": 55,
+            "tp": 118
+          },
+          "defined": true,
+          "kappa": 0.48617677698533535,
+          "kind": "learned",
+          "n": 229,
+          "name": "logistic[score+criteria+evidence]C=0.1",
+          "observed_agreement": 0.7554585152838428
+        },
+        {
+          "confusion": {
+            "fn": 12,
+            "fp": 45,
+            "n": 229,
+            "tn": 57,
+            "tp": 115
+          },
+          "defined": true,
+          "kappa": 0.4796077024279392,
+          "kind": "learned",
+          "n": 229,
+          "name": "logistic[score+criteria+evidence]C=1.0",
+          "observed_agreement": 0.7510917030567685
+        }
+      ],
+      "task_mix": {
+        "code": 53,
+        "reason": 9,
+        "sql": 64,
+        "summarize": 87,
+        "tool_use": 16
+      },
+      "track": "all_admissible_labels"
+    },
+    {
+      "comparison": {
+        "best_overall": {
+          "kappa": 0.644003777148253,
+          "kind": "single",
+          "n": 87,
+          "name": "v7-rubric-fewshot-4.1",
+          "threshold": 0.5
+        },
+        "best_single": {
+          "kappa": 0.644003777148253,
+          "kind": "single",
+          "n": 87,
+          "name": "v7-rubric-fewshot-4.1",
+          "threshold": 0.5
+        },
+        "combiner_helps": false,
+        "contenders": [
+          {
+            "kappa": 0.12121212121212123,
+            "kind": "single",
+            "n": 87,
+            "name": "v0-generic-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.47070124879923164,
+            "kind": "single",
+            "n": 87,
+            "name": "v1-rubric-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.6027397260273972,
+            "kind": "single",
+            "n": 87,
+            "name": "v2-rubric-noref-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.47070124879923164,
+            "kind": "single",
+            "n": 87,
+            "name": "v3-rubric-noboundary-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.5580952380952381,
+            "kind": "single",
+            "n": 87,
+            "name": "v4-rubric-4.1-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.5892351274787535,
+            "kind": "single",
+            "n": 87,
+            "name": "v5-rubric-4.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.5264169068203651,
+            "kind": "single",
+            "n": 87,
+            "name": "v6-rubric-fewshot-4.1-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.644003777148253,
+            "kind": "single",
+            "n": 87,
+            "name": "v7-rubric-fewshot-4.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.6091644204851752,
+            "kind": "unweighted",
+            "n": 87,
+            "name": "mean-score",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.5727440147329651,
+            "kind": "unweighted",
+            "n": 87,
+            "name": "majority-vote",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4176706827309235,
+            "kind": "learned",
+            "n": 87,
+            "name": "logistic[score]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.6198501872659176,
+            "kind": "learned",
+            "n": 87,
+            "name": "logistic[score]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.644003777148253,
+            "kind": "learned",
+            "n": 87,
+            "name": "logistic[criteria]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.6198501872659176,
+            "kind": "learned",
+            "n": 87,
+            "name": "logistic[criteria]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.644003777148253,
+            "kind": "learned",
+            "n": 87,
+            "name": "logistic[score+criteria]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.6198501872659176,
+            "kind": "learned",
+            "n": 87,
+            "name": "logistic[score+criteria]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.644003777148253,
+            "kind": "learned",
+            "n": 87,
+            "name": "logistic[score+criteria+evidence]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.6198501872659176,
+            "kind": "learned",
+            "n": 87,
+            "name": "logistic[score+criteria+evidence]C=1.0",
+            "threshold": 0.5
+          }
+        ],
+        "margin_over_best_single": 0.0
+      },
+      "folds": 5,
+      "human_prevalence": 0.6551724137931034,
+      "n": 87,
+      "n_groups": 41,
+      "results": [
+        {
+          "confusion": {
+            "fn": 44,
+            "fp": 2,
+            "n": 87,
+            "tn": 28,
+            "tp": 13
+          },
+          "defined": true,
+          "kappa": 0.12121212121212123,
+          "kind": "single",
+          "n": 87,
+          "name": "v0-generic-4o-mini",
+          "observed_agreement": 0.47126436781609193
+        },
+        {
+          "confusion": {
+            "fn": 4,
+            "fp": 15,
+            "n": 87,
+            "tn": 15,
+            "tp": 53
+          },
+          "defined": true,
+          "kappa": 0.47070124879923164,
+          "kind": "single",
+          "n": 87,
+          "name": "v1-rubric-4o-mini",
+          "observed_agreement": 0.7816091954022989
+        },
+        {
+          "confusion": {
+            "fn": 5,
+            "fp": 10,
+            "n": 87,
+            "tn": 20,
+            "tp": 52
+          },
+          "defined": true,
+          "kappa": 0.6027397260273972,
+          "kind": "single",
+          "n": 87,
+          "name": "v2-rubric-noref-4o-mini",
+          "observed_agreement": 0.8275862068965517
+        },
+        {
+          "confusion": {
+            "fn": 4,
+            "fp": 15,
+            "n": 87,
+            "tn": 15,
+            "tp": 53
+          },
+          "defined": true,
+          "kappa": 0.47070124879923164,
+          "kind": "single",
+          "n": 87,
+          "name": "v3-rubric-noboundary-4o-mini",
+          "observed_agreement": 0.7816091954022989
+        },
+        {
+          "confusion": {
+            "fn": 3,
+            "fp": 13,
+            "n": 87,
+            "tn": 17,
+            "tp": 54
+          },
+          "defined": true,
+          "kappa": 0.5580952380952381,
+          "kind": "single",
+          "n": 87,
+          "name": "v4-rubric-4.1-mini",
+          "observed_agreement": 0.8160919540229885
+        },
+        {
+          "confusion": {
+            "fn": 3,
+            "fp": 12,
+            "n": 87,
+            "tn": 18,
+            "tp": 54
+          },
+          "defined": true,
+          "kappa": 0.5892351274787535,
+          "kind": "single",
+          "n": 87,
+          "name": "v5-rubric-4.1",
+          "observed_agreement": 0.8275862068965517
+        },
+        {
+          "confusion": {
+            "fn": 3,
+            "fp": 14,
+            "n": 87,
+            "tn": 16,
+            "tp": 54
+          },
+          "defined": true,
+          "kappa": 0.5264169068203651,
+          "kind": "single",
+          "n": 87,
+          "name": "v6-rubric-fewshot-4.1-mini",
+          "observed_agreement": 0.8045977011494253
+        },
+        {
+          "confusion": {
+            "fn": 2,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 55
+          },
+          "defined": true,
+          "kappa": 0.644003777148253,
+          "kind": "single",
+          "n": 87,
+          "name": "v7-rubric-fewshot-4.1",
+          "observed_agreement": 0.8505747126436781
+        },
+        {
+          "confusion": {
+            "fn": 6,
+            "fp": 9,
+            "n": 87,
+            "tn": 21,
+            "tp": 51
+          },
+          "defined": true,
+          "kappa": 0.6091644204851752,
+          "kind": "unweighted",
+          "n": 87,
+          "name": "mean-score",
+          "observed_agreement": 0.8275862068965517
+        },
+        {
+          "confusion": {
+            "fn": 5,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 52
+          },
+          "defined": true,
+          "kappa": 0.5727440147329651,
+          "kind": "unweighted",
+          "n": 87,
+          "name": "majority-vote",
+          "observed_agreement": 0.8160919540229885
+        },
+        {
+          "confusion": {
+            "fn": 2,
+            "fp": 18,
+            "n": 87,
+            "tn": 12,
+            "tp": 55
+          },
+          "defined": true,
+          "kappa": 0.4176706827309235,
+          "kind": "learned",
+          "n": 87,
+          "name": "logistic[score]C=0.1",
+          "observed_agreement": 0.7701149425287356
+        },
+        {
+          "confusion": {
+            "fn": 3,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 54
+          },
+          "defined": true,
+          "kappa": 0.6198501872659176,
+          "kind": "learned",
+          "n": 87,
+          "name": "logistic[score]C=1.0",
+          "observed_agreement": 0.8390804597701149
+        },
+        {
+          "confusion": {
+            "fn": 2,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 55
+          },
+          "defined": true,
+          "kappa": 0.644003777148253,
+          "kind": "learned",
+          "n": 87,
+          "name": "logistic[criteria]C=0.1",
+          "observed_agreement": 0.8505747126436781
+        },
+        {
+          "confusion": {
+            "fn": 3,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 54
+          },
+          "defined": true,
+          "kappa": 0.6198501872659176,
+          "kind": "learned",
+          "n": 87,
+          "name": "logistic[criteria]C=1.0",
+          "observed_agreement": 0.8390804597701149
+        },
+        {
+          "confusion": {
+            "fn": 2,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 55
+          },
+          "defined": true,
+          "kappa": 0.644003777148253,
+          "kind": "learned",
+          "n": 87,
+          "name": "logistic[score+criteria]C=0.1",
+          "observed_agreement": 0.8505747126436781
+        },
+        {
+          "confusion": {
+            "fn": 3,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 54
+          },
+          "defined": true,
+          "kappa": 0.6198501872659176,
+          "kind": "learned",
+          "n": 87,
+          "name": "logistic[score+criteria]C=1.0",
+          "observed_agreement": 0.8390804597701149
+        },
+        {
+          "confusion": {
+            "fn": 2,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 55
+          },
+          "defined": true,
+          "kappa": 0.644003777148253,
+          "kind": "learned",
+          "n": 87,
+          "name": "logistic[score+criteria+evidence]C=0.1",
+          "observed_agreement": 0.8505747126436781
+        },
+        {
+          "confusion": {
+            "fn": 3,
+            "fp": 11,
+            "n": 87,
+            "tn": 19,
+            "tp": 54
+          },
+          "defined": true,
+          "kappa": 0.6198501872659176,
+          "kind": "learned",
+          "n": 87,
+          "name": "logistic[score+criteria+evidence]C=1.0",
+          "observed_agreement": 0.8390804597701149
+        }
+      ],
+      "task_mix": {
+        "summarize": 87
+      },
+      "track": "human_judgment_of_response"
+    },
+    {
+      "comparison": {
+        "best_overall": {
+          "kappa": 0.4667984189723321,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[score+criteria+evidence]C=1.0",
+          "threshold": 0.5
+        },
+        "best_single": {
+          "kappa": 0.43895693401817476,
+          "kind": "single",
+          "n": 142,
+          "name": "v5-rubric-4.1",
+          "threshold": 0.5
+        },
+        "combiner_helps": true,
+        "contenders": [
+          {
+            "kappa": 0.21608832807570977,
+            "kind": "single",
+            "n": 142,
+            "name": "v0-generic-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.2564710531515512,
+            "kind": "single",
+            "n": 142,
+            "name": "v1-rubric-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.12000786936848333,
+            "kind": "single",
+            "n": 142,
+            "name": "v2-rubric-noref-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.18680884676145337,
+            "kind": "single",
+            "n": 142,
+            "name": "v3-rubric-noboundary-4o-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4113699170943544,
+            "kind": "single",
+            "n": 142,
+            "name": "v4-rubric-4.1-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.43895693401817476,
+            "kind": "single",
+            "n": 142,
+            "name": "v5-rubric-4.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.397949122461053,
+            "kind": "single",
+            "n": 142,
+            "name": "v6-rubric-fewshot-4.1-mini",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.34090460201461587,
+            "kind": "single",
+            "n": 142,
+            "name": "v7-rubric-fewshot-4.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.310406342913776,
+            "kind": "unweighted",
+            "n": 142,
+            "name": "mean-score",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.35429023329379195,
+            "kind": "unweighted",
+            "n": 142,
+            "name": "majority-vote",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4250444400553033,
+            "kind": "learned",
+            "n": 142,
+            "name": "logistic[score]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.45287492590397166,
+            "kind": "learned",
+            "n": 142,
+            "name": "logistic[score]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.10055423594616004,
+            "kind": "learned",
+            "n": 142,
+            "name": "logistic[criteria]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.21608832807570977,
+            "kind": "learned",
+            "n": 142,
+            "name": "logistic[criteria]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.38285262741999204,
+            "kind": "learned",
+            "n": 142,
+            "name": "logistic[score+criteria]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4667984189723321,
+            "kind": "learned",
+            "n": 142,
+            "name": "logistic[score+criteria]C=1.0",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.38285262741999204,
+            "kind": "learned",
+            "n": 142,
+            "name": "logistic[score+criteria+evidence]C=0.1",
+            "threshold": 0.5
+          },
+          {
+            "kappa": 0.4667984189723321,
+            "kind": "learned",
+            "n": 142,
+            "name": "logistic[score+criteria+evidence]C=1.0",
+            "threshold": 0.5
+          }
+        ],
+        "margin_over_best_single": 0.027841484954157336
+      },
+      "folds": 5,
+      "human_prevalence": 0.49295774647887325,
+      "n": 142,
+      "n_groups": 119,
+      "results": [
+        {
+          "confusion": {
+            "fn": 12,
+            "fp": 44,
+            "n": 142,
+            "tn": 28,
+            "tp": 58
+          },
+          "defined": true,
+          "kappa": 0.21608832807570977,
+          "kind": "single",
+          "n": 142,
+          "name": "v0-generic-4o-mini",
+          "observed_agreement": 0.6056338028169014
+        },
+        {
+          "confusion": {
+            "fn": 16,
+            "fp": 37,
+            "n": 142,
+            "tn": 35,
+            "tp": 54
+          },
+          "defined": true,
+          "kappa": 0.2564710531515512,
+          "kind": "single",
+          "n": 142,
+          "name": "v1-rubric-4o-mini",
+          "observed_agreement": 0.6267605633802817
+        },
+        {
+          "confusion": {
+            "fn": 10,
+            "fp": 53,
+            "n": 142,
+            "tn": 19,
+            "tp": 60
+          },
+          "defined": true,
+          "kappa": 0.12000786936848333,
+          "kind": "single",
+          "n": 142,
+          "name": "v2-rubric-noref-4o-mini",
+          "observed_agreement": 0.5563380281690141
+        },
+        {
+          "confusion": {
+            "fn": 17,
+            "fp": 41,
+            "n": 142,
+            "tn": 31,
+            "tp": 53
+          },
+          "defined": true,
+          "kappa": 0.18680884676145337,
+          "kind": "single",
+          "n": 142,
+          "name": "v3-rubric-noboundary-4o-mini",
+          "observed_agreement": 0.5915492957746479
+        },
+        {
+          "confusion": {
+            "fn": 8,
+            "fp": 34,
+            "n": 142,
+            "tn": 38,
+            "tp": 62
+          },
+          "defined": true,
+          "kappa": 0.4113699170943544,
+          "kind": "single",
+          "n": 142,
+          "name": "v4-rubric-4.1-mini",
+          "observed_agreement": 0.704225352112676
+        },
+        {
+          "confusion": {
+            "fn": 9,
+            "fp": 31,
+            "n": 142,
+            "tn": 41,
+            "tp": 61
+          },
+          "defined": true,
+          "kappa": 0.43895693401817476,
+          "kind": "single",
+          "n": 142,
+          "name": "v5-rubric-4.1",
+          "observed_agreement": 0.7183098591549296
+        },
+        {
+          "confusion": {
+            "fn": 6,
+            "fp": 37,
+            "n": 142,
+            "tn": 35,
+            "tp": 64
+          },
+          "defined": true,
+          "kappa": 0.397949122461053,
+          "kind": "single",
+          "n": 142,
+          "name": "v6-rubric-fewshot-4.1-mini",
+          "observed_agreement": 0.6971830985915493
+        },
+        {
+          "confusion": {
+            "fn": 12,
+            "fp": 35,
+            "n": 142,
+            "tn": 37,
+            "tp": 58
+          },
+          "defined": true,
+          "kappa": 0.34090460201461587,
+          "kind": "single",
+          "n": 142,
+          "name": "v7-rubric-fewshot-4.1",
+          "observed_agreement": 0.6690140845070423
+        },
+        {
+          "confusion": {
+            "fn": 22,
+            "fp": 27,
+            "n": 142,
+            "tn": 45,
+            "tp": 48
+          },
+          "defined": true,
+          "kappa": 0.310406342913776,
+          "kind": "unweighted",
+          "n": 142,
+          "name": "mean-score",
+          "observed_agreement": 0.6549295774647887
+        },
+        {
+          "confusion": {
+            "fn": 14,
+            "fp": 32,
+            "n": 142,
+            "tn": 40,
+            "tp": 56
+          },
+          "defined": true,
+          "kappa": 0.35429023329379195,
+          "kind": "unweighted",
+          "n": 142,
+          "name": "majority-vote",
+          "observed_agreement": 0.676056338028169
+        },
+        {
+          "confusion": {
+            "fn": 9,
+            "fp": 32,
+            "n": 142,
+            "tn": 40,
+            "tp": 61
+          },
+          "defined": true,
+          "kappa": 0.4250444400553033,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[score]C=0.1",
+          "observed_agreement": 0.7112676056338029
+        },
+        {
+          "confusion": {
+            "fn": 9,
+            "fp": 30,
+            "n": 142,
+            "tn": 42,
+            "tp": 61
+          },
+          "defined": true,
+          "kappa": 0.45287492590397166,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[score]C=1.0",
+          "observed_agreement": 0.7253521126760564
+        },
+        {
+          "confusion": {
+            "fn": 26,
+            "fp": 38,
+            "n": 142,
+            "tn": 34,
+            "tp": 44
+          },
+          "defined": true,
+          "kappa": 0.10055423594616004,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[criteria]C=0.1",
+          "observed_agreement": 0.5492957746478874
+        },
+        {
+          "confusion": {
+            "fn": 12,
+            "fp": 44,
+            "n": 142,
+            "tn": 28,
+            "tp": 58
+          },
+          "defined": true,
+          "kappa": 0.21608832807570977,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[criteria]C=1.0",
+          "observed_agreement": 0.6056338028169014
+        },
+        {
+          "confusion": {
+            "fn": 11,
+            "fp": 33,
+            "n": 142,
+            "tn": 39,
+            "tp": 59
+          },
+          "defined": true,
+          "kappa": 0.38285262741999204,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[score+criteria]C=0.1",
+          "observed_agreement": 0.6901408450704225
+        },
+        {
+          "confusion": {
+            "fn": 9,
+            "fp": 29,
+            "n": 142,
+            "tn": 43,
+            "tp": 61
+          },
+          "defined": true,
+          "kappa": 0.4667984189723321,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[score+criteria]C=1.0",
+          "observed_agreement": 0.7323943661971831
+        },
+        {
+          "confusion": {
+            "fn": 11,
+            "fp": 33,
+            "n": 142,
+            "tn": 39,
+            "tp": 59
+          },
+          "defined": true,
+          "kappa": 0.38285262741999204,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[score+criteria+evidence]C=0.1",
+          "observed_agreement": 0.6901408450704225
+        },
+        {
+          "confusion": {
+            "fn": 9,
+            "fp": 29,
+            "n": 142,
+            "tn": 43,
+            "tp": 61
+          },
+          "defined": true,
+          "kappa": 0.4667984189723321,
+          "kind": "learned",
+          "n": 142,
+          "name": "logistic[score+criteria+evidence]C=1.0",
+          "observed_agreement": 0.7323943661971831
+        }
+      ],
+      "task_mix": {
+        "code": 53,
+        "reason": 9,
+        "sql": 64,
+        "tool_use": 16
+      },
+      "track": "gold_oracle"
+    }
+  ]
+}

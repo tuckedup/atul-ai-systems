@@ -3,7 +3,7 @@
 PY := ../.venv/Scripts/python.exe
 ROOT := cd .. && PYTHONPATH=routebench .venv/Scripts/python.exe
 
-.PHONY: test lint bench corpus splits calibrate-dev calibrate-freeze calibrate-test calibrate-check annotate-export annotate annotate-status
+.PHONY: test lint bench corpus splits calibrate-dev calibrate-verify calibrate-freeze calibrate-test calibrate-check probe-combiners annotate-export annotate annotate-status
 
 test:  ; $(ROOT) -m pytest routebench/tests -q --basetemp .local/pytest-routebench
 lint:  ; cd .. && .venv/Scripts/python.exe -m ruff check routebench/gateway routebench/evalops routebench/tests
@@ -21,10 +21,19 @@ splits: ; $(ROOT) -c "from evalops.dataset import Corpus; from evalops import sp
 ## --- calibration ----------------------------------------------------------
 ## Strict order. `test` refuses to run before `freeze`, and refuses to re-select anything.
 calibrate-dev:    ; $(ROOT) -m evalops.run_calibration dev --budget 25
+## Check that the recorded dev experiment can still be reproduced from this tree before trusting
+## it. `config_hash` covers the prompt scaffolding, so editing a template after a run renames
+## every judge in the record and every cache lookup silently misses. Run this before `freeze`.
+calibrate-verify: ; $(ROOT) -m evalops.run_calibration verify
 calibrate-freeze: ; $(ROOT) -m evalops.run_calibration freeze
 calibrate-test:   ; $(ROOT) -m evalops.run_calibration test --budget 10
 ## Validate the frozen artifact the way CI and the promotion gate do. Exits non-zero on failure.
 calibrate-check:  ; $(ROOT) -m evalops.calibrate routebench/evalops/data/calibration_bundle.json
+
+## --- offline analysis (no provider calls) ---------------------------------
+## Would combining the judges beat the strongest single one? Reads the judgment cache only.
+## Dev-internal grouped CV, so its numbers are NOT held-out results -- see COMBINER_PROBE.md.
+probe-combiners: ; $(ROOT) -m evalops.probe_combiners
 
 ## --- human annotation -----------------------------------------------------
 annotate-export: ; $(ROOT) -m evalops.annotate export --n 100

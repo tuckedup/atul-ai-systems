@@ -6,6 +6,7 @@ from evalops.calibrate import (
     CalibrationBundle,
     CalibrationError,
     Paired,
+    expected_bundle_id,
     pair,
     select_threshold,
     validate_bundle,
@@ -164,13 +165,19 @@ def test_threshold_invariance_of_the_human_marginal():
 
 def _bundle(**overrides):
     base = dict(
-        bundle_id="b1", created_at="now", variant_id="v1", judge_config={}, threshold=0.5,
+        bundle_id="", created_at="now", variant_id="v1", judge_config={}, threshold=0.5,
         min_kappa=ROUTEBENCH_MIN_KAPPA, rubric_bundle_hash=bundle_hash(), dataset_hash="dh",
         split_seed=1, dev_kappa=0.8, dev_n=100, selection_rule="r", threshold_grid=[],
         label_provenance_counts={}, test_result=None,
     )
     base.update(overrides)
-    return CalibrationBundle(**base)
+    bundle = CalibrationBundle(**base)
+    # The gate recomputes `bundle_id` from the identity fields, so it has to be derived here
+    # rather than hardcoded -- unless a test is deliberately overriding it to check that a
+    # tampered artifact is rejected.
+    if "bundle_id" not in overrides:
+        bundle.bundle_id = expected_bundle_id(bundle)
+    return bundle
 
 
 def _track(kappa, *, defined=True, insufficient=False, n=50, reason="", track_completion=1.0):

@@ -50,18 +50,26 @@ def promote(
     calibration: str | Path | None = DEFAULT_ARTIFACT,
     min_kappa: float = ROUTEBENCH_MIN_KAPPA,
     require_headline: bool = True,
+    expected_dataset_hash: str | None = None,
 ) -> PromotionResult:
     """Run the promotion ladder, gated on a valid judge calibration.
 
     `calibration=None` skips the gate. That exists for unit tests of the ladder itself and for
     deliberately un-gated local experiments; it is not the production path, and the audit event
     records `calibration_checked: False` so a skipped gate is visible after the fact.
+
+    `expected_dataset_hash` binds the artifact to a corpus. Pass
+    `calibrate.corpus_dataset_hash(...)` on any path where the corpus is available: the gate
+    otherwise checks the rubric hash but not the data, so an artifact whose kappa was measured on
+    a different (smaller, easier, or simply older) corpus would be accepted as evidence about
+    this one.
     """
     result = PromotionResult(model, "offline", False)
 
     if calibration is not None:
         ok, reasons = validate_bundle(
-            calibration, min_kappa=min_kappa, require_headline=require_headline
+            calibration, min_kappa=min_kappa, require_headline=require_headline,
+            expected_dataset_hash=expected_dataset_hash,
         )
         if not ok:
             result.blocked_by_calibration = True
