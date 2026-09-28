@@ -6,7 +6,11 @@ ROOT := cd .. && PYTHONPATH=routebench .venv/Scripts/python.exe
 .PHONY: test lint bench corpus splits calibrate-dev calibrate-verify calibrate-freeze calibrate-test calibrate-check probe-combiners annotate-export annotate annotate-status
 
 test:  ; $(ROOT) -m pytest routebench/tests -q --basetemp .local/pytest-routebench
-lint:  ; cd .. && .venv/Scripts/python.exe -m ruff check routebench/gateway routebench/evalops routebench/tests
+## Lints the WHOLE routebench tree, tests included. The narrower `gateway evalops` scope
+## reported 4 findings where a full-tree run reported 22, so "lint is clean" was true only
+## of the command being run. A lint scope that excludes the tests is a lint scope that lets
+## test code rot.
+lint:  ; cd .. && .venv/Scripts/python.exe -m ruff check routebench routebench/tests
 
 ## Print the measured quality x cost x latency matrix. Anything without an artifact on disk
 ## prints "not measured" rather than a placeholder.

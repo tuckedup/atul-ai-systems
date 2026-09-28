@@ -16,7 +16,7 @@ from sklearn.metrics import cohen_kappa_score
 
 def test_kappa_arithmetic_fixture_exact():
     c = Confusion(tp=87, tn=87, fp=13, fn=13)
-    kappa, po, pe, reason = kappa_of(c)
+    kappa, _po, _pe, reason = kappa_of(c)
     assert kappa == pytest.approx(0.74, abs=1e-9)
     assert reason == ""
     # Cross-check against sklearn so the hand-rolled closed form cannot drift.

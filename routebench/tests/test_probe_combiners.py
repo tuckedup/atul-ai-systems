@@ -10,8 +10,13 @@ from __future__ import annotations
 import json
 
 import pytest
-from evalops.probe_combiners import group_folds, load_cached, oof_threshold_only, to_markdown
-from evalops.probe_combiners import Row
+from evalops.probe_combiners import (
+    Row,
+    group_folds,
+    load_cached,
+    oof_threshold_only,
+    to_markdown,
+)
 
 
 def test_group_folds_keeps_a_group_whole():

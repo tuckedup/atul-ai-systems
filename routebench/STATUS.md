@@ -34,13 +34,17 @@
 - [~] M5 second round (2026-09-28) — defects fixed and the combiner question answered; the
       measurement itself is BLOCKED for want of a provider key. κ ≥ 0.74 is NOT achieved and the
       test split has NOT been touched. Detail:
-  - **The recorded dev experiment is not reproducible from this tree.** All 8 variants in
-    `evalops/data/dev_experiments.json` fail `make calibrate-verify`. Every stored `JudgeConfig`
-    field round-trips exactly, so the drift is in one of the two `config_hash` inputs the record
-    does not store — and `exemplars_hash` is the constant empty-path value for the variants that
-    use no exemplars, which leaves the prompt scaffolding in `judge.py`. The 2,968 cached
-    judgments were produced by prompts that are no longer in the repository, so the κ values in
-    that file describe judges that cannot be rebuilt.
+  - **The recorded dev experiment was written under an older `config_hash` formula.** All 8
+    variants in `evalops/data/dev_experiments.json` fail `make calibrate-verify`. An earlier
+    revision of this file claimed the prompts behind them were lost; that was **wrong** and is
+    corrected here. An exhaustive search over 131,072 candidate formulas found exactly one that
+    reproduces all eight recorded hashes, and it has no `prompt_template` key at all — so a prompt
+    edit was invisible to it and the mismatch says only that the formula changed. Every
+    `rubric_version` in those judgments matches the rubrics in this tree; the `_ROLE` and
+    output-format scaffolding is covered by nothing. The 2,968 judgments therefore have **unknown**
+    prompt provenance: findable and auditable, admissible for a labelled development probe, never
+    behind a frozen bundle. `JudgmentCache.legacy_lookup` tags them `unverified_legacy` and
+    `run_variant` never counts one as a cache hit, so nothing can relabel them as current.
   - The concrete consequence, reproduced before the fix: `make calibrate-freeze` failed with
     `threshold selection needs a usable dev set; got 0 paired items` while 2,968 usable judgments
     sat in the cache. `cmd_freeze` keyed the cache off `GRID`'s reconstructed `config_hash`, so
@@ -59,6 +63,25 @@
     current prompts, judging the TRAIN split at all (the cache holds zero train judgments, so no
     combiner can be fitted under the protocol), and running the v8–v16 variants. All of these need
     a provider key; this environment has none.
+
+- [~] M5 third round (2026-09-28) — review findings addressed; measurement still BLOCKED. κ ≥ 0.74
+      NOT achieved, test split untouched, no bundle frozen. Detail:
+  - Cache diagnosis **corrected** (see above): the recovered legacy `config_hash` formula explains
+    the mismatch; the prompts are of unknown provenance, not lost. Legacy judgments are identified
+    and tagged, never promoted to current.
+  - Spend cap made hard: reservations are now derived from the model's configured price rather than
+    a flat $0.01 estimate (which was 1/8 of the true bound for a 2,000-token gpt-4.1 call, the gap
+    that allowed a reproduced `$0.03 cap -> $0.04 spend`), scale by `samples` as well as
+    `max_attempts`, commit the cost that failed attempts burned, and record any breach.
+  - Freeze integrity: bundles are now bound to the annotation contents and the exact split
+    membership, not only to case contents and the split seed; `freeze` refuses to overwrite a bundle
+    that already carries a held-out measurement.
+  - Lint reconciled: the scope now covers the whole `routebench` tree (22 findings at that scope
+    versus 4 at the old narrow one) and is clean at it.
+  - Upstream MiniCheck and AlignScore adapters added from source at pinned commits, lazily imported
+    and fully tested against a fake checker — and **unrun**, pending a weights-licence decision and
+    approved downloads.
+  - 464 routebench tests pass. Five pre-existing forgecode failures are unrelated and unchanged.
 
 - [x] M6 eval-driven promotion — regression injection automatically rolls back and writes a verified audit event; CI offline gate committed
 

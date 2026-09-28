@@ -224,6 +224,31 @@ class Corpus:
     cases: list[CaseRecord]
     annotations: list[Annotation]
 
+    @property
+    def cases_hash(self) -> str:
+        """Digest of the case CONTENTS. This is what `dataset_hash` has always been."""
+        return content_hash(sorted(c.fingerprint for c in self.cases))
+
+    @property
+    def annotations_hash(self) -> str:
+        """Digest of the LABELS: case id, label value and provenance for every annotation.
+
+        Separate from `cases_hash` because a calibration bundle bound only to case contents is
+        bound to the questions and not to the answers. Flipping a human label leaves `cases_hash`
+        byte-identical, so a relabelled corpus passed the release gate -- and relabelling is the
+        single cheapest way to move kappa, which is exactly why `docs/KAPPA_DESIGN.md` §8 lists
+        "editing human labels after seeing judge output" first among the things the protocol
+        forbids. A forbidden operation with no detector is a convention, not a control.
+
+        `annotator_id` and `adjudicated` are included: which rater produced a label, and whether it
+        survived adjudication, are part of what the headline track claims. `reason` and `timestamp`
+        are not -- they are commentary, and hashing them would make a typo fix look like tampering.
+        """
+        return content_hash([
+            [a.case_id, a.label, a.provenance.value, a.annotator_id, a.adjudicated]
+            for a in sorted(self.annotations, key=lambda a: (a.case_id, a.annotator_id))
+        ])
+
     @classmethod
     def load(cls, root: str | Path, *, require_labels: bool = True) -> Corpus:
         root = Path(root)

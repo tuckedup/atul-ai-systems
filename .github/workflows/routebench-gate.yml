@@ -85,6 +85,73 @@ jobs:
           uv run python -m evalops.probe_combiners \
             --out .local/combiner_probe.json --markdown .local/COMBINER_PROBE.md
 
+      - name: Checker adapters import and run with no torch, weights or network
+        # The lazy-import contract. If a heavy import creeps above a loader function, the adapter
+        # tests become undiscoverable on any machine without a GPU stack -- so CI asserts it here
+        # as well as in the suite, where a conftest could mask it.
+        run: |
+          uv run python -c "
+          import sys
+          import evalops.checkers as c
+          heavy = {'torch', 'transformers', 'nltk', 'vllm', 'minicheck', 'alignscore'}
+          loaded = heavy & set(sys.modules)
+          assert not loaded, f'heavy imports at module load: {loaded}'
+          assert len(c.DEFAULT_SPECS) >= 4
+          for spec in c.DEFAULT_SPECS:
+              assert len(spec.upstream['commit']) == 40, spec.checker_id
+              assert spec.model_name != 'Bespoke-MiniCheck-7B', 'licence-restricted default'
+          print('checker adapters OK; upstream pins', sorted({s.upstream['commit'][:8] for s in c.DEFAULT_SPECS}))
+          "
+
+      - name: Spend cap is hard — reservation bounds, samples, and failed-attempt cost
+        run: |
+          uv run python -c "
+          from evalops.experiments import SpendMeter, BudgetExceeded, worst_case_call_usd
+          from evalops.judge import JudgeConfig
+          # A price-derived bound absorbs a call the flat estimate would have let through.
+          cfg = JudgeConfig(variant_id='v', model='gpt-4.1', max_tokens=2000)
+          bound = worst_case_call_usd('gpt-4.1', cfg)
+          assert bound > 0.05, bound
+          m = SpendMeter(cap_usd=1.0)
+          m.reserve(max_attempts=1, worst_case_usd=bound).record(0.04, model='gpt-4.1')
+          assert not m.as_dict()['cap_exceeded'] and m.as_dict()['reservation_breaches'] == 0
+          # An over-reservation cost is committed AND reported, never hidden.
+          m2 = SpendMeter(cap_usd=0.03, reserve_usd=0.01)
+          m2.reserve(max_attempts=1).record(0.04, model='gpt-4o-mini')
+          d = m2.as_dict()
+          assert d['cap_exceeded'] and d['reservation_breaches'] == 1, d
+          # samples multiply.
+          c3 = JudgeConfig(variant_id='v', model='gpt-4.1-mini', samples=3, max_attempts=3, max_tokens=2000)
+          b3 = worst_case_call_usd(c3.model, c3)
+          m3 = SpendMeter(cap_usd=b3 * 3)
+          try:
+              m3.reserve(max_attempts=3, samples=3, worst_case_usd=b3)
+              raise AssertionError('a nine-call judgment was admitted by a three-call budget')
+          except BudgetExceeded:
+              pass
+          # Failed attempts still cost.
+          m4 = SpendMeter(cap_usd=1.0)
+          m4.reserve(max_attempts=3, worst_case_usd=0.02).release(accrued_usd=0.0042, model='gpt-4o-mini')
+          assert abs(m4.spent_usd - 0.0042) < 1e-12, m4.spent_usd
+          print('spend cap behaviours verified')
+          "
+
+      - name: Legacy config_hash is identified, never promoted
+        run: |
+          uv run python -c "
+          import json, pathlib
+          from evalops.judge import JudgeConfig
+          p = pathlib.Path('routebench/evalops/data/dev_experiments.json')
+          saved = {s['config']['variant_id']: s['config']
+                   for s in json.loads(p.read_text())['run_summaries']}
+          assert saved, 'no stored configs in the dev record'
+          for variant, cfg in sorted(saved.items()):
+              c = JudgeConfig.from_dict(cfg)
+              assert c.legacy_config_hash == cfg['config_hash'], variant
+              assert c.config_hash != cfg['config_hash'], variant
+          print(f'{len(saved)} recorded variants reproduce under the legacy formula and not the current one')
+          "
+
       - name: Validate the frozen calibration artifact
         run: uv run python -m evalops.calibrate routebench/evalops/data/calibration_bundle.json
 
@@ -111,6 +178,8 @@ jobs:
           check('variant_swapped', lambda p: p.update(variant_id='some-other-judge'))
           check('dataset_hash_edited', lambda p: p.update(dataset_hash='an-easier-corpus'))
           check('judge_config_edited', lambda p: p.update(judge_config={'model': 'swapped'}))
+          check('labels_edited', lambda p: p.update(annotations_hash='relabelled'))
+          check('split_moved', lambda p: p.update(split_membership_hash='cases-moved'))
           def below(p):
               for t in p['test_result']['tracks'].values():
                   t['kappa'] = 0.10

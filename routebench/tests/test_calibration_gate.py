@@ -164,12 +164,15 @@ def test_threshold_invariance_of_the_human_marginal():
 
 
 def _bundle(**overrides):
-    base = dict(
-        bundle_id="", created_at="now", variant_id="v1", judge_config={}, threshold=0.5,
-        min_kappa=ROUTEBENCH_MIN_KAPPA, rubric_bundle_hash=bundle_hash(), dataset_hash="dh",
-        split_seed=1, dev_kappa=0.8, dev_n=100, selection_rule="r", threshold_grid=[],
-        label_provenance_counts={}, test_result=None,
-    )
+    base = {
+        "bundle_id": "", "created_at": "now", "variant_id": "v1", "judge_config": {},
+        "threshold": 0.5, "min_kappa": ROUTEBENCH_MIN_KAPPA,
+        "rubric_bundle_hash": bundle_hash(), "dataset_hash": "dh",
+        "split_seed": 1, "dev_kappa": 0.8, "dev_n": 100, "selection_rule": "r",
+        "threshold_grid": [], "label_provenance_counts": {}, "test_result": None,
+        # A real artifact binds the labels and the split membership, not just the case contents.
+        "annotations_hash": "ann-1", "split_membership_hash": "mem-1",
+    }
     base.update(overrides)
     bundle = CalibrationBundle(**base)
     # The gate recomputes `bundle_id` from the identity fields, so it has to be derived here
@@ -291,7 +294,7 @@ def test_validate_bundle_kappa_exactly_at_policy_passes(tmp_path):
     b = _bundle(min_kappa=0.74, test_result=_passing_test_result(kappa=0.74))
     p = tmp_path / "b.json"
     b.save(p)
-    ok, reasons = validate_bundle(p, min_kappa=0.74)
+    ok, _reasons = validate_bundle(p, min_kappa=0.74)
     assert ok is True
 
 

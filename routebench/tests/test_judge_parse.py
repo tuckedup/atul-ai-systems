@@ -15,17 +15,17 @@ RUBRIC = for_task("code")
 
 
 def _case(**overrides):
-    base = dict(
-        case_id="c1", group_id="g1", task_class="code",
-        task_input="TASKINPUT", context="CTXBLOB", reference="REFANSWER",
-        candidate_output="CANDOUT",
-    )
+    base = {
+        "case_id": "c1", "group_id": "g1", "task_class": "code",
+        "task_input": "TASKINPUT", "context": "CTXBLOB", "reference": "REFANSWER",
+        "candidate_output": "CANDOUT",
+    }
     base.update(overrides)
     return CaseRecord(**base)
 
 
 def _cfg(**overrides):
-    base = dict(variant_id="v1", model="m")
+    base = {"variant_id": "v1", "model": "m"}
     base.update(overrides)
     return JudgeConfig(**base)
 
@@ -194,7 +194,7 @@ def test_include_boundary_examples_false_omits_boundary_block():
 # this claim"; if its cited span is only in the candidate, it has quoted the very text it was
 # meant to be checking and proved nothing. The old code scored that as located evidence.
 
-from evalops.judge import (  # noqa: E402
+from evalops.judge import (
     EvidenceLocation,
     _parse_decomposed,
     locate_evidence,
@@ -255,13 +255,13 @@ def test_source_rate_is_over_checkable_quotes_only():
 
 
 def _decompose_case(**overrides):
-    base = dict(
-        case_id="g1", group_id="grp", task_class="summarize",
-        task_input="Summarise the article.",
-        context="Rizespor confirmed the loan on Monday. The fee was undisclosed.",
-        reference="",
-        candidate_output="Rizespor signed him permanently for a record fee.",
-    )
+    base = {
+        "case_id": "g1", "group_id": "grp", "task_class": "summarize",
+        "task_input": "Summarise the article.",
+        "context": "Rizespor confirmed the loan on Monday. The fee was undisclosed.",
+        "reference": "",
+        "candidate_output": "Rizespor signed him permanently for a record fee.",
+    }
     base.update(overrides)
     return CaseRecord(**base)
 

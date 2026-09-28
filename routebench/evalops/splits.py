@@ -47,6 +47,23 @@ class SplitPlan:
     policy: str = "sha256(seed:group_id) bucketed; stratified by task_class"
     stats: dict[str, Any] = field(default_factory=dict)
 
+    @property
+    def membership_hash(self) -> str:
+        """Digest of the ACTUAL group-to-split assignment, not of the seed that generated it.
+
+        A bundle recorded `split_seed` and nothing else, which binds the recipe rather than the
+        result. Since `of_case` reads `assignment` directly, a hand-edited `splits.json` that keeps
+        the seed and moves a group from test to train changes which items the held-out measurement
+        covers, and nothing noticed. That matters more here than in most projects because the
+        assignment is deliberately NOT recomputable from the seed alone: `plan()` hashes
+        `(seed, task, group)` so that adding corpus rows leaves existing assignments alone, which
+        is the property that keeps the test set frozen -- and it means the file is the authority.
+        Binding the authority is the point.
+        """
+        from .dataset import content_hash
+
+        return content_hash(sorted((g, s) for g, s in self.assignment.items()))
+
     def of_case(self, case: CaseRecord) -> Split:
         try:
             return self.assignment[case.group_id]

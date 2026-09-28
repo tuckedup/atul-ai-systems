@@ -236,6 +236,13 @@ class CalibrationBundle:
     selection_rule: str
     threshold_grid: list[dict[str, Any]]
     label_provenance_counts: dict[str, int]
+    #: Digest of the LABELS the threshold was selected against. `dataset_hash` covers case
+    #: contents only, so without this a bundle is bound to the questions and not the answers, and
+    #: a relabelled corpus passes the gate untouched.
+    annotations_hash: str = ""
+    #: Digest of the actual group-to-split assignment. `split_seed` binds the recipe; this binds
+    #: the result, which is what `of_case` actually reads.
+    split_membership_hash: str = ""
     #: Filled in by `evaluate`; absent until the frozen bundle has faced the test split.
     test_result: dict[str, Any] | None = None
     software: dict[str, str] = field(default_factory=dict)
@@ -266,6 +273,8 @@ def identity_hash(
     rubric_bundle_hash: str,
     dataset_hash: str,
     split_seed: int,
+    annotations_hash: str = "",
+    split_membership_hash: str = "",
 ) -> str:
     """Hash the fields that define a bundle's identity. The one place `bundle_id` is computed.
 
@@ -277,10 +286,18 @@ def identity_hash(
     """
     from .dataset import content_hash
 
-    return content_hash({
+    payload: dict[str, Any] = {
         "variant": variant_id, "threshold": threshold, "config": judge_config,
         "rubrics": rubric_bundle_hash, "dataset": dataset_hash, "seed": split_seed,
-    })
+    }
+    # Added only when present, so a bundle frozen before these bindings existed keeps its id and
+    # stays verifiable. A migration that silently changed every historical id would make the
+    # integrity check reject exactly the artifacts it is supposed to vouch for.
+    if annotations_hash:
+        payload["annotations"] = annotations_hash
+    if split_membership_hash:
+        payload["split_membership"] = split_membership_hash
+    return content_hash(payload)
 
 
 def expected_bundle_id(bundle: CalibrationBundle) -> str:
@@ -292,6 +309,8 @@ def expected_bundle_id(bundle: CalibrationBundle) -> str:
         rubric_bundle_hash=bundle.rubric_bundle_hash,
         dataset_hash=bundle.dataset_hash,
         split_seed=bundle.split_seed,
+        annotations_hash=bundle.annotations_hash,
+        split_membership_hash=bundle.split_membership_hash,
     )
 
 
@@ -304,6 +323,8 @@ def freeze(
     split_seed: int,
     dev: Paired,
     min_kappa: float = ROUTEBENCH_MIN_KAPPA,
+    annotations_hash: str = "",
+    split_membership_hash: str = "",
     notes: str = "",
 ) -> CalibrationBundle:
     counts: dict[str, int] = {}
@@ -313,6 +334,7 @@ def freeze(
         bundle_id=identity_hash(
             variant_id=variant_id, threshold=choice.threshold, judge_config=judge_config,
             rubric_bundle_hash=bundle_hash(), dataset_hash=dataset_hash, split_seed=split_seed,
+            annotations_hash=annotations_hash, split_membership_hash=split_membership_hash,
         ),
         created_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         variant_id=variant_id,
@@ -327,6 +349,8 @@ def freeze(
         selection_rule=choice.rule,
         threshold_grid=choice.grid,
         label_provenance_counts=counts,
+        annotations_hash=annotations_hash,
+        split_membership_hash=split_membership_hash,
         software={
             "python": sys.version.split()[0],
             "platform": platform.platform(),
@@ -455,6 +479,9 @@ def validate_bundle(
     require_headline: bool = True,
     min_completion: float = 1.0,
     expected_dataset_hash: str | None = None,
+    expected_annotations_hash: str | None = None,
+    expected_split_membership_hash: str | None = None,
+    require_data_bindings: bool = True,
 ) -> tuple[bool, list[str]]:
     """Decide whether a calibration artifact may back a routing/promotion decision.
 
@@ -505,6 +532,34 @@ def validate_bundle(
             f"dataset hash mismatch: artifact {b.dataset_hash}, corpus {expected_dataset_hash}. "
             "The corpus changed since calibration, so this kappa was measured on different data "
             "than the judge is now being trusted for."
+        )
+    if require_data_bindings and not b.annotations_hash:
+        reasons.append(
+            "artifact records no annotations_hash: it is bound to the case contents but not to the "
+            "LABELS the threshold was selected against, so a relabelled corpus would pass. Re-freeze "
+            "with the label digest, or pass require_data_bindings=False to accept a pre-binding "
+            "artifact deliberately."
+        )
+    if require_data_bindings and not b.split_membership_hash:
+        reasons.append(
+            "artifact records no split_membership_hash: it is bound to the split SEED but not to "
+            "the assignment the seed produced, and `of_case` reads the assignment. Re-freeze with "
+            "the membership digest, or pass require_data_bindings=False deliberately."
+        )
+    if expected_annotations_hash is not None and b.annotations_hash and \
+            b.annotations_hash != expected_annotations_hash:
+        reasons.append(
+            f"annotation hash mismatch: artifact {b.annotations_hash}, corpus "
+            f"{expected_annotations_hash}. The human labels changed since calibration, so this "
+            "kappa was measured against different ground truth than the judge is now trusted for. "
+            "Editing labels after seeing judge output is the first thing the protocol forbids."
+        )
+    if expected_split_membership_hash is not None and b.split_membership_hash and \
+            b.split_membership_hash != expected_split_membership_hash:
+        reasons.append(
+            f"split membership mismatch: artifact {b.split_membership_hash}, plan "
+            f"{expected_split_membership_hash}. Cases moved between splits after the freeze, so "
+            "the held-out measurement no longer covers the items it reports on."
         )
     if b.rubric_bundle_hash != bundle_hash():
         reasons.append(
@@ -625,6 +680,36 @@ def validate_bundle(
     return (not reasons), reasons
 
 
+def corpus_bindings(data_dir: str | Path) -> dict[str, str | None]:
+    """The three data digests a bundle should be bound to, or Nones if the corpus is absent.
+
+    Returned together because binding one and not the others is the hole this closes: the gate
+    used to check case contents while the labels and the split assignment went unchecked.
+    """
+    out: dict[str, str | None] = {
+        "dataset": None, "annotations": None, "split_membership": None,
+    }
+    try:
+        from .dataset import Corpus
+
+        corpus = Corpus.load(data_dir)
+        if corpus.cases:
+            out["dataset"] = corpus.cases_hash
+            out["annotations"] = corpus.annotations_hash
+    except Exception as e:  # noqa: BLE001 - absence of a corpus is not a gate failure
+        # Deliberately swallowed and recorded, not logged: `validate_bundle` treats an absent
+        # binding as "unverified" and says so, which is the honest outcome on a machine that does
+        # not carry the corpus. Raising here would make validating an artifact impossible there.
+        out["dataset_error"] = f"{type(e).__name__}: {e}"
+    try:
+        from .splits import SplitPlan
+
+        out["split_membership"] = SplitPlan.load(Path(data_dir) / "splits.json").membership_hash
+    except Exception as e:  # noqa: BLE001 - same reasoning as above
+        out["split_membership_error"] = f"{type(e).__name__}: {e}"
+    return out
+
+
 def corpus_dataset_hash(data_dir: str | Path) -> str | None:
     """The dataset hash of the corpus on disk, or None if it cannot be loaded.
 
@@ -654,15 +739,20 @@ def _cli() -> int:
                     help="skip binding the artifact to the corpus on disk (for validating an "
                          "artifact on a machine that does not carry the corpus)")
     args = ap.parse_args()
-    expected = None
+    bindings: dict[str, str | None] = {
+        "dataset": None, "annotations": None, "split_membership": None,
+    }
     if not args.no_dataset_check:
-        expected = corpus_dataset_hash(Path(args.artifact).parent)
-        if expected is None:
-            print("note: no corpus found beside the artifact; dataset binding NOT verified",
-                  file=sys.stderr)
+        bindings = corpus_bindings(Path(args.artifact).parent)
+        missing = [k for k, v in bindings.items() if v is None]
+        if missing:
+            print(f"note: corpus bindings NOT verified for {missing} (no corpus beside the "
+                  "artifact)", file=sys.stderr)
     ok, reasons = validate_bundle(
         args.artifact, min_kappa=args.min_kappa, require_headline=not args.allow_oracle_track,
-        expected_dataset_hash=expected,
+        expected_dataset_hash=bindings["dataset"],
+        expected_annotations_hash=bindings["annotations"],
+        expected_split_membership_hash=bindings["split_membership"],
     )
     if ok:
         b = CalibrationBundle.load(args.artifact)

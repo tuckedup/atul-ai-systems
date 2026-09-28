@@ -24,6 +24,7 @@ from evalops.run_calibration import (
     GRID,
     MATCHED_PAIRS,
     _recorded_config,
+    overwrite_refusal,
     verify_record,
 )
 
@@ -65,22 +66,45 @@ def test_recorded_config_refuses_rather_than_falling_back_to_grid():
         _recorded_config(row, {"variants": [row], "run_summaries": []})
 
 
-def test_a_hash_that_does_not_reproduce_names_the_prompt_scaffolding():
-    # Simulates the real failure: the stored fields round-trip exactly, but the recorded hash was
-    # produced under different prompt templates.
+def test_a_recorded_legacy_hash_is_identified_as_a_formula_change():
+    """The real failure mode, and the one an earlier revision misdiagnosed.
+
+    The recorded hash matches `legacy_config_hash` exactly, so the message must say the FORMULA
+    changed and must NOT claim the prompts did — the legacy formula could not see them.
+    """
+    cfg = JudgeConfig(variant_id="v-legacy", model="gpt-4o-mini", mode="rubric")
+    row, experiments = _record("v-legacy", config=cfg)
+    row["judge_config"] = dict(row["judge_config"], config_hash=cfg.legacy_config_hash)
+    row["config_hash"] = cfg.legacy_config_hash
+    with pytest.raises(CalibrationError) as e:
+        _recorded_config(row, experiments)
+    message = str(e.value)
+    assert "PRE-2026-09-28 config_hash formula" in message
+    assert "reproduced exactly by the legacy formula" in message
+    assert "NOT evidence that the prompts changed" in message
+    # The evidence must be described as unverifiable, never as lost, and never relabelled.
+    assert "unknown prompt provenance" in message
+    assert "never admissible behind a frozen bundle" in message
+    assert "nothing here will relabel them as current" in message
+
+
+def test_an_unidentifiable_hash_says_so_without_guessing_a_cause():
+    # Neither the current nor the recovered legacy formula fits. The message must report that and
+    # stop, rather than inferring a specific cause from the alternatives it happened to enumerate —
+    # which is the mistake the legacy-formula search exposed.
     row, experiments = _record()
-    row["judge_config"] = dict(row["judge_config"], config_hash="a-hash-from-older-prompts")
-    row["config_hash"] = "a-hash-from-older-prompts"
+    row["judge_config"] = dict(row["judge_config"], config_hash="not-either-formula")
+    row["config_hash"] = "not-either-formula"
     row["prompt_template_hash"] = "older-templates"
     with pytest.raises(CalibrationError) as e:
         _recorded_config(row, experiments)
     message = str(e.value)
     assert "cannot be reconstructed" in message
-    assert "prompt scaffolding" in message
-    assert "older-templates" in message
+    assert "legacy formula would give" in message
+    assert "also does not match" in message
+    assert "a third formula or against different exemplars" in message
     assert prompt_template_hash("rubric") in message
-    # It must not suggest a workaround that would freeze an unreproducible judge.
-    assert "has to be re-judged" in message
+    assert "Re-run `dev` rather than guessing" in message
 
 
 def test_grid_drift_is_reported_but_does_not_block(capsys):
@@ -212,3 +236,62 @@ def test_every_grid_variant_has_a_distinct_config_hash():
 def test_every_grid_variant_id_is_unique():
     ids = [c.variant_id for c in GRID]
     assert len(set(ids)) == len(ids)
+
+
+# ---------------------------------------------------------------- freeze overwrite protection
+
+
+def _measured_artifact(tmp_path, **overrides):
+    import json as _json
+
+    payload = {
+        "bundle_id": "b", "created_at": "now", "variant_id": "v-already-measured",
+        "judge_config": {}, "threshold": 0.5, "min_kappa": 0.74, "rubric_bundle_hash": "r",
+        "dataset_hash": "d", "split_seed": 1, "dev_kappa": 0.8, "dev_n": 100,
+        "selection_rule": "r", "threshold_grid": [], "label_provenance_counts": {},
+        "test_result": {"tracks": {"human_judgment_of_response": {
+            "track": "human_judgment_of_response", "insufficient": False, "kappa": 0.61, "n": 200,
+        }}},
+    }
+    payload.update(overrides)
+    path = tmp_path / "calibration_bundle.json"
+    path.write_text(_json.dumps(payload), encoding="utf-8")
+    return path
+
+
+def test_freeze_refuses_to_overwrite_a_measured_bundle(tmp_path):
+    refusal = overwrite_refusal(_measured_artifact(tmp_path), replace=False)
+    assert refusal is not None
+    assert "already on disk" in refusal
+    assert "v-already-measured" in refusal
+    assert "kappa=0.61" in refusal
+    assert "--replace" in refusal
+
+
+def test_freeze_may_overwrite_an_unmeasured_bundle(tmp_path):
+    # A bundle that never faced the test split holds no held-out result to lose, so re-freezing
+    # over it is ordinary iteration and must not be obstructed.
+    assert overwrite_refusal(_measured_artifact(tmp_path, test_result=None), replace=False) is None
+
+
+def test_freeze_may_overwrite_when_replace_is_passed(tmp_path):
+    assert overwrite_refusal(_measured_artifact(tmp_path), replace=True) is None
+
+
+def test_freeze_is_unobstructed_when_no_bundle_exists(tmp_path):
+    assert overwrite_refusal(tmp_path / "nothing.json", replace=False) is None
+
+
+def test_an_unreadable_artifact_does_not_block_freezing(tmp_path):
+    # A corrupt file holds no measurement worth protecting, and blocking on it would wedge the
+    # pipeline with no way forward.
+    path = tmp_path / "calibration_bundle.json"
+    path.write_text("{ not json", encoding="utf-8")
+    assert overwrite_refusal(path, replace=False) is None
+
+
+def test_the_guard_needs_no_corpus(tmp_path):
+    # It must fire before any corpus work; otherwise a missing corpus is the reason a measured
+    # artifact survives, which is the wrong reason for the right outcome.
+    assert not (tmp_path / "cases.jsonl").exists()
+    assert overwrite_refusal(_measured_artifact(tmp_path), replace=False) is not None

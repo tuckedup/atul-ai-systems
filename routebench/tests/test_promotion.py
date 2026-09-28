@@ -29,10 +29,11 @@ FIXTURE_LABELS = Path(__file__).parent.parent / "evalops" / "fixtures" / "synthe
 def _bundle(**overrides: object) -> dict[str, object]:
     """A minimal well-formed passing artifact, so each test can break exactly one field."""
     # Derived, not literal: the gate recomputes `bundle_id` from these fields.
-    identity = dict(
-        variant_id="v-test", threshold=0.5, judge_config={"model": "gpt-4.1-mini"},
-        rubric_bundle_hash=bundle_hash(), dataset_hash="abc123", split_seed=20260927,
-    )
+    identity = {
+        "variant_id": "v-test", "threshold": 0.5, "judge_config": {"model": "gpt-4.1-mini"},
+        "rubric_bundle_hash": bundle_hash(), "dataset_hash": "abc123", "split_seed": 20260927,
+        "annotations_hash": "ann-abc", "split_membership_hash": "mem-abc",
+    }
     base: dict[str, object] = {
         "bundle_id": identity_hash(**identity),  # type: ignore[arg-type]
         "created_at": "2026-09-27T00:00:00+00:00",
@@ -43,6 +44,8 @@ def _bundle(**overrides: object) -> dict[str, object]:
         "rubric_bundle_hash": identity["rubric_bundle_hash"],
         "dataset_hash": identity["dataset_hash"],
         "split_seed": identity["split_seed"],
+        "annotations_hash": identity["annotations_hash"],
+        "split_membership_hash": identity["split_membership_hash"],
         "dev_kappa": 0.80,
         "dev_n": 400,
         "selection_rule": "argmax dev kappa",

@@ -62,6 +62,7 @@ def _frozen_bundle(dev: Paired | None = None) -> CalibrationBundle:
     return freeze(
         choice, variant_id="v-frozen", judge_config=CONFIG,
         dataset_hash="ds-1", split_seed=7, dev=dev,
+        annotations_hash="ann-1", split_membership_hash="mem-1",
     )
 
 
@@ -194,6 +195,8 @@ def test_lowering_the_threshold_by_hand_cannot_be_hidden_by_rewriting_the_id(tmp
         variant_id=payload["variant_id"], threshold=payload["threshold"],
         judge_config=payload["judge_config"], rubric_bundle_hash=payload["rubric_bundle_hash"],
         dataset_hash=payload["dataset_hash"], split_seed=payload["split_seed"],
+        annotations_hash=payload["annotations_hash"],
+        split_membership_hash=payload["split_membership_hash"],
     )
     path.write_text(json.dumps(payload))
     ok, reasons = validate_bundle(path)
@@ -244,3 +247,174 @@ def test_rubric_drift_is_still_caught_independently(tmp_path):
 def test_bundle_hash_is_the_working_tree_hash_at_freeze(tmp_path):
     bundle = CalibrationBundle.load(_measured(tmp_path))
     assert bundle.rubric_bundle_hash == bundle_hash()
+
+
+# ---------------------------------------------------------------- Holes 5-7, from the second review
+#
+# Hole 5 -- `dataset_hash` digests case CONTENTS only, so a bundle was bound to the questions and
+#           not the answers. Flipping a human label left it byte-identical, and "editing human
+#           labels after seeing judge output" is the first thing docs/KAPPA_DESIGN.md §8 forbids.
+# Hole 6 -- the bundle recorded `split_seed` but no membership digest. Since `of_case` reads
+#           `assignment` directly, a hand-edited splits.json keeping the seed could move a group
+#           from test to train undetected.
+# Hole 7 -- `cmd_test` refused to re-measure a frozen bundle, but nothing stopped `cmd_freeze`
+#           REPLACING the file. Freezing again and measuring the new bundle was the same loophole
+#           one step earlier.
+
+from evalops.calibrate import corpus_bindings
+
+
+def test_a_relabelled_corpus_is_rejected(tmp_path):
+    path = _measured(tmp_path)
+    ok, reasons = validate_bundle(path, expected_annotations_hash="labels-were-edited")
+    assert ok is False
+    assert any("annotation hash mismatch" in r for r in reasons), reasons
+
+
+def test_matching_annotation_hash_is_accepted(tmp_path):
+    ok, reasons = validate_bundle(_measured(tmp_path), expected_annotations_hash="ann-1")
+    assert ok, reasons
+
+
+def test_moved_split_membership_is_rejected(tmp_path):
+    path = _measured(tmp_path)
+    ok, reasons = validate_bundle(path, expected_split_membership_hash="cases-were-moved")
+    assert ok is False
+    assert any("split membership mismatch" in r for r in reasons), reasons
+
+
+def test_matching_split_membership_is_accepted(tmp_path):
+    ok, reasons = validate_bundle(_measured(tmp_path), expected_split_membership_hash="mem-1")
+    assert ok, reasons
+
+
+def test_a_bundle_with_no_label_binding_is_rejected(tmp_path):
+    path = _measured(tmp_path, annotations_hash="")
+    ok, reasons = validate_bundle(path)
+    assert ok is False
+    assert any("records no annotations_hash" in r for r in reasons), reasons
+
+
+def test_a_bundle_with_no_split_binding_is_rejected(tmp_path):
+    path = _measured(tmp_path, split_membership_hash="")
+    ok, reasons = validate_bundle(path)
+    assert ok is False
+    assert any("records no split_membership_hash" in r for r in reasons), reasons
+
+
+def test_a_pre_binding_artifact_can_be_accepted_only_deliberately(tmp_path):
+    """An escape hatch that has to be asked for by name.
+
+    Built the way a real pre-binding artifact was: frozen WITHOUT the digests, so its `bundle_id`
+    is internally consistent and only the missing bindings are at issue. `identity_hash` omits an
+    empty digest from the payload for exactly this reason — adding the bindings must not
+    retroactively invalidate the artifacts that predate them.
+    """
+    dev = _paired()
+    bundle = freeze(select_threshold(dev), variant_id="v-frozen", judge_config=CONFIG,
+                    dataset_hash="ds-1", split_seed=7, dev=dev)
+    bundle.test_result = evaluate(bundle, _paired(split="test"), bootstrap=0)
+    path = tmp_path / "calibration_bundle.json"
+    bundle.save(path)
+
+    ok, reasons = validate_bundle(path)
+    assert ok is False
+    assert not any("bundle_id mismatch" in r for r in reasons), (
+        "a genuine pre-binding artifact must still verify its own identity", reasons)
+    assert any("records no annotations_hash" in r for r in reasons), reasons
+
+    ok, reasons = validate_bundle(path, require_data_bindings=False)
+    assert ok, reasons
+
+
+def test_the_two_new_digests_are_part_of_the_bundle_identity(tmp_path):
+    # Otherwise they could be edited out of an artifact without breaking bundle_id.
+    import json as _json
+
+    path = _measured(tmp_path)
+    for field in ("annotations_hash", "split_membership_hash"):
+        payload = _json.loads(path.read_text())
+        payload[field] = "swapped"
+        p = tmp_path / f"{field}.json"
+        p.write_text(_json.dumps(payload))
+        ok, reasons = validate_bundle(p)
+        assert ok is False
+        assert any("bundle_id mismatch" in r for r in reasons), (field, reasons)
+
+
+def test_annotations_hash_moves_when_a_label_flips():
+    from evalops.dataset import Annotation, Corpus, LabelProvenance
+
+    cases = [CaseRecord(case_id="c1", group_id="g1", task_class="code", task_input="i",
+                        context="", reference="r", candidate_output="o")]
+    def corpus(label):
+        return Corpus(cases=cases, annotations=[Annotation(
+            case_id="c1", annotator_id="a", label=label,
+            provenance=LabelProvenance.HUMAN_EXPERT)])
+    a, b = corpus(1), corpus(0)
+    assert a.cases_hash == b.cases_hash, "the questions are identical"
+    assert a.annotations_hash != b.annotations_hash, "the answers are not"
+
+
+def test_annotations_hash_ignores_commentary_fields():
+    # A typo fix in `reason` must not look like tampering; the label, rater, provenance and
+    # adjudication flag are what the headline track claims.
+    from evalops.dataset import Annotation, Corpus, LabelProvenance
+
+    cases = [CaseRecord(case_id="c1", group_id="g1", task_class="code", task_input="i",
+                        context="", reference="r", candidate_output="o")]
+    def corpus(reason, timestamp):
+        return Corpus(cases=cases, annotations=[Annotation(
+            case_id="c1", annotator_id="a", label=1, reason=reason, timestamp=timestamp,
+            provenance=LabelProvenance.HUMAN_EXPERT)])
+    assert corpus("typo", "t1").annotations_hash == corpus("fixed", "t2").annotations_hash
+
+
+def test_split_membership_hash_moves_when_a_group_changes_split():
+    from evalops.splits import SplitPlan
+
+    a = SplitPlan(assignment={"g1": "train", "g2": "test"}, weights={}, seed=1)
+    b = SplitPlan(assignment={"g1": "train", "g2": "train"}, weights={}, seed=1)
+    assert a.seed == b.seed, "the seed is unchanged, which is the point"
+    assert a.membership_hash != b.membership_hash
+
+
+def test_split_membership_hash_is_order_independent():
+    from evalops.splits import SplitPlan
+
+    a = SplitPlan(assignment={"g1": "train", "g2": "test"}, weights={}, seed=1)
+    b = SplitPlan(assignment={"g2": "test", "g1": "train"}, weights={}, seed=1)
+    assert a.membership_hash == b.membership_hash
+
+
+def test_corpus_bindings_reports_all_three_for_the_committed_corpus():
+    from pathlib import Path as _Path
+
+    data = _Path(__file__).parent.parent / "evalops" / "data"
+    if not (data / "cases.jsonl").exists():
+        pytest.skip("no corpus in this checkout")
+    b = corpus_bindings(data)
+    assert set(b) == {"dataset", "annotations", "split_membership"}
+    assert all(v for v in b.values()), b
+
+
+def test_corpus_bindings_returns_nones_without_a_corpus(tmp_path):
+    b = corpus_bindings(tmp_path)
+    assert b["dataset"] is None
+    assert b["annotations"] is None
+    assert b["split_membership"] is None
+    # And it says WHY, rather than swallowing the reason: an unverified binding on a machine
+    # without the corpus is a legitimate state, but a silent one is indistinguishable from a bug.
+    assert b["dataset_error"]
+    assert b["split_membership_error"]
+
+
+def test_corpus_bindings_records_no_error_when_the_corpus_loads():
+    from pathlib import Path as _Path
+
+    data = _Path(__file__).parent.parent / "evalops" / "data"
+    if not (data / "cases.jsonl").exists():
+        pytest.skip("no corpus in this checkout")
+    b = corpus_bindings(data)
+    assert "dataset_error" not in b
+    assert "split_membership_error" not in b

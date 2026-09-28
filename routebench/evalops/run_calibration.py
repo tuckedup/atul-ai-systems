@@ -318,21 +318,35 @@ def _recorded_config(row: dict[str, Any], experiments: dict[str, Any]) -> JudgeC
     config = JudgeConfig.from_dict(saved)
     recorded_hash = str(saved.get("config_hash", "") or row.get("config_hash", ""))
     if recorded_hash and config.config_hash != recorded_hash:
+        legacy = config.legacy_config_hash
+        if recorded_hash == legacy:
+            raise CalibrationError(
+                f"variant {variant!r} was recorded under the PRE-2026-09-28 config_hash formula.\n"
+                f"  recorded config_hash:    {recorded_hash}  (reproduced exactly by the legacy "
+                "formula)\n"
+                f"  current config_hash:     {config.config_hash}\n"
+                "The legacy formula omitted `prompt_template` entirely, so a prompt edit was "
+                "invisible to it. The difference above therefore shows only that the FORMULA "
+                "changed; it is NOT evidence that the prompts changed, and an earlier revision of "
+                "docs/KAPPA_DESIGN.md wrongly claimed it was.\n"
+                "What IS verified: every `rubric_version` in those cached judgments matches the "
+                "rubrics in this tree. What is NOT covered by anything: the `_ROLE` and "
+                "output-format scaffolding. So these judgments have unknown prompt provenance — "
+                "usable for a labelled development probe, never admissible behind a frozen bundle. "
+                "Re-judging under pinned prompts is the only way to make them admissible; nothing "
+                "here will relabel them as current."
+            )
         recorded_prompt = str(row.get("prompt_template_hash", "") or "not recorded")
         raise CalibrationError(
             f"variant {variant!r} cannot be reconstructed.\n"
             f"  recorded config_hash:      {recorded_hash}\n"
             f"  rebuilt from the record:   {config.config_hash}\n"
+            f"  legacy formula would give: {legacy}  (also does not match)\n"
             f"  recorded prompt_template:  {recorded_prompt}\n"
             f"  prompt_template now:       {prompt_template_hash(config.mode)}\n"
-            "Every stored JudgeConfig FIELD round-trips exactly, so the difference is in an input "
-            "the record does not store. `config_hash` has only two of those: the prompt scaffolding "
-            "in judge.py and the exemplar file contents. The judgments in the cache were therefore "
-            "produced by a prompt that is no longer in this repository, and the kappa recorded for "
-            "this variant describes a judge that cannot be rebuilt.\n"
-            "This is not recoverable by editing anything: the dev split has to be re-judged under "
-            "the current prompts. Nothing here will freeze a bundle naming a judge it cannot "
-            "reproduce."
+            "Every stored JudgeConfig FIELD round-trips exactly and neither the current nor the "
+            "known legacy formula reproduces the recorded hash, so this record was written by a "
+            "third formula or against different exemplars. Re-run `dev` rather than guessing."
         )
     live = next((c for c in GRID if c.variant_id == variant), None)
     if live is not None and live.config_hash != config.config_hash:
@@ -342,6 +356,18 @@ def _recorded_config(row: dict[str, Any], experiments: dict[str, Any]) -> JudgeC
             "will re-judge under the new hash rather than reuse these judgments."
         )
     return config
+
+
+def _saved_config(row: dict[str, Any], experiments: dict[str, Any]) -> dict[str, Any] | None:
+    """The stored config dict for a row, from the row or from `run_summaries`. Never raises."""
+    saved = row.get("judge_config")
+    if saved:
+        return dict(saved)
+    for summary in experiments.get("run_summaries", []):
+        cfg = summary.get("config") or {}
+        if cfg.get("variant_id") == row.get("variant_id"):
+            return dict(cfg)
+    return None
 
 
 def verify_record(experiments: dict[str, Any]) -> list[dict[str, Any]]:
@@ -368,6 +394,25 @@ def verify_record(experiments: dict[str, Any]) -> list[dict[str, Any]]:
         except CalibrationError as e:
             entry.update({"reproducible": False, "reason": str(e).splitlines()[0],
                           "detail": str(e)})
+            # Distinguish "written under the recovered legacy formula" from "written under
+            # something we cannot identify". The first says the judgments are findable and their
+            # prompt provenance is unknown; the second says the record is opaque. Collapsing them
+            # is what produced the overstated "the prompts are lost" claim.
+            try:
+                live_cfg = JudgeConfig.from_dict(
+                    row.get("judge_config") or _saved_config(row, experiments) or {}
+                )
+            except (TypeError, ValueError):
+                live_cfg = None
+            if live_cfg is not None and entry["recorded_config_hash"] == \
+                    live_cfg.legacy_config_hash:
+                entry.update({
+                    "legacy_formula": True,
+                    "prompt_provenance": "unverified_legacy",
+                    "note": ("recorded under the pre-2026-09-28 config_hash, which omitted "
+                             "prompt_template; the judgments are findable but their prompt "
+                             "provenance cannot be established either way"),
+                })
         else:
             live = next((c for c in GRID if c.variant_id == variant), None)
             entry.update({
@@ -408,14 +453,25 @@ def cmd_verify(args: argparse.Namespace) -> int:
             continue
         if not row.get("reproducible"):
             broken.append(row)
-            print(f"  {row['variant_id']:34s} NOT REPRODUCIBLE")
+            label = ("LEGACY FORMULA (findable, prompt provenance unverified)"
+                     if row.get("legacy_formula") else "NOT REPRODUCIBLE (formula unidentified)")
+            print(f"  {row['variant_id']:34s} {label}")
             continue
         note = "" if row["grid_matches_record"] else "  (GRID has since changed)"
         print(f"  {row['variant_id']:34s} ok  {row['rebuilt_config_hash']}{note}")
 
     if broken:
-        print(f"\n{len(broken)} of {len(rows)} recorded variants cannot be reproduced from this "
-              "tree. The first one in detail:\n", file=sys.stderr)
+        legacy = [r for r in broken if r.get("legacy_formula")]
+        if len(legacy) == len(broken):
+            print(f"\nAll {len(broken)} recorded variants were written under the recovered "
+                  "pre-2026-09-28 config_hash formula. Their judgments are findable in the cache "
+                  "and their prompt provenance is unverifiable — not lost, and not current. "
+                  "Re-judge under pinned prompts before freezing anything.\n", file=sys.stderr)
+        else:
+            print(f"\n{len(broken)} of {len(rows)} recorded variants cannot be reproduced from "
+                  f"this tree ({len(legacy)} under the known legacy formula, "
+                  f"{len(broken) - len(legacy)} unidentified). The first one in detail:\n",
+                  file=sys.stderr)
         print(broken[0]["detail"], file=sys.stderr)
         return 1
     if not dataset_ok:
@@ -423,6 +479,44 @@ def cmd_verify(args: argparse.Namespace) -> int:
         return 1
     print("\nevery recorded variant is reproducible from this tree")
     return 0
+
+
+def overwrite_refusal(bundle_path: Path, *, replace: bool) -> str | None:
+    """Why freezing must not write to `bundle_path`, or None if it may.
+
+    `cmd_test` refuses to re-measure a bundle that already carries a `test_result`, so the held-out
+    split is scored once per bundle. Nothing stopped `cmd_freeze` REPLACING that file, which made
+    "freeze a different variant and measure that one" the same loophole reached one step earlier:
+    each bundle is measured once, and you may have as many bundles as you like against one test
+    split.
+
+    Factored out of `cmd_freeze` so the guard is testable without a corpus on disk. It also has to
+    run before any corpus work, or a missing corpus becomes the reason a measured artifact survives.
+    """
+    if replace or not bundle_path.exists():
+        return None
+    try:
+        existing = CalibrationBundle.load(bundle_path)
+    except Exception:  # noqa: BLE001 - an unreadable artifact is not worth protecting
+        return None
+    if not existing.frozen:
+        return None
+    lines = [
+        "REFUSING: a bundle carrying a measured test_result is already on disk.",
+        f"  {bundle_path}",
+        f"  variant {existing.variant_id} at threshold {existing.threshold}",
+    ]
+    for name, row in sorted((existing.test_result or {}).get("tracks", {}).items()):
+        if isinstance(row, dict) and not row.get("insufficient"):
+            lines.append(f"  {name}: kappa={row.get('kappa')} n={row.get('n')}")
+    lines += [
+        ("Overwriting it would discard a held-out measurement and let a second variant be measured "
+         "on the same test split -- the loophole `cmd_test --remeasure` exists to close, reopened "
+         "one step earlier."),
+        "  --replace archives the existing artifact beside it and proceeds.",
+        "  Re-selecting after seeing test requires a genuinely new confirmation set.",
+    ]
+    return "\n".join(lines)
 
 
 def cmd_freeze(args: argparse.Namespace) -> int:
@@ -479,10 +573,21 @@ def cmd_freeze(args: argparse.Namespace) -> int:
         else {"n": len(o), "skipped": True},
     }
 
+    # Refuse to clobber a bundle that already carries a held-out measurement. `cmd_test` guards
+    # the same file against re-measurement, but nothing guarded it against being REPLACED by a
+    # fresh freeze -- so the cheapest way around "the test split is measured once per bundle" was
+    # to freeze again and measure the new bundle. Same loophole, one step earlier.
+    bundle_path = DATA / "calibration_bundle.json"
+    refusal = overwrite_refusal(bundle_path, replace=args.replace)
+    if refusal:
+        print(refusal, file=sys.stderr)
+        return 1
     bundle = freeze(
         choice, variant_id=config.variant_id, judge_config=config.as_dict(),
         dataset_hash=dataset_hash, split_seed=sp.seed, dev=selection,
         min_kappa=args.min_kappa,
+        annotations_hash=corpus.annotations_hash,
+        split_membership_hash=sp.membership_hash,
         notes=(
             f"Threshold selected on the dev split only, optimising the '{args.select_on}' label "
             f"track (n={len(selection)}). Variant chosen by dev kappa among {len(usable)} "
@@ -493,7 +598,12 @@ def cmd_freeze(args: argparse.Namespace) -> int:
             )
         ),
     )
-    path = bundle.save(DATA / "calibration_bundle.json")
+    if args.replace and bundle_path.exists():
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        archived = bundle_path.with_name(f"calibration_bundle.replaced.{stamp}.json")
+        archived.write_text(bundle_path.read_text(encoding="utf-8"), encoding="utf-8")
+        print(f"archived the previous artifact to {archived}")
+    path = bundle.save(bundle_path)
     print(f"froze {config.variant_id} at threshold {choice.threshold} "
           f"(selection track '{args.select_on}', dev kappa {choice.dev_kappa:.4f}, n={len(selection)})")
     for name, row in cross.items():
@@ -618,6 +728,8 @@ def main(argv: list[str] | None = None) -> int:
         p.add_argument("--min-kappa", type=float, default=ROUTEBENCH_MIN_KAPPA)
         if name == "freeze":
             p.add_argument("--variant", default=None, help="override the dev-kappa winner")
+            p.add_argument("--replace", action="store_true",
+                           help="replace an existing MEASURED bundle, archiving it first")
             p.add_argument("--select-on", choices=["pooled", "headline", "oracle"],
                            default="pooled",
                            help="which dev label track the threshold is optimised against")

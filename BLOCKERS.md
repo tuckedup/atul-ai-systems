@@ -38,13 +38,17 @@
   be run. The held-out test split was NOT touched, and no calibration bundle was frozen. The best
   agreement measured anywhere in this repository remains a dev-internal estimate well below the
   target: κ ≈ 0.64 on the groundedness track and κ ≈ 0.50 pooled.
-- **The recorded dev experiment cannot be reproduced from the committed tree.** All 8 variants in
-  `evalops/data/dev_experiments.json` fail `make calibrate-verify`. The stored `JudgeConfig` fields
-  round-trip exactly, so the divergence is in the prompt scaffolding in `judge.py`, which
-  `config_hash` covers but the record does not store. The 2,968 cached judgments were produced by
-  prompts no longer in the repository. This is not repairable by editing anything: the dev split
-  has to be re-judged under the current prompts, which needs a provider key. Diagnosable with
-  `make calibrate-verify`; the failure now names the drift instead of reporting "0 paired items".
+- **The recorded dev experiment was written under an older `config_hash` formula, and its prompt
+  provenance is unverifiable.** CORRECTED 2026-09-28: an earlier entry here claimed the prompts
+  were "no longer in the repository". That was wrong. An exhaustive search over 131,072 candidate
+  formulas found exactly one reproducing all eight recorded hashes, and it omits `prompt_template`
+  entirely — so a prompt edit was invisible to it and the mismatch is fully explained by the
+  formula change. Every `rubric_version` in the cached judgments matches this tree; the `_ROLE` and
+  output-format scaffolding is covered by nothing. The 2,968 judgments are therefore of unknown
+  prompt provenance: usable for a labelled development probe, NOT admissible behind a frozen
+  bundle. Making them admissible needs a re-judge under pinned prompts, which needs a provider key.
+  `make calibrate-verify` distinguishes "legacy formula" from "unidentifiable formula"; nothing in
+  the code will relabel a legacy judgment as current.
 - **No TRAIN judgments exist at all.** The judgment cache holds dev judgments only (0 train, 0
   test at the recorded config hashes). The acceptance protocol fits any learned combiner on train
   groups, so a combiner cannot be fitted under the protocol until the train split is judged. The
@@ -61,3 +65,26 @@
   recorded: not measured, pending human input, not fabricated.
 - The no-Docker amendment above is unchanged: nothing in this round needed or assumed a container
   runtime, and no Docker-blocked item was reopened or worked around.
+
+## Review response, third round (2026-09-28)
+
+- **κ ≥ 0.74 still NOT ACHIEVED.** Unchanged and unchangeable here: no provider credential, so no
+  judge variant can run, the test split is untouched and no bundle is frozen. The best agreement
+  measured anywhere in this repository remains a dev-internal cross-validated estimate — κ ≈ 0.64 on
+  groundedness over 87 jointly-covered cases, κ ≈ 0.50 pooled.
+- **MiniCheck / AlignScore adapters are implemented and unrun.** `evalops/checkers.py` calls upstream
+  at the pinned commits, with 53 tests passing against a scripted fake checker and zero heavy
+  imports at module load. Running them for real needs (a) a weights-licence decision —
+  `CheckerSpec.weights_licence_checked` defaults to False and `load_checker` refuses without it —
+  and (b) approved model downloads into an isolated environment. Neither is a code problem.
+- **No model weights were downloaded and no upstream package was installed into this project's
+  environment.** The upstream repositories were cloned to a scratch directory to read the
+  algorithms; `docs/upstream/REPRODUCTION.md` records what was read and the pins it was read at.
+- **Prometheus was not adapted.** Its absolute-grading prompt produces a 1–5 ordinal score, and
+  RouteBench's target is unweighted binary κ. Converting one to the other needs a declared
+  binarisation chosen on dev, which is more experiment than the current round can honestly run.
+- **The train split still has zero judgments**, so a learned combiner cannot be fitted under the
+  acceptance protocol. Unchanged from the previous round and still the reason the combiner probe is
+  labelled dev-internal.
+- Docker-dependent milestones remain BLOCKED exactly as recorded above. Nothing in this round needed
+  or assumed a container runtime.

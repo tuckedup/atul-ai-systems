@@ -57,12 +57,15 @@
   `run_calibration dev` is therefore the intended way to raise a variant's completion rate
   toward the >=98% the release gate requires: it re-judges only the failures and costs nothing
   for work already done.
-- Known wart, deliberately not changed mid-measurement: `JudgeConfig.concurrency` is an
+- ~~Known wart, deliberately not changed mid-measurement: `JudgeConfig.concurrency` is an
   operational knob that cannot change a verdict, but it is included in `config_hash` and so
-  invalidates cached judgments when tuned. Excluding it would be correct, and doing so while a
-  dev run is in flight would silently invalidate that run's cache, so it is left until after the
-  current dev -> freeze -> test cycle completes. It affects cache reuse only, never a reported
-  number.
+  invalidates cached judgments when tuned.~~ **Resolved, and the note was stale when written.**
+  `concurrency` was excluded from `config_hash` at some point before the 2026-09-28 review; the
+  recovered legacy formula (`JudgeConfig.legacy_config_hash`) shows it *was* in the payload for the
+  2026-09-27 dev run and is not in the current one. So the exclusion the note deferred had already
+  happened, and it is one of the four differences that made every recorded hash mismatch. The note
+  is kept struck through rather than deleted: a decisions log that silently drops a superseded entry
+  cannot be used to reconstruct why a hash changed, which is exactly what this round needed it for.
 
 ## Judge calibration, second round (2026-09-28)
 
@@ -136,3 +139,58 @@
   train judgments to fit on. `COMBINER_PROBE.md` says so in its first line, the JSON carries a
   `protocol_deviation` field, and a test asserts both are present — a deviation that is only
   described in a commit message is one that will be read as a result later.
+
+## Review response, third round (2026-09-28)
+
+- The "prompts are lost" diagnosis is **withdrawn**. An exhaustive search over 131,072 candidate
+  formulas recovered exactly one that reproduces all eight recorded `config_hash` values, and it has
+  no `prompt_template` key — so a prompt edit was invisible to it and the mismatch says only that
+  the formula changed. `JudgeConfig.legacy_config_hash` identifies it and a test re-runs the search
+  in its neighbourhood, so "exactly one formula fits" stays checked. Uniqueness is what makes it
+  evidence rather than a story: several formulas fitting eight points would mean nothing.
+- Legacy judgments are **identified, never promoted**. `JudgmentCache.legacy_lookup` finds one and
+  tags it `unverified_legacy`; `run_variant` never counts it as a hit, so a re-judge is never
+  skipped. The rubric content IS verified (every `rubric_version` in the cache matches this tree);
+  the `_ROLE` and format scaffolding is covered by nothing. "Unknown provenance" is the honest
+  state, and the cheap way to resolve it — accept the legacy key and let the report stamp today's
+  hash on yesterday's verdicts — is the relabelling the review warned against, so it is blocked in
+  code rather than discouraged in prose.
+- The reservation is now a **bound derived from the model's price**, not a flat estimate.
+  `worst_case_call_usd` uses the configured per-1M rates and `max_tokens`; the old flat $0.01 was
+  exactly one eighth of the true bound for a 2,000-token gpt-4.1 judgment, which is why a
+  `$0.03 cap -> $0.04 spend` was reachable. Over-reserving can refuse a judgment that would have
+  fitted, which stops a run visibly; under-reserving lets real spend past the cap, which is
+  invisible until the bill.
+- `samples` multiplies the reservation. `judge_case` draws k samples and retries each up to
+  `max_attempts`, so the declared v10/v11 configs reserved three calls' worth of budget for a
+  nine-call worst case.
+- A `provider_error` now **commits the cost its attempts burned** instead of releasing the whole
+  reservation. Releasing it made the cap a limit on *successful* spending, which is the wrong
+  quantity and the more forgiving one.
+- A committed cost exceeding its reservation is recorded as a `breach` and sets `cap_exceeded`,
+  surfaced in `SpendMeter.as_dict()`. The money is already gone; the honest response is to report it
+  and let the cap bind the next call, not to hide the overshoot behind a comfortable total.
+- A bundle is now bound to the **labels** and the **split membership**, not just to case contents.
+  `dataset_hash` left a relabelled corpus byte-identical, and "editing human labels after seeing
+  judge output" is the first thing the protocol forbids — a forbidden operation with no detector is
+  a convention. `split_seed` bound the recipe while `of_case` reads the assignment, which is
+  deliberately not recomputable from the seed (that is what keeps the test set frozen as the corpus
+  grows), so the file is the authority and the authority is what must be bound.
+- `identity_hash` omits an empty digest from its payload, so adding these bindings does not
+  retroactively invalidate artifacts that predate them. A migration that changed every historical id
+  would make the integrity check reject exactly the artifacts it vouches for.
+- `freeze` refuses to overwrite a bundle carrying a measured `test_result`. `cmd_test` guarded the
+  file against re-measurement but nothing guarded it against replacement, so "freeze another variant
+  and measure that one" was the same one-measurement-per-test-split loophole reached one step
+  earlier. `--replace` archives the existing artifact first. The guard is extracted as
+  `overwrite_refusal` so it is testable without a corpus, and it runs before any corpus work — a
+  missing corpus must not be the reason a measured artifact survives.
+- The lint scope now covers the whole `routebench` tree. The previous `gateway evalops` target
+  reported 4 findings where a full-tree run reported 22, so "lint is clean" was a statement about
+  the command rather than the code. A lint scope that excludes tests lets test code rot.
+- Upstream checkers are **called, not reimplemented**, at pinned commits, with every heavy import
+  deferred so the 53 adapter tests run with no torch, weights, network or GPU. MiniCheck's
+  response-level aggregation is ours and declared as such (its own docstring leaves it to the
+  caller); AlignScore's mean-over-sentences IS upstream's, so `mean` there is faithful. Recording
+  that asymmetry matters: "we used mean for both" would be faithful for one and an invention for the
+  other.

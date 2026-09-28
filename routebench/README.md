@@ -12,10 +12,12 @@ RouteBench is an OpenAI-compatible gateway whose routing and rollout inputs are 
   judge yet, and no κ result**. The held-out split has never been scored and no bundle has been
   frozen, so there is no `calibration_bundle.json` and `make calibrate-check` correctly exits
   non-zero. What exists is the machinery plus a dev-only variant grid in
-  `evalops/data/dev_experiments.json`, and those recorded numbers are themselves **not
-  reproducible from this tree** — `make calibrate-verify` shows all 8 variants failing, because the
-  prompts that produced the cached judgments are no longer in the repository. The dev split has to
-  be re-judged before anything can be frozen, which needs a provider key. See `BLOCKERS.md`.
+  `evalops/data/dev_experiments.json`, whose numbers carry **unverified prompt provenance** —
+  `make calibrate-verify` shows all 8 variants were recorded under an older `config_hash` formula
+  that did not cover the prompt scaffolding. Their rubrics check out against this tree; the rest of
+  the prompt cannot be checked either way. They are admissible for development probes and not
+  behind a frozen bundle, so the dev split needs re-judging under pinned prompts before anything is
+  frozen, which needs a provider key. See `BLOCKERS.md`.
 - The ensemble and learned-combiner question is answered on the cached judgments at zero cost
   (`make probe-combiners`, `evalops/data/COMBINER_PROBE.md`): **no combination of the eight existing
   judges beats the strongest single one** on either track backing the headline claim. The artifact

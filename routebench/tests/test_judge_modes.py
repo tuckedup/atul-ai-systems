@@ -337,7 +337,7 @@ def test_a_malformed_response_is_an_error_not_a_score(mode):
 # is backed by every sample's citations) and taken from the representative sample for the decompose
 # median (the reported score is that sample's, so the evidence beside it must be too).
 
-from evalops.judge import aggregate  # noqa: E402
+from evalops.judge import aggregate
 
 
 def _samples(mode, bodies, **cfg_kw):

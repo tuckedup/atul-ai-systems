@@ -501,7 +501,12 @@ train. Most of that got built and unit-tested. None of it got *measured*, becaus
 has no provider credential — and the thing that stopped it is more interesting than the thing that
 was planned.
 
-### 10.1 The experiment record and the code had already diverged
+### 10.1 The experiment record and the code had diverged — but not the way I first said
+
+**Correction.** An earlier revision of this section claimed the prompts that produced the cached
+judgments were "no longer in the repository". That claim was wrong, an independent review disputed
+it, and the review was right. The corrected account is below; the original reasoning is kept
+because the way it failed is the useful part.
 
 `make calibrate-freeze` on the committed tree:
 
@@ -512,45 +517,75 @@ calibration error: threshold selection needs a usable dev set; got 0 paired item
 There are 2,968 usable judgments in `judgment_cache.jsonl`. Freeze could see none of them.
 
 `cmd_freeze` looked the chosen variant up in `GRID` and used the reconstructed `config_hash` as the
-cache key. But `config_hash` covers every `JudgeConfig` field *and* the prompt scaffolding — which
-is the whole point of §7's "editing a rubric correctly stops old judgments being reused". So
-declaring the v8–v11 variants, which added `restrict_tasks` and `samples` and new prompt templates,
-renamed every judge in the record. Every lookup missed. `pooled` came back empty. And the error
-message blamed the dev set.
+cache key. But `config_hash` covers every `JudgeConfig` field *and* the prompt scaffolding, so
+declaring the v8–v11 variants — which added `restrict_tasks` and `samples` — renamed every judge in
+the record. Every lookup missed. `pooled` came back empty. And the error message blamed the dev set.
+All of that is correct and is fixed.
 
-Narrowing it down is worth writing out, because the answer is precise:
+#### What I got wrong
+
+The original argument ran: every stored field round-trips exactly, so the drift is in one of the two
+`config_hash` inputs the record does not store; `exemplars_hash` is the constant empty-path value
+for `v4`; therefore the prompts changed. Each step is true except the conclusion, and the flaw is
+that I never checked the remaining possibility — that **the formula itself changed**.
+
+It had. An exhaustive search over 131,072 candidate formulas — every subset of the 14 `JudgeConfig`
+fields, crossed with each way of including the exemplars hash and the prompt-template hash — finds
+exactly one that reproduces all eight recorded hashes:
 
 ```
-every stored field round-trips: True
-exemplars_hash (empty path): none
-with current templates -> 5b9dad1a6c32f2ae
-recorded               -> df8718f2d4a71d32
+keys = (model, mode, include_reference, include_boundary_examples, exemplars_path,
+        temperature, max_tokens, max_attempts, concurrency, rubric_dir)
 ```
 
-`JudgeConfig.from_dict` restores every recorded field exactly, and re-hashing still differs.
-`config_hash` has exactly two inputs the record does not store: `prompt_template_hash` and
-`exemplars_hash`. For `v4-rubric-4.1-mini` the exemplar path is empty, so its exemplars hash is the
-constant `none`. That leaves one candidate. **The prompts in `judge.py` are not the prompts that
-produced the cached judgments**, so the κ values in `dev_experiments.json` — 0.4645, 0.5009, 0.5266
-and the rest — describe judges that no longer exist in the repository.
+That is the current field set minus `variant_id`, `notes`, `restrict_tasks` and `samples`, with
+`exemplars_path` hashed literally rather than by content, `concurrency` **included**, and **no
+`prompt_template` key at all**. It is now `JudgeConfig.legacy_config_hash`, and a test re-runs the
+search in the neighbourhood of the answer so "exactly one formula fits" stays a checked claim rather
+than a remembered one. Uniqueness is what makes this evidence: if several formulas fitted eight data
+points, choosing one would be storytelling.
 
-Three things follow, and the first is the uncomfortable one:
+The last clause is the one that demolishes the original conclusion. **The legacy hash did not cover
+the prompt scaffolding**, so a prompt edit was invisible to it. A mismatch between it and today's
+hash is therefore fully explained by the formula change and carries no information about the prompts
+at all. I inferred a specific cause from the absence of alternatives I had bothered to enumerate.
 
-- Those numbers cannot be reproduced, and the dev split has to be re-judged before anything is
-  frozen. That needs a provider key. It is a blocker, not a task.
-- The mechanism that caught this is `prompt_template_hash`, written in the first round for exactly
-  this purpose. It worked. What was missing was anything that *looked* at it: the drift was
-  detectable from the committed files the whole time and surfaced only as a misleading error about
-  the dev set.
-- So the fix is not a better hash. `freeze` now rebuilds the judge from the experiment record
-  rather than from `GRID` — the rule `cmd_test` already applied one step later — `dev` records the
-  full `judge_config` and `prompt_template_hash` in every row, and `make calibrate-verify` answers
-  "is this record still usable?" without anyone having to attempt a freeze and interpret the
-  wreckage.
+#### What is actually known
 
-The general lesson I'd take from it: a check that fails closed is only half of a guarantee. The
-other half is a command whose job is to ask it. An invariant nothing interrogates is a latent
-defect with a good excuse.
+- **Verified identical:** every `rubric_version` in the cached judgments matches a rubric in this
+  tree (`summarize@1.0.0+d72496…`, `sql@1.0.0+0f757a…`, and so on for all five task classes). The
+  rubric text is the bulk of a rubric-mode prompt, so this is real evidence the judgments came from
+  substantially this judge.
+- **Covered by nothing:** `_ROLE` and the output-format blocks. The legacy hash omitted them and
+  nothing else records them, so they cannot be checked in either direction.
+- **Therefore:** the judgments have *unknown* prompt provenance. Not lost, not current.
+
+"Unknown" is an awkward state and the obvious temptation is to resolve it by decree — quietly accept
+the legacy key as a cache hit and let the run report today's `config_hash` over yesterday's
+verdicts. That is relabelling, and it would put unverified evidence behind a frozen bundle while
+looking exactly like a clean run. So the distinction is enforced in code rather than in prose:
+`JudgmentCache.legacy_lookup` finds a legacy judgment and returns it tagged
+`unverified_legacy`; `run_variant` never counts it as a hit, so a re-judge is never skipped; and a
+test asserts that a legacy entry does not satisfy a run. A legacy judgment may inform a labelled
+development probe and may answer "is a re-run needed?". It may not back an acceptance claim.
+
+`make calibrate-verify` now distinguishes the two failure modes it previously collapsed — "written
+under the recovered legacy formula" versus "written under something unidentifiable" — because
+collapsing them is what let the overstated claim through.
+
+#### The lesson, revised
+
+The first version of this section drew a tidy moral: a check that fails closed is only half a
+guarantee, the other half is a command that asks it. That still holds — `prompt_template_hash` had
+detected something real and nothing was looking.
+
+But the sharper lesson is about the diagnosis, not the mechanism. I had a hash mismatch and two
+candidate explanations, enumerated one of them, and reported the result as established. The
+cheap check that would have caught it — *try the older formula* — costs one loop and was not run,
+because the conclusion already felt explanatory. An independent reviewer ran it. When a diagnosis
+concludes that evidence is unrecoverable, that conclusion is worth more scepticism than a
+convenient one, not less: it is the reading that licenses throwing work away and spending money to
+redo it.
 
 ### 10.2 Ensembling the judges does not work, and the reason is structural
 
@@ -675,8 +710,10 @@ Stated plainly, since the whole document is about not overclaiming:
 - **κ ≥ 0.74 is not achieved.** The test split was not touched and no bundle was frozen. The best
   agreement measured anywhere in this repository is a dev-internal cross-validated estimate: κ ≈
   0.64 on groundedness, ≈ 0.50 pooled.
-- **The numbers in §9 are not reproducible from this tree**, for the reason in §10.1. They should be
-  read as a record of what was observed under prompts that are gone, not as current measurements.
+- **The numbers in §9 are not verifiable from this tree**, for the reason in §10.1 — but their
+  judgments are findable and their rubrics check out. They should be read as measurements of
+  unverified prompt provenance, admissible for development and not behind a frozen bundle. Whether
+  a re-judge changes them is unknown until one is run.
 - **The combiner result is a real finding, on a real weakness.** No combination of the eight
   existing judges beats the strongest one. That is measured, cross-validated out of fold, grouped by
   source document, and it is dev-internal rather than held out.

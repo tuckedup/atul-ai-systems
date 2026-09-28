@@ -44,6 +44,15 @@ from .rubrics import Rubric, RubricError, for_task, score
 # ---------------------------------------------------------------- configuration
 
 
+#: Payload keys of the pre-2026-09-28 `config_hash`. Ordered as the search recovered them. Do
+#: NOT edit to make an old hash match a new judge: rewriting this to claim current-prompt
+#: equivalence for old judgments is exactly the relabelling the provenance rule below forbids.
+_LEGACY_CONFIG_HASH_KEYS: tuple[str, ...] = (
+    "model", "mode", "include_reference", "include_boundary_examples", "exemplars_path",
+    "temperature", "max_tokens", "max_attempts", "concurrency", "rubric_dir",
+)
+
+
 @dataclass(frozen=True)
 class JudgeConfig:
     """One fully-specified judge. Everything that can change a verdict lives here.
@@ -149,6 +158,32 @@ class JudgeConfig:
         # _ROLE or a format block changes verdicts, so it must invalidate cached judgments.
         payload["prompt_template"] = prompt_template_hash(self.mode)
         return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()[:16]
+
+    @property
+    def legacy_config_hash(self) -> str:
+        """The `config_hash` formula used for the 2026-09-27 dev run, kept for identification only.
+
+        Recovered by exhaustive search over 131,072 candidate formulas: exactly one reproduces all
+        eight hashes recorded in `data/dev_experiments.json`. It is the current field set minus
+        `variant_id`, `notes`, `restrict_tasks` and `samples`, with `exemplars_path` hashed
+        literally rather than as a content hash, `concurrency` INCLUDED, and **no
+        `prompt_template` key at all**.
+
+        That last point is the whole reason this method exists, and it corrects a claim made in an
+        earlier revision of `docs/KAPPA_DESIGN.md`. The legacy hash did not cover the prompt
+        scaffolding, so the fact that today's hash differs says only that the FORMULA changed. It
+        is not evidence that the prompts changed: a prompt edit was invisible to this hash, which
+        is precisely the hole `prompt_template_hash` was later added to close.
+
+        So the cached judgments are of *unknown* prompt provenance, not *known-stale* provenance.
+        `LEGACY_PROMPT_PROVENANCE` in `experiments.py` is where that distinction is enforced:
+        identification is allowed, promotion to "current judge" is not.
+        """
+        d = asdict(self)
+        payload = {k: d[k] for k in _LEGACY_CONFIG_HASH_KEYS}
+        return hashlib.sha256(
+            json.dumps(payload, sort_keys=True, default=str).encode()
+        ).hexdigest()[:16]
 
     def as_dict(self) -> dict[str, Any]:
         d = asdict(self)

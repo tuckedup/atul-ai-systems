@@ -30,7 +30,7 @@ from collections.abc import Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 
 from aisys.llm import _PRICING
 
@@ -55,6 +55,39 @@ def _cache_key(case: CaseRecord, config: JudgeConfig) -> str:
     return content_hash(case.fingerprint, config.config_hash, rubric_hash, case.task_class)
 
 
+def _legacy_cache_key(case: CaseRecord, config: JudgeConfig) -> str:
+    """The cache key those judgments were written under, for IDENTIFICATION only.
+
+    See `JudgeConfig.legacy_config_hash`. The legacy `config_hash` did not cover the prompt
+    scaffolding, so a judgment found under this key cannot be shown to have been produced by the
+    prompts now in the tree. `legacy_lookup` therefore returns it tagged, and `run_variant` never
+    treats it as a hit.
+    """
+    try:
+        rubric_hash = for_task(case.task_class, config.rubric_dir).hash
+    except Exception:  # noqa: BLE001
+        rubric_hash = "no-rubric"
+    return content_hash(
+        case.fingerprint, config.legacy_config_hash, rubric_hash, case.task_class
+    )
+
+
+#: What is known about the prompts behind a cached judgment.
+#:
+#: `current` -- the judgment's `config_hash` covers `prompt_template_hash`, so the prompts are
+#: pinned and verified.
+#: `unverified_legacy` -- found under the pre-2026-09-28 key, whose hash omitted the prompt
+#: scaffolding entirely. The rubric content IS verified (every `rubric_version` in the cache
+#: matches this tree), but `_ROLE` and the output-format blocks are not covered by anything.
+#:
+#: The rule, which exists because relabelling is the cheap way to fake a result: an
+#: `unverified_legacy` judgment may be used for a clearly-labelled development probe and may be
+#: counted as evidence that a re-run is or is not needed. It may never back a frozen calibration
+#: bundle, and nothing may rewrite its provenance to `current`.
+LEGACY_PROMPT_PROVENANCE = "unverified_legacy"
+CURRENT_PROMPT_PROVENANCE = "current"
+
+
 class _Reservation:
     """A handle for one in-flight reservation, returned by `SpendMeter.reserve()`.
 
@@ -65,9 +98,9 @@ class _Reservation:
     then a no-op.
     """
 
-    __slots__ = ("_meter", "_amount_usd", "_settled")
+    __slots__ = ("_amount_usd", "_meter", "_settled")
 
-    def __init__(self, meter: "SpendMeter", amount_usd: float) -> None:
+    def __init__(self, meter: SpendMeter, amount_usd: float) -> None:
         self._meter = meter
         self._amount_usd = amount_usd
         self._settled = False
@@ -77,6 +110,11 @@ class _Reservation:
 
         A `None` cost (unpriced model) is never recorded as zero: the reservation is released
         and `UnpricedModel` is raised, exactly as the old `SpendMeter.record()` did.
+
+        A cost that EXCEEDS its reservation is committed in full and recorded as a breach. It is
+        already spent at the provider, so hiding it would make `spent_usd` a comfortable fiction;
+        the cap's job from that point is to stop the next call, which `_commit` does because the
+        overshoot lands in `spent_usd`.
         """
         if self._settled:
             raise RuntimeError("reservation already recorded/released")
@@ -88,21 +126,67 @@ class _Reservation:
                 "an unknown cost as $0.00. Add the model's per-1M rates before running."
             )
         self._settled = True
-        self._meter._commit(self._amount_usd, cost)
+        self._meter._commit(self._amount_usd, cost, model=model)
 
-    def release(self) -> None:
-        """Give the reservation back unused -- for a failed/`provider_error`/undecided call."""
+    def release(self, *, accrued_usd: float | None = None, model: str = "") -> None:
+        """Settle a failed/undecided call, committing any cost it already burned.
+
+        `accrued_usd` is the cost the attempt really incurred before failing. This exists because
+        releasing the whole reservation and recording nothing -- the previous behaviour -- loses
+        real money from the accounting: `judge_case` accumulates tokens and cost across every
+        attempt onto the judgment, so a judgment that burns three attempts and then returns
+        `provider_error` has spent at the provider whatever those attempts cost. A cap that does
+        not see that spend is not a cap on spending; it is a cap on *successful* spending, which is
+        the wrong quantity and the more forgiving one.
+        """
         if self._settled:
             return
         self._settled = True
-        self._meter._release(self._amount_usd)
+        if accrued_usd:
+            self._meter._commit(self._amount_usd, float(accrued_usd), model=model)
+        else:
+            self._meter._release(self._amount_usd)
 
-    def __enter__(self) -> "_Reservation":
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
         if not self._settled:
             self.release()
+
+
+def worst_case_call_usd(model: str, config: JudgeConfig, *, prompt_tokens: int | None = None) -> float:
+    """A real upper bound on one provider call's cost for `config`, from the configured price.
+
+    This replaces the flat `reserve_usd = 0.01` estimate as the reservation basis. The output side
+    is bounded exactly -- `max_tokens` is the most the provider will emit. The input side is not
+    knowable before the prompt is built, so it is bounded generously: `prompt_tokens` when the
+    caller has counted them, otherwise `_PROMPT_TOKEN_CEILING`, which is well above any judge
+    prompt this repository builds (the longest, a decompose judgment over an AggreFact document
+    with boundary examples, is a few thousand tokens).
+
+    Over-reserving is the safe direction. It can refuse a judgment that would in fact have fitted,
+    which stops a run early and is visible; under-reserving lets real spend past the cap, which is
+    invisible until the bill.
+
+    Raises `UnpricedModel` rather than returning 0.0 for an unknown model, since a zero bound would
+    make the cap unbounded -- the same failure `require_priced` exists to prevent.
+    """
+    price = _PRICING.get(model)
+    if not price:
+        raise UnpricedModel(
+            f"no price configured for {model!r} in aisys/pricing.yaml; a spend cap cannot be "
+            "enforced for an unpriced model."
+        )
+    prompt = _PROMPT_TOKEN_CEILING if prompt_tokens is None else max(0, prompt_tokens)
+    return (
+        prompt * float(price["input_per_1m"])
+        + max(1, config.max_tokens) * float(price["output_per_1m"])
+    ) / 1e6
+
+
+#: Generous input-token ceiling for reservation sizing only. Never used to truncate anything.
+_PROMPT_TOKEN_CEILING = 32_000
 
 
 @dataclass
@@ -141,10 +225,37 @@ class SpendMeter:
     _in_flight: int = field(default=0, repr=False)
     #: Per-thread stash so the old admit()-then-record() two-step still works (see `admit()`).
     _local: threading.local = field(default_factory=threading.local, repr=False)
+    #: Calls whose real cost exceeded their reservation, i.e. every case where the reservation was
+    #: not the bound it claimed to be. Reported in `as_dict()` so a run cannot quietly rely on a
+    #: cap it overshot.
+    breaches: list[dict[str, Any]] = field(default_factory=list)
+    #: True once committed spend has passed the cap. A run that ends with this set spent more than
+    #: it was authorised to, and the report must say so.
+    cap_exceeded: bool = False
 
-    def reserve(self, max_attempts: int = 1) -> _Reservation:
-        """Atomically reserve one judgment's worst-case cost, or raise `BudgetExceeded`."""
-        amount = self.reserve_usd * max(1, max_attempts)
+    def reserve(
+        self,
+        max_attempts: int = 1,
+        *,
+        samples: int = 1,
+        worst_case_usd: float | None = None,
+    ) -> _Reservation:
+        """Atomically reserve one judgment's worst-case cost, or raise `BudgetExceeded`.
+
+        `samples` multiplies the reservation because `judge_case` draws k independent samples and
+        retries EACH of them up to `max_attempts`, accumulating every call's cost onto one
+        judgment. Reserving `max_attempts` alone under-reserves a `samples=3` variant by 3x --
+        confirmed against the declared v10/v11 configs, which reserved 3 calls' worth of budget
+        for a 9-call worst case.
+
+        `worst_case_usd` is a real per-call bound derived from the model's price and token budget
+        (`worst_case_call_usd`). Pass it. Without it the reservation falls back to `reserve_usd`,
+        a flat $0.01 estimate that is not a bound at all: one 2,000-token gpt-4.1 judgment costs
+        several cents, and a single call whose true cost exceeds its reservation walks straight
+        through the cap.
+        """
+        per_call = self.reserve_usd if worst_case_usd is None else max(0.0, worst_case_usd)
+        amount = per_call * max(1, max_attempts) * max(1, samples)
         with self._lock:
             if self.spent_usd + self._reserved_usd + amount > self.cap_usd:
                 raise BudgetExceeded(
@@ -186,12 +297,22 @@ class SpendMeter:
             self.spent_usd += cost
             self.calls += 1
 
-    def _commit(self, reserved_amount: float, cost: float) -> None:
+    def _commit(self, reserved_amount: float, cost: float, *, model: str = "") -> None:
         with self._lock:
             self._reserved_usd -= reserved_amount
             self._in_flight -= 1
             self.spent_usd += cost
             self.calls += 1
+            if cost > reserved_amount + 1e-12:
+                # The reservation was not a bound. Recorded rather than raised: the money is
+                # already gone, and a run that dies here loses the accounting too. The cap still
+                # binds the NEXT reservation, because the overshoot is in `spent_usd`.
+                self.breaches.append({
+                    "model": model, "reserved_usd": reserved_amount, "actual_usd": cost,
+                    "over_usd": cost - reserved_amount,
+                })
+            if self.spent_usd > self.cap_usd + 1e-12:
+                self.cap_exceeded = True
 
     def _release(self, reserved_amount: float) -> None:
         with self._lock:
@@ -223,6 +344,12 @@ class SpendMeter:
             "committed_usd": round(self.spent_usd, 6),
             "reserved_usd": round(reserved, 6),
             "in_flight": in_flight,
+            # Surfaced, not buried: a run that overshot its cap has to say so in the artifact the
+            # experiment record keeps, or the cap is only a cap in the docstring.
+            "cap_exceeded": self.cap_exceeded,
+            "reservation_breaches": len(self.breaches),
+            "worst_breach_usd": (round(max(b["over_usd"] for b in self.breaches), 6)
+                                 if self.breaches else 0.0),
         }
 
 
@@ -258,6 +385,24 @@ class JudgmentCache:
 
     def get(self, key: str) -> Judgment | None:
         return self._entries.get(key)
+
+    def legacy_lookup(
+        self, case: CaseRecord, config: JudgeConfig
+    ) -> tuple[Judgment | None, str]:
+        """Find a judgment for `case` under either key, and say which provenance it carries.
+
+        Returns `(judgment, provenance)`. Checking the current key first matters: once a case has
+        been re-judged under pinned prompts, the verified judgment must win over the legacy one
+        rather than the lookup order deciding.
+
+        This is the whole of "preserve reusable evidence where defensible". It makes the 2,968
+        cached judgments findable and auditable without asserting they came from today's prompts —
+        the claim the recovered legacy formula shows cannot be made either way.
+        """
+        current = self.get(_cache_key(case, config))
+        if current is not None:
+            return current, CURRENT_PROMPT_PROVENANCE
+        return self.get(_legacy_cache_key(case, config)), LEGACY_PROMPT_PROVENANCE
 
     def put(self, key: str, judgment: Judgment) -> None:
         with self._lock:
@@ -304,6 +449,9 @@ def run_variant(
 ) -> tuple[list[Judgment], RunSummary]:
     """Judge every case under one configuration. Returns judgments in `cases` order."""
     require_priced([config.model])
+    # Computed once: the reservation basis for every judgment in this run. `require_priced` above
+    # has already refused an unpriced model, so this cannot fall back to a meaningless bound.
+    per_call_bound = worst_case_call_usd(config.model, config)
     started = time.perf_counter()
     out: list[Judgment | None] = [None] * len(cases)
     cached = 0
@@ -323,20 +471,28 @@ def run_variant(
         if stopped.is_set():
             return
         try:
-            # Reserve this judgment's worst-case cost up front (one call x max_attempts),
-            # atomically against the cap -- see `SpendMeter.reserve()`. This is what makes the
-            # cap hard under concurrency: nothing else can spend past the cap while this
-            # judgment is in flight, even before its real cost is known.
-            slot = meter.reserve(max_attempts=config.max_attempts)
+            # Reserve this judgment's worst-case cost up front, atomically against the cap -- see
+            # `SpendMeter.reserve()`. This is what makes the cap hard under concurrency: nothing
+            # else can spend past the cap while this judgment is in flight, even before its real
+            # cost is known. The bound covers every call the judgment can make: k samples, each
+            # retried up to `max_attempts`, sized from the model's configured price rather than
+            # from a flat per-call guess.
+            slot = meter.reserve(
+                max_attempts=config.max_attempts,
+                samples=config.samples,
+                worst_case_usd=per_call_bound,
+            )
         except BudgetExceeded:
             stopped.set()
             return
         with slot:
             judgment = judge_case(case, config)
             if judgment.status == "provider_error":
-                # No usable cost was accrued (or it's already unrecoverable): give the
-                # reservation back rather than let it sit against the cap for the rest of run.
-                slot.release()
+                # The attempts that failed still cost money: `judge_case` accumulates token and
+                # cost accounting onto the judgment across every attempt. Committing that accrued
+                # cost rather than releasing the whole reservation is the difference between a cap
+                # on spending and a cap on successful spending.
+                slot.release(accrued_usd=judgment.cost_usd, model=config.model)
             else:
                 try:
                     slot.record(judgment.cost_usd, model=config.model)
