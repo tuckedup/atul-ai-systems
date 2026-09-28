@@ -47,7 +47,8 @@ ROUTEBENCH_MIN_KAPPA = 0.74
 
 #: Bounded, declared-in-advance threshold grid. An unbounded search over a continuous parameter
 #: on a few hundred dev items is a good way to fit noise.
-THRESHOLD_GRID: tuple[float, ...] = tuple(round(0.05 * n, 2) for n in range(1, 20))
+# Include 1.0: supported-fraction judges need the strict "every assertion supported" rule.
+THRESHOLD_GRID: tuple[float, ...] = tuple(round(0.05 * n, 2) for n in range(1, 21))
 
 
 class CalibrationError(RuntimeError):

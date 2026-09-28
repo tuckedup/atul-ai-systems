@@ -1,5 +1,25 @@
 # Blocked verification
 
+## Current local RouteBench execution status (2026-09-28)
+
+- **Live API check: BLOCKED by `credit_balance_exhausted`.** The configured project key
+  is now present. One tiny request to the configured `api.openai.com` GPT-4.1 endpoint
+  returned HTTP 429, type `insufficient_quota`, code `credit_balance_exhausted`, with
+  no usage result. This supersedes the historical "no credential" descriptions below.
+  No billing settings were changed and no credits were purchased.
+- The 512-case/variant development run was not launched after this confirmation.
+  Existing labels/cache remain intact; no held-out judgments or new agreement score
+  were produced. Additional data collection is not the current blocker.
+- Quota exhaustion now fails fast through the shared client, judge repair/sample loop,
+  concurrent runner and calibration commands. A quota-blocked test leaves its frozen
+  bundle/report unchanged and can resume the same candidate from cached successes.
+- No ready MiniCheck/AlignScore fallback: the active environment lacks their libraries
+  and torch/transformers, and the inspected local model cache lacks their checkpoints.
+  Their integration and real-weight validation remain unfinished, as documented in
+  `docs/ROUTEBENCH_DEBUG_HANDOFF.md`.
+
+The following sections retain historical observations and other projects' blockers.
+
 - Core M1 infrastructure boot / Phoenix UI proof — BLOCKED: requires Docker
 - Core definition-of-done Phoenix trace visibility proof — BLOCKED: requires Docker
 - RouteBench M2 self-hosted vLLM backend proof — BLOCKED: requires Docker

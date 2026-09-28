@@ -304,6 +304,7 @@ DEFAULT_SPECS: tuple[CheckerSpec, ...] = (
         checker_id="alignscore-base-nli-sp",
         backend="alignscore",
         model_name="roberta-base",
+        split_sentences=False,
         aggregation="mean",
         evaluation_mode="nli_sp",
         notes=("AlignScore nli_sp: max over premise chunks per response sentence, then mean over "
@@ -316,7 +317,7 @@ DEFAULT_SPECS: tuple[CheckerSpec, ...] = (
 # ---------------------------------------------------------------- loading (lazy)
 
 
-def load_checker(spec: CheckerSpec, *, device: int = -1, batch_size: int = 16) -> SupportChecker:
+def load_checker(spec: CheckerSpec, *, device: str | int = "cpu", batch_size: int = 16) -> SupportChecker:
     """Import and construct the upstream checker. Every heavy import happens here, not above.
 
     Refuses without `weights_licence_checked`. The code licences (Apache-2.0, MIT) say nothing about
@@ -366,7 +367,8 @@ def load_checker(spec: CheckerSpec, *, device: int = -1, batch_size: int = 16) -
                 f"{spec.upstream['commit']} into an isolated environment."
             ) from e
         return AlignScore(
-            model=spec.model_name, batch_size=batch_size, device=device,
+            model=spec.model_name, batch_size=batch_size,
+            device="cpu" if device == -1 else device,
             ckpt_path=spec.ckpt_path, evaluation_mode=spec.evaluation_mode, verbose=False,
         )
     raise CheckerError(f"unknown backend {spec.backend!r}")
@@ -519,7 +521,8 @@ def check_case(
             "split_sentences": spec.split_sentences,
             "n_sentences": len(sentences),
             "chunk_size": spec.chunk_size,
-            "splitter": "injected" if splitter is not None else "upstream_nltk",
+            "splitter": ("none" if not spec.split_sentences else
+                         "injected" if splitter is not None else "upstream_nltk"),
             "source_chars": len(source),
         }
     except CheckerError as e:

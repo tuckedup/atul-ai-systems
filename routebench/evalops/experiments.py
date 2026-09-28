@@ -232,6 +232,10 @@ class SpendMeter:
     #: True once committed spend has passed the cap. A run that ends with this set spent more than
     #: it was authorised to, and the report must say so.
     cap_exceeded: bool = False
+    _changed: threading.Condition = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self._changed = threading.Condition(self._lock)
 
     def reserve(
         self,
@@ -239,6 +243,7 @@ class SpendMeter:
         *,
         samples: int = 1,
         worst_case_usd: float | None = None,
+        wait: bool = False,
     ) -> _Reservation:
         """Atomically reserve one judgment's worst-case cost, or raise `BudgetExceeded`.
 
@@ -257,6 +262,11 @@ class SpendMeter:
         per_call = self.reserve_usd if worst_case_usd is None else max(0.0, worst_case_usd)
         amount = per_call * max(1, max_attempts) * max(1, samples)
         with self._lock:
+            # An outstanding conservative reservation is not exhausted spend. Wait for it to
+            # settle before rejecting queued work, unless even zero reservations cannot fit.
+            while (wait and self._in_flight and self.spent_usd + amount <= self.cap_usd
+                   and self.spent_usd + self._reserved_usd + amount > self.cap_usd):
+                self._changed.wait()
             if self.spent_usd + self._reserved_usd + amount > self.cap_usd:
                 raise BudgetExceeded(
                     f"spend cap reached: ${self.spent_usd:.4f} committed + "
@@ -313,11 +323,13 @@ class SpendMeter:
                 })
             if self.spent_usd > self.cap_usd + 1e-12:
                 self.cap_exceeded = True
+            self._changed.notify_all()
 
     def _release(self, reserved_amount: float) -> None:
         with self._lock:
             self._reserved_usd -= reserved_amount
             self._in_flight -= 1
+            self._changed.notify_all()
 
     @property
     def reserved_usd(self) -> float:
@@ -456,6 +468,7 @@ def run_variant(
     out: list[Judgment | None] = [None] * len(cases)
     cached = 0
     stopped = threading.Event()
+    quota_stopped = threading.Event()
     done = threading.Lock()
     counter = {"n": 0}
 
@@ -464,7 +477,7 @@ def run_variant(
         index, case = index_case
         key = _cache_key(case, config)
         hit = cache.get(key)
-        if hit is not None and hit.status == "ok":
+        if hit is not None and hit.usable:
             out[index] = hit
             cached += 1
             return
@@ -481,13 +494,20 @@ def run_variant(
                 max_attempts=config.max_attempts,
                 samples=config.samples,
                 worst_case_usd=per_call_bound,
+                wait=True,
             )
         except BudgetExceeded:
             stopped.set()
             return
         with slot:
+            # A worker may have waited for a reservation while another found exhausted quota.
+            if quota_stopped.is_set():
+                return
             judgment = judge_case(case, config)
-            if judgment.status == "provider_error":
+            if judgment.status == "quota_exhausted":
+                quota_stopped.set()
+                stopped.set()
+            if judgment.status in {"provider_error", "quota_exhausted"}:
                 # The attempts that failed still cost money: `judge_case` accumulates token and
                 # cost accounting onto the judgment across every attempt. Committing that accrued
                 # cost rather than releasing the whole reservation is the difference between a cap
@@ -525,7 +545,8 @@ def run_variant(
         if j.model_served:
             served[j.model_served] = served.get(j.model_served, 0) + 1
     if stopped.is_set():
-        errors["budget_stopped"] = len(cases) - len(judgments)
+        errors["quota_stopped" if quota_stopped.is_set() else "budget_stopped"] = (
+            len(cases) - len(judgments))
 
     summary = RunSummary(
         variant_id=config.variant_id, config=config.as_dict(), n_cases=len(cases),

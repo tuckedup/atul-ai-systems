@@ -28,12 +28,20 @@ from .calibrate import (
     CalibrationError,
     Paired,
     evaluate,
+    expected_bundle_id,
     freeze,
     pair,
     select_threshold,
 )
 from .dataset import HEADLINE_PROVENANCE, Corpus, LabelProvenance, content_hash
-from .experiments import JudgmentCache, RunSummary, SpendMeter, run_variant
+from .experiments import (
+    JudgmentCache,
+    RunSummary,
+    SpendMeter,
+    _cache_key,
+    run_variant,
+    worst_case_call_usd,
+)
 from .judge import JudgeConfig, prompt_template_hash
 from .metrics import agreement, binarize
 from .rubrics import bundle_hash
@@ -216,17 +224,69 @@ def _dev_row(p: Paired, threshold: float) -> dict[str, Any]:
             "n": a.n, "confusion": a.confusion.as_dict()}
 
 
+def _track(p: Paired, name: str) -> Paired:
+    if name == "pooled":
+        return p
+    return p.restrict(HEADLINE_PROVENANCE if name == "headline" else
+                      frozenset({LabelProvenance.GOLD_ORACLE}))
+
+
+def _requested_grid(args: argparse.Namespace) -> list[JudgeConfig]:
+    names = getattr(args, "variants", None)
+    if not names:
+        return list(GRID)
+    by_id = {c.variant_id: c for c in GRID}
+    unknown = sorted(set(names) - by_id.keys())
+    if unknown:
+        raise CalibrationError(f"unknown variants: {unknown}")
+    return [by_id[n] for n in dict.fromkeys(names)]
+
+
+def _dev_cases(corpus: Corpus, sp: SplitPlan, name: str) -> list[Any]:
+    cases = select(corpus.cases, sp, "dev")
+    if name == "pooled":
+        return cases
+    allowed = HEADLINE_PROVENANCE if name == "headline" else {LabelProvenance.GOLD_ORACLE}
+    labels = corpus.resolved_labels()
+    return [c for c in cases if c.case_id in labels and labels[c.case_id].provenance in allowed]
+
+
+def cmd_plan(args: argparse.Namespace) -> int:
+    """No provider calls, model downloads, writes or held-out judgments."""
+    corpus, sp, _ = _load()
+    cases = _dev_cases(corpus, sp, args.select_on)
+    cache = JudgmentCache(DATA / "judgment_cache.jsonl")
+    rows = []
+    for config in _requested_grid(args):
+        scoped = _scope(cases, config)
+        missing = sum(1 for c in scoped
+                      if (j := cache.get(_cache_key(c, config))) is None or not j.usable)
+        bound = worst_case_call_usd(config.model, config) * config.max_attempts * config.samples
+        rows.append({"variant_id": config.variant_id, "cases": len(scoped),
+                     "missing_current_judgments": missing,
+                     "reservation_per_case_usd": round(bound, 6),
+                     "reservation_envelope_usd": round(bound * missing, 6)})
+    print(json.dumps({"split": "dev", "selection_track": args.select_on,
+                      "variants": rows,
+                      "note": "Reservation envelope, not a measured price quote; no calls made."},
+                     indent=2))
+    return 0
+
+
 def cmd_dev(args: argparse.Namespace) -> int:
     corpus, sp, dataset_hash = _load()
-    dev_cases = select(corpus.cases, sp, "dev")
+    selection_track = getattr(args, "select_on", "pooled")
+    dev_cases = _dev_cases(corpus, sp, selection_track)
+    grid = _requested_grid(args)
     labels = corpus.resolved_labels()
     cache = JudgmentCache(DATA / "judgment_cache.jsonl")
     meter = SpendMeter(cap_usd=args.budget, reserve_usd=0.02)
-    print(f"dev: {len(dev_cases)} cases, {len(GRID)} variants, cap ${args.budget:.2f}")
+    print(f"dev: {len(dev_cases)} cases, {len(grid)} variants, cap ${args.budget:.2f}")
 
     rows: list[dict[str, Any]] = []
     summaries: list[RunSummary] = []
-    for config in GRID:
+    blocked = None
+    for config in grid:
         if config.model in UNAVAILABLE:
             rows.append({"variant_id": config.variant_id, "skipped": UNAVAILABLE[config.model]})
             continue
@@ -268,15 +328,29 @@ def cmd_dev(args: argparse.Namespace) -> int:
         print(f"  {config.variant_id:32s} n={len(p):4d} kappa@0.5="
               f"{(row['at_0.5'] or {}).get('kappa')} best={k if k is None else round(k, 4)}"
               f" @t={row['best_threshold']} spend=${meter.spent_usd:.3f}")
+        if summary.errors.get("quota_exhausted"):
+            blocked = "quota_exhausted"
+            print("Provider quota exhausted; stopping remaining variants. "
+                  "Resolve credits/limits before resuming.", file=sys.stderr)
+            break
 
     out = {
         "dataset_hash": dataset_hash, "split_seed": sp.seed, "n_dev_cases": len(dev_cases),
+        "annotations_hash": corpus.annotations_hash,
+        "split_membership_hash": sp.membership_hash,
+        "selection_track": selection_track,
+        "blocked": blocked,
         "spend": meter.as_dict(), "unavailable": UNAVAILABLE, "variants": rows,
         "run_summaries": [s.as_dict() for s in summaries],
     }
-    (DATA / "dev_experiments.json").write_text(json.dumps(out, indent=2, sort_keys=True), encoding="utf-8")
+    record_path = DATA / "dev_experiments.json"
+    if record_path.exists():
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+        record_path.with_name(f"dev_experiments.previous.{stamp}.json").write_text(
+            record_path.read_text(encoding="utf-8"), encoding="utf-8")
+    record_path.write_text(json.dumps(out, indent=2, sort_keys=True), encoding="utf-8")
     print(f"\nwrote {DATA / 'dev_experiments.json'}  total spend ${meter.spent_usd:.4f}")
-    return 0
+    return 3 if blocked else 0
 
 
 def _recorded_config(row: dict[str, Any], experiments: dict[str, Any]) -> JudgeConfig:
@@ -520,47 +594,43 @@ def overwrite_refusal(bundle_path: Path, *, replace: bool) -> str | None:
 
 
 def cmd_freeze(args: argparse.Namespace) -> int:
+    bundle_path = DATA / "calibration_bundle.json"
+    refusal = overwrite_refusal(bundle_path, replace=args.replace)
+    if refusal:
+        print(refusal, file=sys.stderr)
+        return 1
     corpus, sp, dataset_hash = _load()
     dev = select(corpus.cases, sp, "dev")
     labels = corpus.resolved_labels()
     experiments = json.loads((DATA / "dev_experiments.json").read_text(encoding="utf-8"))
-    usable = [
-        r for r in experiments["variants"]
-        if not r.get("skipped") and r.get("best_dev_kappa") is not None
-        and r.get("completion", 0) >= 0.98
-    ]
+    for key, expected in (("dataset_hash", dataset_hash), ("split_seed", sp.seed),
+                          ("annotations_hash", corpus.annotations_hash),
+                          ("split_membership_hash", sp.membership_hash)):
+        if experiments.get(key) != expected:
+            raise CalibrationError(f"dev record {key} missing or changed; rerun dev before freeze")
+    cache = JudgmentCache(DATA / "judgment_cache.jsonl")
+    usable = []
+    for row in experiments["variants"]:
+        if row.get("skipped") or (args.variant and row["variant_id"] != args.variant):
+            continue
+        config = _recorded_config(row, experiments)
+        judgments = [j for c in _scope(dev, config)
+                     if (j := cache.get(_cache_key(c, config))) is not None]
+        # Pair against ALL labelled dev cases before track restriction. Scoping must not erase
+        # unjudged cases from the target population and inflate completion.
+        pooled = pair(dev, labels, judgments, split="dev")
+        selection = _track(pooled, args.select_on)
+        if selection.completion < 0.98:
+            continue
+        try:
+            choice = select_threshold(selection)
+        except CalibrationError:
+            continue
+        usable.append((choice.dev_kappa, config, pooled, selection, choice))
     if not usable:
         print("no variant produced a usable dev result", file=sys.stderr)
         return 1
-    if args.variant:
-        chosen = next((r for r in usable if r["variant_id"] == args.variant), None)
-        if chosen is None:
-            print(f"variant {args.variant} has no usable dev result", file=sys.stderr)
-            return 1
-    else:
-        chosen = max(usable, key=lambda r: r["best_dev_kappa"])
-
-    config = _recorded_config(chosen, experiments)
-    # Which dev labels the threshold is optimised against. The judge serves every task class, so
-    # `pooled` (one global threshold over all admissible dev labels) is the operational default.
-    # `headline` optimises against human judgments of the response only, which is the track the
-    # primary claim is made on; the pooled set is numerically dominated by gold-oracle labels
-    # whose class prevalence differs, so the two can disagree. Whichever is used is recorded in
-    # the bundle, and both are computed on DEV -- the test split plays no part either way.
-    track = {
-        "pooled": None,
-        "headline": HEADLINE_PROVENANCE,
-        "oracle": frozenset({LabelProvenance.GOLD_ORACLE}),
-    }[args.select_on]
-    # Recompute the threshold from the cached dev judgments, so the bundle records the same
-    # numbers the dev table reported. No new provider calls are made here by construction.
-    from .experiments import _cache_key
-
-    cache = JudgmentCache(DATA / "judgment_cache.jsonl")
-    judgments = [j for j in (cache.get(_cache_key(c, config)) for c in dev) if j is not None]
-    pooled = pair(dev, labels, judgments, split="dev")
-    selection = pooled if track is None else pooled.restrict(track)
-    choice = select_threshold(selection)
+    _, config, pooled, selection, choice = max(usable, key=lambda item: item[0])
 
     # Report what the chosen threshold does on every dev track, so a threshold that is good
     # pooled but poor on the headline track is visible at freeze time rather than after test.
@@ -573,15 +643,6 @@ def cmd_freeze(args: argparse.Namespace) -> int:
         else {"n": len(o), "skipped": True},
     }
 
-    # Refuse to clobber a bundle that already carries a held-out measurement. `cmd_test` guards
-    # the same file against re-measurement, but nothing guarded it against being REPLACED by a
-    # fresh freeze -- so the cheapest way around "the test split is measured once per bundle" was
-    # to freeze again and measure the new bundle. Same loophole, one step earlier.
-    bundle_path = DATA / "calibration_bundle.json"
-    refusal = overwrite_refusal(bundle_path, replace=args.replace)
-    if refusal:
-        print(refusal, file=sys.stderr)
-        return 1
     bundle = freeze(
         choice, variant_id=config.variant_id, judge_config=config.as_dict(),
         dataset_hash=dataset_hash, split_seed=sp.seed, dev=selection,
@@ -623,6 +684,17 @@ def cmd_test(args: argparse.Namespace) -> int:
         print("no calibration_bundle.json; run `freeze` first", file=sys.stderr)
         return 1
     bundle = CalibrationBundle.load(path)
+    checks = {
+        "bundle_id": (bundle.bundle_id, expected_bundle_id(bundle)),
+        "annotations_hash": (bundle.annotations_hash, corpus.annotations_hash),
+        "split_membership_hash": (bundle.split_membership_hash, sp.membership_hash),
+        "rubric_bundle_hash": (bundle.rubric_bundle_hash, bundle_hash()),
+        "split_seed": (bundle.split_seed, sp.seed),
+    }
+    for name, (recorded, current) in checks.items():
+        if recorded != current:
+            print(f"frozen {name} missing or changed; refusing before inference", file=sys.stderr)
+            return 1
     if bundle.dataset_hash != dataset_hash:
         print(f"bundle dataset_hash {bundle.dataset_hash} != corpus {dataset_hash}; the corpus "
               "changed after freezing, so this bundle cannot be measured on it", file=sys.stderr)
@@ -683,7 +755,17 @@ def cmd_test(args: argparse.Namespace) -> int:
         scoped, config, cache=cache, meter=meter,
         concurrency=config.concurrency or args.concurrency,
     )
-    p = pair(scoped, labels, judgments, split="test")
+    if summary.errors.get("quota_exhausted"):
+        print("Provider quota exhausted; cached outputs retained, but bundle and test report "
+              "left unchanged. Resume the SAME frozen judge after quota is restored.",
+              file=sys.stderr)
+        return 3
+    # Include the declared task scope AND the complete headline population. A specialist need
+    # not grade SQL, but cannot make human-labelled cases disappear by narrowing its scope.
+    scoped_ids = {c.case_id for c in scoped}
+    population = [c for c in test_cases if c.case_id in scoped_ids or
+                  (c.case_id in labels and labels[c.case_id].provenance in HEADLINE_PROVENANCE)]
+    p = pair(population, labels, judgments, split="test")
     result = evaluate(bundle, p, bootstrap=args.bootstrap)
     result["run_summary"] = summary.as_dict()
     bundle.test_result = result
@@ -719,17 +801,20 @@ def cmd_test(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name, fn in (("dev", cmd_dev), ("verify", cmd_verify), ("freeze", cmd_freeze),
+    for name, fn in (("plan", cmd_plan), ("dev", cmd_dev), ("verify", cmd_verify), ("freeze", cmd_freeze),
                      ("test", cmd_test)):
         p = sub.add_parser(name)
         p.set_defaults(fn=fn)
         p.add_argument("--budget", type=float, default=25.0, help="hard spend cap in USD")
         p.add_argument("--concurrency", type=int, default=8)
         p.add_argument("--min-kappa", type=float, default=ROUTEBENCH_MIN_KAPPA)
+        if name in {"dev", "plan"}:
+            p.add_argument("--variants", nargs="+", help="explicit variant IDs, in execution order")
         if name == "freeze":
             p.add_argument("--variant", default=None, help="override the dev-kappa winner")
             p.add_argument("--replace", action="store_true",
                            help="replace an existing MEASURED bundle, archiving it first")
+        if name in {"plan", "dev", "freeze"}:
             p.add_argument("--select-on", choices=["pooled", "headline", "oracle"],
                            default="pooled",
                            help="which dev label track the threshold is optimised against")

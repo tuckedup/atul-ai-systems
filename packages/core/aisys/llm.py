@@ -63,6 +63,16 @@ class ProviderError(RuntimeError):
     pass
 
 
+class QuotaExceededError(ProviderError):
+    """Billing/quota block requiring operator action, not a transient rate limit."""
+
+
+_QUOTA_CODES = frozenset({
+    "insufficient_quota", "credit_balance_exhausted", "organization_spend_limit_exceeded",
+    "project_spend_limit_exceeded", "organization_usage_limit_exceeded",
+})
+
+
 # Pass to `chat(fallback=...)` to pin a call to exactly one model, disabling configured fallback -
 # `[]` works too, this is just a documented, greppable spelling of the same thing.
 NO_FALLBACK: Final[tuple[str, ...]] = ()
@@ -110,6 +120,9 @@ def chat(
                     "latency_ms": result.latency_ms, "trace_id": current_trace_id.get(),
                 })
                 return result
+            except QuotaExceededError:
+                # Retries and model fallback use the same account and cannot restore its quota.
+                raise
             except ProviderError as e:
                 last_err = e
                 time.sleep(min(8.0, (2**attempt) * 0.5 + random.random() * 0.25))
@@ -175,6 +188,18 @@ def _call(
             headers={"Authorization": f"Bearer {settings.openai_api_key}"},
             json=body,
         )
+    if r.status_code == 429:
+        try:
+            data = r.json()
+        except ValueError:
+            data = {}
+        error = data.get("error") if isinstance(data, dict) else None
+        if isinstance(error, dict):
+            code, kind = error.get("code"), error.get("type")
+            if (isinstance(code, str) and code in _QUOTA_CODES) or kind == "insufficient_quota":
+                # Only known codes reach logs; provider messages may contain credentials/PII.
+                safe_code = code if isinstance(code, str) and code in _QUOTA_CODES else "insufficient_quota"
+                raise QuotaExceededError(f"HTTP 429: {safe_code}; resolve provider quota before retrying")
     if r.status_code == 429 or r.status_code >= 500:
         raise ProviderError(f"{model}: HTTP {r.status_code}")
     r.raise_for_status()

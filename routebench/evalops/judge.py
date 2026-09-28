@@ -1039,6 +1039,10 @@ def _judge_once(
                 messages, model=config.model, temperature=config.temperature,
                 max_tokens=config.max_tokens, fallback=_NO_FALLBACK,
             )
+        except llm.QuotaExceededError as e:
+            base.attempts = attempt
+            base.status, base.error = "quota_exhausted", str(e)
+            return None
         except Exception as e:  # noqa: BLE001 - provider failure is data, not a crash
             last_error = f"{type(e).__name__}: {e}"
             base.attempts = attempt

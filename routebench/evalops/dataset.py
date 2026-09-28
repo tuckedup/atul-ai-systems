@@ -157,7 +157,7 @@ class Judgment(BaseModel):
     #: Facts the judge called supported while citing a span that is not in the source material.
     #: Only meaningful for decompose-mode judgments.
     support_unverified: int = 0
-    #: "ok" | "parse_error" | "provider_error" | "invalid_output" | "refused"
+    #: "ok" | "parse_error" | "provider_error" | "quota_exhausted" | "invalid_output" | "refused"
     status: str = "ok"
     error: str | None = None
     attempts: int = 1
