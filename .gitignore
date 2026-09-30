@@ -10,3 +10,20 @@
 .env
 *.env
 .env.*
+
+# licensed third-party transcripts (CC-BY-NC-SA / research-only): local use only
+routebench/evalops/data/raw/tofueval_upstream/
+.local/
+
+# Local research inputs and uncleared artifacts (preserved on disk, not published).
+routebench/evalops/data/raw/authoritative/
+routebench/evalops/data/raw/tofueval_document_ids_dev_test_split.json
+routebench/evalops/data/gedd_train_exemplars.json
+routebench/evalops/data/gedd_diverse_exemplars.json
+routebench/evalops/data/tofu_context.json
+routebench/evalops/data/stack_minicheck/fit_result.json
+routebench/evalops/data/upstream_validation/judgments.jsonl
+routebench/evalops/data/attribution/*.jsonl
+routebench/evalops/data/probe/*.jsonl
+docs/FRANK_FLAGGED_ANNOTATIONS.json
+docs/LABEL_*.json

@@ -36,12 +36,13 @@ from evalops.experiments import (
 )
 from evalops.judge import _LEGACY_CONFIG_HASH_KEYS, JudgeConfig, prompt_template_hash
 
-RECORD = Path(__file__).parent.parent / "evalops" / "data" / "dev_experiments.json"
+# Immutable pre-rejudge record: the live dev record now uses the current hash formula.
+RECORD = (Path(__file__).parent.parent / "evalops" / "data"
+          / "dev_experiments.previous.20260928T180211361238Z.json")
 
 
 def _saved_configs() -> dict[str, dict]:
-    if not RECORD.exists():
-        pytest.skip("no dev record in this checkout")
+    assert RECORD.exists(), "the historical hash regression requires its archived record"
     experiments = json.loads(RECORD.read_text(encoding="utf-8"))
     out = {}
     for summary in experiments.get("run_summaries", []):
@@ -75,7 +76,9 @@ def test_the_legacy_formula_differs_from_the_current_one_in_known_ways():
     fields = set(asdict(JudgeConfig(variant_id="x", model="m")))
     legacy = set(_LEGACY_CONFIG_HASH_KEYS)
     # Labels, plus the two fields added when the v8-v11 variants were declared.
-    assert fields - legacy == {"variant_id", "notes", "restrict_tasks", "samples"}
+    assert fields - legacy == {
+        "variant_id", "notes", "restrict_tasks", "samples", "reasoning_effort",
+        "context_path"}
     # `concurrency` and the literal `exemplars_path` were in the legacy payload; the current one
     # drops concurrency (it cannot change a verdict) and hashes exemplar CONTENTS instead.
     assert "concurrency" in legacy

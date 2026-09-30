@@ -1,15 +1,33 @@
 # Blocked verification
 
+## GEDD and attribution audit (2026-09-29)
+
+- **Quality target still NOT achieved.** Original dev best single 0.6532, inspected
+  combination 0.6719; separate attribution test 0.5431 on only 195/206 items.
+- Attribution confirmation is compromised: 96 cropped sources, 14 test pairs seen
+  in prior probes, and empty annotation/split bindings. Existing artifacts are
+  preserved and commands refuse silent rebuild/refreeze. Perfectly resolving the
+  11 missing calls could give at most 0.5721, not 0.74.
+- Source-complete expert TRAIN examples and unmeasured v17 are prepared offline.
+  A new paid dev run needs specific authorization; no paid judge calls were made
+  during this audit. Original test remains unmeasured. See
+  `docs/ROUTEBENCH_GEDD_AUDIT.md` for diagnosis, changes and the bounded next step.
+- A new attribution corpus is not ready: excluding prior probe evidence leaves
+  only 47 Wice positive rows against the declared quota of 50. Do not reuse exposed
+  documents or alter the sampling protocol silently.
+
 ## Current local RouteBench execution status (2026-09-28)
 
-- **Live API check: BLOCKED by `credit_balance_exhausted`.** The configured project key
-  is now present. One tiny request to the configured `api.openai.com` GPT-4.1 endpoint
-  returned HTTP 429, type `insufficient_quota`, code `credit_balance_exhausted`, with
-  no usage result. This supersedes the historical "no credential" descriptions below.
-  No billing settings were changed and no credits were purchased.
-- The 512-case/variant development run was not launched after this confirmation.
-  Existing labels/cache remain intact; no held-out judgments or new agreement score
-  were produced. Additional data collection is not the current blocker.
+- **API credit blocker CLEARED; authorized dev evaluation COMPLETE.** After the
+  owner restored credits and authorized transmission of 128 dev cases for four
+  variants within $12, all 512 current-config judgments completed. Recorded
+  token-priced cost, including the tiny health probe and retries, is $2.502474.
+  No billing settings were changed and no credits were purchased by this agent.
+- **Quality target NOT achieved.** Best single-judge dev kappa is 0.6532; best
+  inspected unweighted combination is 0.6719, both below 0.74 on all 128 cases.
+  No held-out inference or bundle freeze was performed. Dataset, annotations,
+  prompts, and scoring code were unchanged during evaluation. See
+  `docs/ROUTEBENCH_DEV_RESULTS.md` for the measured results and next decision.
 - Quota exhaustion now fails fast through the shared client, judge repair/sample loop,
   concurrent runner and calibration commands. A quota-blocked test leaves its frozen
   bundle/report unchanged and can resume the same candidate from cached successes.
@@ -108,3 +126,14 @@ The following sections retain historical observations and other projects' blocke
   labelled dev-internal.
 - Docker-dependent milestones remain BLOCKED exactly as recorded above. Nothing in this round needed
   or assumed a container runtime.
+
+## Round 3 (2026-09-29)
+- kappa >= 0.74 still NOT ACHIEVED on dev (best single 0.6771, o4-mini high). See docs/ROUTEBENCH_ROUND3_REASONING_JUDGES.md.
+- 14/128 dev cases are misjudged by every judge; human adjudication of docs/LABEL_ADJUDICATION_QUEUE.json is needed.
+
+## Phase close-out (2026-09-29)
+- kappa >= 0.74 NOT ACHIEVED. Selected comparison baseline v18 (o4-mini, hash 12fc8b550d954359): dev 0.6745 (selected on dev), TRAIN 0.448, fresh upstream-dev documents 0.404 [0.282, 0.525] (weighted, evaluation-only). Highest single-judge dev score: v21, 0.6771. See docs/ROUTEBENCH_FINAL_PHASE_REPORT.md.
+- UNRESOLVED dataset terms: TofuEval and LLM-AggreFact forbid training use. The v17/v23 few-shot packets and the MiniCheck+v18 combiner used TofuEval-derived TRAIN data and are not release-ready. Transcripts are CC-BY-NC-SA or research-only and git-ignored.
+- No further paid calls, training, downloads or test evaluation without a new approved scope (proposal in the final report).
+
+- HHEM-2.1-Open screening (frozen, 2026-09-29): dev kappa 0.586, fresh-set weighted kappa 0.437 vs v18 0.404 (paired CI [-0.101, +0.171]); no convincing improvement; training provenance undocumented. Pretrained-verifier trials stopped.

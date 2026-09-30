@@ -1,0 +1,2676 @@
+{
+  "dataset_hash": "a5387f856111ac92",
+  "n_dev_cases": 371,
+  "run_summaries": [
+    {
+      "config": {
+        "concurrency": 0,
+        "config_hash": "4e4e48f2bce7b267",
+        "exemplars_path": "",
+        "include_boundary_examples": false,
+        "include_reference": true,
+        "max_attempts": 3,
+        "max_tokens": 1200,
+        "mode": "generic",
+        "model": "gpt-4o-mini",
+        "notes": "baseline: reproduces the pre-existing single-rubric judge, for comparison only",
+        "rubric_dir": null,
+        "temperature": 0.0,
+        "variant_id": "v0-generic-4o-mini"
+      },
+      "errors": {},
+      "models_served": {
+        "gpt-4o-mini-2024-07-18": 371
+      },
+      "n_cached": 0,
+      "n_cases": 371,
+      "n_ok": 371,
+      "spend": {
+        "calls": 371,
+        "cap_usd": 25.0,
+        "spent_usd": 0.069623
+      },
+      "variant_id": "v0-generic-4o-mini",
+      "wall_s": 87.9
+    },
+    {
+      "config": {
+        "concurrency": 0,
+        "config_hash": "e4a237f2f5ab1102",
+        "exemplars_path": "",
+        "include_boundary_examples": true,
+        "include_reference": true,
+        "max_attempts": 3,
+        "max_tokens": 1200,
+        "mode": "rubric",
+        "model": "gpt-4o-mini",
+        "notes": "task rubric + reference + boundary examples",
+        "rubric_dir": null,
+        "temperature": 0.0,
+        "variant_id": "v1-rubric-4o-mini"
+      },
+      "errors": {
+        "parse_error": 4,
+        "provider_error": 7
+      },
+      "models_served": {
+        "gpt-4o-mini-2024-07-18": 371
+      },
+      "n_cached": 0,
+      "n_cases": 371,
+      "n_ok": 360,
+      "spend": {
+        "calls": 735,
+        "cap_usd": 25.0,
+        "spent_usd": 0.235747
+      },
+      "variant_id": "v1-rubric-4o-mini",
+      "wall_s": 245.1
+    },
+    {
+      "config": {
+        "concurrency": 0,
+        "config_hash": "fd3d07d7d05a0a01",
+        "exemplars_path": "",
+        "include_boundary_examples": true,
+        "include_reference": false,
+        "max_attempts": 3,
+        "max_tokens": 1200,
+        "mode": "rubric",
+        "model": "gpt-4o-mini",
+        "notes": "ablation: isolates the contribution of the verified reference answer",
+        "rubric_dir": null,
+        "temperature": 0.0,
+        "variant_id": "v2-rubric-noref-4o-mini"
+      },
+      "errors": {
+        "parse_error": 3,
+        "provider_error": 4
+      },
+      "models_served": {
+        "gpt-4o-mini-2024-07-18": 371
+      },
+      "n_cached": 0,
+      "n_cases": 371,
+      "n_ok": 364,
+      "spend": {
+        "calls": 1102,
+        "cap_usd": 25.0,
+        "spent_usd": 0.393436
+      },
+      "variant_id": "v2-rubric-noref-4o-mini",
+      "wall_s": 254.1
+    },
+    {
+      "config": {
+        "concurrency": 0,
+        "config_hash": "f437a59f4d843935",
+        "exemplars_path": "",
+        "include_boundary_examples": false,
+        "include_reference": true,
+        "max_attempts": 3,
+        "max_tokens": 1200,
+        "mode": "rubric",
+        "model": "gpt-4o-mini",
+        "notes": "ablation: isolates the contribution of the rubric's boundary cases",
+        "rubric_dir": null,
+        "temperature": 0.0,
+        "variant_id": "v3-rubric-noboundary-4o-mini"
+      },
+      "errors": {
+        "parse_error": 13,
+        "provider_error": 1
+      },
+      "models_served": {
+        "gpt-4o-mini-2024-07-18": 371
+      },
+      "n_cached": 0,
+      "n_cases": 371,
+      "n_ok": 357,
+      "spend": {
+        "calls": 1472,
+        "cap_usd": 25.0,
+        "spent_usd": 0.551022
+      },
+      "variant_id": "v3-rubric-noboundary-4o-mini",
+      "wall_s": 255.3
+    },
+    {
+      "config": {
+        "concurrency": 0,
+        "config_hash": "df8718f2d4a71d32",
+        "exemplars_path": "",
+        "include_boundary_examples": true,
+        "include_reference": true,
+        "max_attempts": 3,
+        "max_tokens": 1200,
+        "mode": "rubric",
+        "model": "gpt-4.1-mini",
+        "notes": "stronger judge, same rubric",
+        "rubric_dir": null,
+        "temperature": 0.0,
+        "variant_id": "v4-rubric-4.1-mini"
+      },
+      "errors": {
+        "provider_error": 2
+      },
+      "models_served": {
+        "gpt-4.1-mini-2025-04-14": 369
+      },
+      "n_cached": 0,
+      "n_cases": 371,
+      "n_ok": 369,
+      "spend": {
+        "calls": 1841,
+        "cap_usd": 25.0,
+        "spent_usd": 0.973053
+      },
+      "variant_id": "v4-rubric-4.1-mini",
+      "wall_s": 180.8
+    },
+    {
+      "config": {
+        "concurrency": 3,
+        "config_hash": "1d959f1a3205fcc1",
+        "exemplars_path": "",
+        "include_boundary_examples": true,
+        "include_reference": true,
+        "max_attempts": 3,
+        "max_tokens": 1200,
+        "mode": "rubric",
+        "model": "gpt-4.1",
+        "notes": "strongest available judge, same rubric; low concurrency to stay inside TPM limits",
+        "rubric_dir": null,
+        "temperature": 0.0,
+        "variant_id": "v5-rubric-4.1"
+      },
+      "errors": {
+        "provider_error": 51
+      },
+      "models_served": {
+        "gpt-4.1-2025-04-14": 321
+      },
+      "n_cached": 0,
+      "n_cases": 371,
+      "n_ok": 320,
+      "spend": {
+        "calls": 2161,
+        "cap_usd": 25.0,
+        "spent_usd": 2.750183
+      },
+      "variant_id": "v5-rubric-4.1",
+      "wall_s": 1271.7
+    },
+    {
+      "config": {
+        "concurrency": 0,
+        "config_hash": "08517e25e1f5a809",
+        "exemplars_path": "C:\\Users\\atulp\\Downloads\\files\\wt-forge\\routebench\\evalops\\data\\exemplars.json",
+        "include_boundary_examples": true,
+        "include_reference": true,
+        "max_attempts": 3,
+        "max_tokens": 1200,
+        "mode": "rubric",
+        "model": "gpt-4.1-mini",
+        "notes": "rubric + 2 pass/2 fail TRAIN-split exemplars for the case's own task class",
+        "rubric_dir": null,
+        "temperature": 0.0,
+        "variant_id": "v6-rubric-fewshot-4.1-mini"
+      },
+      "errors": {
+        "provider_error": 6
+      },
+      "models_served": {
+        "gpt-4.1-mini-2025-04-14": 366
+      },
+      "n_cached": 0,
+      "n_cases": 371,
+      "n_ok": 365,
+      "spend": {
+        "calls": 2526,
+        "cap_usd": 25.0,
+        "spent_usd": 3.210225
+      },
+      "variant_id": "v6-rubric-fewshot-4.1-mini",
+      "wall_s": 211.4
+    },
+    {
+      "config": {
+        "concurrency": 3,
+        "config_hash": "31881c161dd1b148",
+        "exemplars_path": "C:\\Users\\atulp\\Downloads\\files\\wt-forge\\routebench\\evalops\\data\\exemplars.json",
+        "include_boundary_examples": true,
+        "include_reference": true,
+        "max_attempts": 3,
+        "max_tokens": 1200,
+        "mode": "rubric",
+        "model": "gpt-4.1",
+        "notes": "strongest judge plus train-split exemplars",
+        "rubric_dir": null,
+        "temperature": 0.0,
+        "variant_id": "v7-rubric-fewshot-4.1"
+      },
+      "errors": {
+        "provider_error": 82
+      },
+      "models_served": {
+        "gpt-4.1-2025-04-14": 289
+      },
+      "n_cached": 0,
+      "n_cases": 371,
+      "n_ok": 289,
+      "spend": {
+        "calls": 2815,
+        "cap_usd": 25.0,
+        "spent_usd": 4.987879
+      },
+      "variant_id": "v7-rubric-fewshot-4.1",
+      "wall_s": 1396.0
+    }
+  ],
+  "spend": {
+    "calls": 2815,
+    "cap_usd": 25.0,
+    "spent_usd": 4.987879
+  },
+  "split_seed": 20260927,
+  "unavailable": {
+    "gpt-5": "HTTP 404 from /v1/chat/completions for the gpt-5 family on this key",
+    "gpt-5-mini": "HTTP 404 from /v1/chat/completions for the gpt-5 family on this key"
+  },
+  "variants": [
+    {
+      "at_0.5": {
+        "agreement": 0.5795148247978437,
+        "confusion": {
+          "fn": 78,
+          "fp": 78,
+          "n": 371,
+          "tn": 108,
+          "tp": 107
+        },
+        "defined": true,
+        "kappa": 0.159023539668701,
+        "n": 371
+      },
+      "best_dev_kappa": 0.159023539668701,
+      "best_threshold": 0.5,
+      "completion": 1.0,
+      "config_hash": "4e4e48f2bce7b267",
+      "errors": {},
+      "mode": "generic",
+      "model": "gpt-4o-mini",
+      "models_served": {
+        "gpt-4o-mini-2024-07-18": 371
+      },
+      "n_paired": 371,
+      "notes": "baseline: reproduces the pre-existing single-rubric judge, for comparison only",
+      "spend_after_usd": 0.0696,
+      "threshold_grid": [
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.05
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.1
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.15
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.2
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.25
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.3
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.35
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.4
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.45
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.5
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.55
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.6
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.65
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.7
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.75
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.8
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.85
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.9
+        },
+        {
+          "agreement": 0.5795148247978437,
+          "confusion": {
+            "fn": 78,
+            "fp": 78,
+            "n": 371,
+            "tn": 108,
+            "tp": 107
+          },
+          "defined": true,
+          "judge_prevalence": 0.49865229110512127,
+          "kappa": 0.159023539668701,
+          "threshold": 0.95
+        }
+      ],
+      "variant_id": "v0-generic-4o-mini"
+    },
+    {
+      "at_0.5": {
+        "agreement": 0.6916666666666667,
+        "confusion": {
+          "fn": 10,
+          "fp": 101,
+          "n": 360,
+          "tn": 76,
+          "tp": 173
+        },
+        "defined": true,
+        "kappa": 0.37791892396786847,
+        "n": 360
+      },
+      "best_dev_kappa": 0.4645347215766477,
+      "best_threshold": 0.85,
+      "completion": 0.9703504043126685,
+      "config_hash": "e4a237f2f5ab1102",
+      "errors": {
+        "parse_error": 4,
+        "provider_error": 7
+      },
+      "mode": "rubric",
+      "model": "gpt-4o-mini",
+      "models_served": {
+        "gpt-4o-mini-2024-07-18": 371
+      },
+      "n_paired": 360,
+      "notes": "task rubric + reference + boundary examples",
+      "spend_after_usd": 0.2357,
+      "threshold_grid": [
+        {
+          "agreement": 0.6111111111111112,
+          "confusion": {
+            "fn": 7,
+            "fp": 133,
+            "n": 360,
+            "tn": 44,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.8583333333333333,
+          "kappa": 0.21281979195951664,
+          "threshold": 0.05
+        },
+        {
+          "agreement": 0.6111111111111112,
+          "confusion": {
+            "fn": 7,
+            "fp": 133,
+            "n": 360,
+            "tn": 44,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.8583333333333333,
+          "kappa": 0.21281979195951664,
+          "threshold": 0.1
+        },
+        {
+          "agreement": 0.6166666666666667,
+          "confusion": {
+            "fn": 7,
+            "fp": 131,
+            "n": 360,
+            "tn": 46,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.8527777777777777,
+          "kappa": 0.2242106249414411,
+          "threshold": 0.15
+        },
+        {
+          "agreement": 0.6166666666666667,
+          "confusion": {
+            "fn": 7,
+            "fp": 131,
+            "n": 360,
+            "tn": 46,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.8527777777777777,
+          "kappa": 0.2242106249414411,
+          "threshold": 0.2
+        },
+        {
+          "agreement": 0.6194444444444445,
+          "confusion": {
+            "fn": 7,
+            "fp": 130,
+            "n": 360,
+            "tn": 47,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.85,
+          "kappa": 0.2299044406970208,
+          "threshold": 0.25
+        },
+        {
+          "agreement": 0.6611111111111111,
+          "confusion": {
+            "fn": 8,
+            "fp": 114,
+            "n": 360,
+            "tn": 63,
+            "tp": 175
+          },
+          "defined": true,
+          "judge_prevalence": 0.8027777777777778,
+          "kappa": 0.31531194462632123,
+          "threshold": 0.3
+        },
+        {
+          "agreement": 0.6611111111111111,
+          "confusion": {
+            "fn": 8,
+            "fp": 114,
+            "n": 360,
+            "tn": 63,
+            "tp": 175
+          },
+          "defined": true,
+          "judge_prevalence": 0.8027777777777778,
+          "kappa": 0.31531194462632123,
+          "threshold": 0.35
+        },
+        {
+          "agreement": 0.6611111111111111,
+          "confusion": {
+            "fn": 8,
+            "fp": 114,
+            "n": 360,
+            "tn": 63,
+            "tp": 175
+          },
+          "defined": true,
+          "judge_prevalence": 0.8027777777777778,
+          "kappa": 0.31531194462632123,
+          "threshold": 0.4
+        },
+        {
+          "agreement": 0.6916666666666667,
+          "confusion": {
+            "fn": 10,
+            "fp": 101,
+            "n": 360,
+            "tn": 76,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.7611111111111111,
+          "kappa": 0.37791892396786847,
+          "threshold": 0.45
+        },
+        {
+          "agreement": 0.6916666666666667,
+          "confusion": {
+            "fn": 10,
+            "fp": 101,
+            "n": 360,
+            "tn": 76,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.7611111111111111,
+          "kappa": 0.37791892396786847,
+          "threshold": 0.5
+        },
+        {
+          "agreement": 0.6916666666666667,
+          "confusion": {
+            "fn": 14,
+            "fp": 97,
+            "n": 360,
+            "tn": 80,
+            "tp": 169
+          },
+          "defined": true,
+          "judge_prevalence": 0.7388888888888889,
+          "kappa": 0.3783834235579615,
+          "threshold": 0.55
+        },
+        {
+          "agreement": 0.6916666666666667,
+          "confusion": {
+            "fn": 14,
+            "fp": 97,
+            "n": 360,
+            "tn": 80,
+            "tp": 169
+          },
+          "defined": true,
+          "judge_prevalence": 0.7388888888888889,
+          "kappa": 0.3783834235579615,
+          "threshold": 0.6
+        },
+        {
+          "agreement": 0.6972222222222222,
+          "confusion": {
+            "fn": 20,
+            "fp": 89,
+            "n": 360,
+            "tn": 88,
+            "tp": 163
+          },
+          "defined": true,
+          "judge_prevalence": 0.7,
+          "kappa": 0.3903803131991051,
+          "threshold": 0.65
+        },
+        {
+          "agreement": 0.6972222222222222,
+          "confusion": {
+            "fn": 20,
+            "fp": 89,
+            "n": 360,
+            "tn": 88,
+            "tp": 163
+          },
+          "defined": true,
+          "judge_prevalence": 0.7,
+          "kappa": 0.3903803131991051,
+          "threshold": 0.7
+        },
+        {
+          "agreement": 0.6972222222222222,
+          "confusion": {
+            "fn": 20,
+            "fp": 89,
+            "n": 360,
+            "tn": 88,
+            "tp": 163
+          },
+          "defined": true,
+          "judge_prevalence": 0.7,
+          "kappa": 0.3903803131991051,
+          "threshold": 0.75
+        },
+        {
+          "agreement": 0.7027777777777777,
+          "confusion": {
+            "fn": 23,
+            "fp": 84,
+            "n": 360,
+            "tn": 93,
+            "tp": 160
+          },
+          "defined": true,
+          "judge_prevalence": 0.6777777777777778,
+          "kappa": 0.4020119225037257,
+          "threshold": 0.8
+        },
+        {
+          "agreement": 0.7333333333333333,
+          "confusion": {
+            "fn": 28,
+            "fp": 68,
+            "n": 360,
+            "tn": 109,
+            "tp": 155
+          },
+          "defined": true,
+          "judge_prevalence": 0.6194444444444445,
+          "kappa": 0.4645347215766477,
+          "threshold": 0.85
+        },
+        {
+          "agreement": 0.7333333333333333,
+          "confusion": {
+            "fn": 28,
+            "fp": 68,
+            "n": 360,
+            "tn": 109,
+            "tp": 155
+          },
+          "defined": true,
+          "judge_prevalence": 0.6194444444444445,
+          "kappa": 0.4645347215766477,
+          "threshold": 0.9
+        },
+        {
+          "agreement": 0.7333333333333333,
+          "confusion": {
+            "fn": 28,
+            "fp": 68,
+            "n": 360,
+            "tn": 109,
+            "tp": 155
+          },
+          "defined": true,
+          "judge_prevalence": 0.6194444444444445,
+          "kappa": 0.4645347215766477,
+          "threshold": 0.95
+        }
+      ],
+      "variant_id": "v1-rubric-4o-mini"
+    },
+    {
+      "at_0.5": {
+        "agreement": 0.5934065934065934,
+        "confusion": {
+          "fn": 10,
+          "fp": 138,
+          "n": 364,
+          "tn": 44,
+          "tp": 172
+        },
+        "defined": true,
+        "kappa": 0.18681318681318682,
+        "n": 364
+      },
+      "best_dev_kappa": 0.3076923076923077,
+      "best_threshold": 0.85,
+      "completion": 0.9811320754716981,
+      "config_hash": "fd3d07d7d05a0a01",
+      "errors": {
+        "parse_error": 3,
+        "provider_error": 4
+      },
+      "mode": "rubric",
+      "model": "gpt-4o-mini",
+      "models_served": {
+        "gpt-4o-mini-2024-07-18": 371
+      },
+      "n_paired": 364,
+      "notes": "ablation: isolates the contribution of the verified reference answer",
+      "spend_after_usd": 0.3934,
+      "threshold_grid": [
+        {
+          "agreement": 0.5467032967032966,
+          "confusion": {
+            "fn": 6,
+            "fp": 159,
+            "n": 364,
+            "tn": 23,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.9203296703296703,
+          "kappa": 0.0934065934065933,
+          "threshold": 0.05
+        },
+        {
+          "agreement": 0.5467032967032966,
+          "confusion": {
+            "fn": 6,
+            "fp": 159,
+            "n": 364,
+            "tn": 23,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.9203296703296703,
+          "kappa": 0.0934065934065933,
+          "threshold": 0.1
+        },
+        {
+          "agreement": 0.5521978021978022,
+          "confusion": {
+            "fn": 6,
+            "fp": 157,
+            "n": 364,
+            "tn": 25,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.9148351648351648,
+          "kappa": 0.10439560439560447,
+          "threshold": 0.15
+        },
+        {
+          "agreement": 0.5521978021978022,
+          "confusion": {
+            "fn": 6,
+            "fp": 157,
+            "n": 364,
+            "tn": 25,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.9148351648351648,
+          "kappa": 0.10439560439560447,
+          "threshold": 0.2
+        },
+        {
+          "agreement": 0.554945054945055,
+          "confusion": {
+            "fn": 6,
+            "fp": 156,
+            "n": 364,
+            "tn": 26,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.9120879120879121,
+          "kappa": 0.10989010989010994,
+          "threshold": 0.25
+        },
+        {
+          "agreement": 0.5824175824175825,
+          "confusion": {
+            "fn": 9,
+            "fp": 143,
+            "n": 364,
+            "tn": 39,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.8681318681318682,
+          "kappa": 0.16483516483516492,
+          "threshold": 0.3
+        },
+        {
+          "agreement": 0.5824175824175825,
+          "confusion": {
+            "fn": 9,
+            "fp": 143,
+            "n": 364,
+            "tn": 39,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.8681318681318682,
+          "kappa": 0.16483516483516492,
+          "threshold": 0.35
+        },
+        {
+          "agreement": 0.5824175824175825,
+          "confusion": {
+            "fn": 9,
+            "fp": 143,
+            "n": 364,
+            "tn": 39,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.8681318681318682,
+          "kappa": 0.16483516483516492,
+          "threshold": 0.4
+        },
+        {
+          "agreement": 0.5934065934065934,
+          "confusion": {
+            "fn": 10,
+            "fp": 138,
+            "n": 364,
+            "tn": 44,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.8516483516483516,
+          "kappa": 0.18681318681318682,
+          "threshold": 0.45
+        },
+        {
+          "agreement": 0.5934065934065934,
+          "confusion": {
+            "fn": 10,
+            "fp": 138,
+            "n": 364,
+            "tn": 44,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.8516483516483516,
+          "kappa": 0.18681318681318682,
+          "threshold": 0.5
+        },
+        {
+          "agreement": 0.6098901098901099,
+          "confusion": {
+            "fn": 12,
+            "fp": 130,
+            "n": 364,
+            "tn": 52,
+            "tp": 170
+          },
+          "defined": true,
+          "judge_prevalence": 0.8241758241758241,
+          "kappa": 0.2197802197802199,
+          "threshold": 0.55
+        },
+        {
+          "agreement": 0.6098901098901099,
+          "confusion": {
+            "fn": 12,
+            "fp": 130,
+            "n": 364,
+            "tn": 52,
+            "tp": 170
+          },
+          "defined": true,
+          "judge_prevalence": 0.8241758241758241,
+          "kappa": 0.2197802197802199,
+          "threshold": 0.6
+        },
+        {
+          "agreement": 0.6208791208791209,
+          "confusion": {
+            "fn": 14,
+            "fp": 124,
+            "n": 364,
+            "tn": 58,
+            "tp": 168
+          },
+          "defined": true,
+          "judge_prevalence": 0.8021978021978022,
+          "kappa": 0.2417582417582418,
+          "threshold": 0.65
+        },
+        {
+          "agreement": 0.6208791208791209,
+          "confusion": {
+            "fn": 14,
+            "fp": 124,
+            "n": 364,
+            "tn": 58,
+            "tp": 168
+          },
+          "defined": true,
+          "judge_prevalence": 0.8021978021978022,
+          "kappa": 0.2417582417582418,
+          "threshold": 0.7
+        },
+        {
+          "agreement": 0.6208791208791209,
+          "confusion": {
+            "fn": 14,
+            "fp": 124,
+            "n": 364,
+            "tn": 58,
+            "tp": 168
+          },
+          "defined": true,
+          "judge_prevalence": 0.8021978021978022,
+          "kappa": 0.2417582417582418,
+          "threshold": 0.75
+        },
+        {
+          "agreement": 0.6291208791208791,
+          "confusion": {
+            "fn": 17,
+            "fp": 118,
+            "n": 364,
+            "tn": 64,
+            "tp": 165
+          },
+          "defined": true,
+          "judge_prevalence": 0.7774725274725275,
+          "kappa": 0.2582417582417582,
+          "threshold": 0.8
+        },
+        {
+          "agreement": 0.6538461538461539,
+          "confusion": {
+            "fn": 20,
+            "fp": 106,
+            "n": 364,
+            "tn": 76,
+            "tp": 162
+          },
+          "defined": true,
+          "judge_prevalence": 0.7362637362637363,
+          "kappa": 0.3076923076923077,
+          "threshold": 0.85
+        },
+        {
+          "agreement": 0.6538461538461539,
+          "confusion": {
+            "fn": 20,
+            "fp": 106,
+            "n": 364,
+            "tn": 76,
+            "tp": 162
+          },
+          "defined": true,
+          "judge_prevalence": 0.7362637362637363,
+          "kappa": 0.3076923076923077,
+          "threshold": 0.9
+        },
+        {
+          "agreement": 0.6538461538461539,
+          "confusion": {
+            "fn": 20,
+            "fp": 106,
+            "n": 364,
+            "tn": 76,
+            "tp": 162
+          },
+          "defined": true,
+          "judge_prevalence": 0.7362637362637363,
+          "kappa": 0.3076923076923077,
+          "threshold": 0.95
+        }
+      ],
+      "variant_id": "v2-rubric-noref-4o-mini"
+    },
+    {
+      "at_0.5": {
+        "agreement": 0.6946778711484594,
+        "confusion": {
+          "fn": 13,
+          "fp": 96,
+          "n": 357,
+          "tn": 84,
+          "tp": 164
+        },
+        "defined": true,
+        "kappa": 0.3916897247104066,
+        "n": 357
+      },
+      "best_dev_kappa": 0.45217963171739944,
+      "best_threshold": 0.85,
+      "completion": 0.9622641509433962,
+      "config_hash": "f437a59f4d843935",
+      "errors": {
+        "parse_error": 13,
+        "provider_error": 1
+      },
+      "mode": "rubric",
+      "model": "gpt-4o-mini",
+      "models_served": {
+        "gpt-4o-mini-2024-07-18": 371
+      },
+      "n_paired": 357,
+      "notes": "ablation: isolates the contribution of the rubric's boundary cases",
+      "spend_after_usd": 0.551,
+      "threshold_grid": [
+        {
+          "agreement": 0.6106442577030813,
+          "confusion": {
+            "fn": 8,
+            "fp": 131,
+            "n": 357,
+            "tn": 49,
+            "tp": 169
+          },
+          "defined": true,
+          "judge_prevalence": 0.8403361344537815,
+          "kappa": 0.22571736179375573,
+          "threshold": 0.05
+        },
+        {
+          "agreement": 0.6106442577030813,
+          "confusion": {
+            "fn": 8,
+            "fp": 131,
+            "n": 357,
+            "tn": 49,
+            "tp": 169
+          },
+          "defined": true,
+          "judge_prevalence": 0.8403361344537815,
+          "kappa": 0.22571736179375573,
+          "threshold": 0.1
+        },
+        {
+          "agreement": 0.6162464985994398,
+          "confusion": {
+            "fn": 8,
+            "fp": 129,
+            "n": 357,
+            "tn": 51,
+            "tp": 169
+          },
+          "defined": true,
+          "judge_prevalence": 0.834733893557423,
+          "kappa": 0.23678666729085715,
+          "threshold": 0.15
+        },
+        {
+          "agreement": 0.6162464985994398,
+          "confusion": {
+            "fn": 8,
+            "fp": 129,
+            "n": 357,
+            "tn": 51,
+            "tp": 169
+          },
+          "defined": true,
+          "judge_prevalence": 0.834733893557423,
+          "kappa": 0.23678666729085715,
+          "threshold": 0.2
+        },
+        {
+          "agreement": 0.6190476190476191,
+          "confusion": {
+            "fn": 8,
+            "fp": 128,
+            "n": 357,
+            "tn": 52,
+            "tp": 169
+          },
+          "defined": true,
+          "judge_prevalence": 0.8319327731092437,
+          "kappa": 0.24232209737827723,
+          "threshold": 0.25
+        },
+        {
+          "agreement": 0.6470588235294118,
+          "confusion": {
+            "fn": 10,
+            "fp": 116,
+            "n": 357,
+            "tn": 64,
+            "tp": 167
+          },
+          "defined": true,
+          "judge_prevalence": 0.7927170868347339,
+          "kappa": 0.2975733158437178,
+          "threshold": 0.3
+        },
+        {
+          "agreement": 0.6470588235294118,
+          "confusion": {
+            "fn": 10,
+            "fp": 116,
+            "n": 357,
+            "tn": 64,
+            "tp": 167
+          },
+          "defined": true,
+          "judge_prevalence": 0.7927170868347339,
+          "kappa": 0.2975733158437178,
+          "threshold": 0.35
+        },
+        {
+          "agreement": 0.6470588235294118,
+          "confusion": {
+            "fn": 10,
+            "fp": 116,
+            "n": 357,
+            "tn": 64,
+            "tp": 167
+          },
+          "defined": true,
+          "judge_prevalence": 0.7927170868347339,
+          "kappa": 0.2975733158437178,
+          "threshold": 0.4
+        },
+        {
+          "agreement": 0.6946778711484594,
+          "confusion": {
+            "fn": 13,
+            "fp": 96,
+            "n": 357,
+            "tn": 84,
+            "tp": 164
+          },
+          "defined": true,
+          "judge_prevalence": 0.7282913165266106,
+          "kappa": 0.3916897247104066,
+          "threshold": 0.45
+        },
+        {
+          "agreement": 0.6946778711484594,
+          "confusion": {
+            "fn": 13,
+            "fp": 96,
+            "n": 357,
+            "tn": 84,
+            "tp": 164
+          },
+          "defined": true,
+          "judge_prevalence": 0.7282913165266106,
+          "kappa": 0.3916897247104066,
+          "threshold": 0.5
+        },
+        {
+          "agreement": 0.6946778711484594,
+          "confusion": {
+            "fn": 15,
+            "fp": 94,
+            "n": 357,
+            "tn": 86,
+            "tp": 162
+          },
+          "defined": true,
+          "judge_prevalence": 0.7170868347338936,
+          "kappa": 0.39157558984943003,
+          "threshold": 0.55
+        },
+        {
+          "agreement": 0.6946778711484594,
+          "confusion": {
+            "fn": 15,
+            "fp": 94,
+            "n": 357,
+            "tn": 86,
+            "tp": 162
+          },
+          "defined": true,
+          "judge_prevalence": 0.7170868347338936,
+          "kappa": 0.39157558984943003,
+          "threshold": 0.6
+        },
+        {
+          "agreement": 0.6918767507002801,
+          "confusion": {
+            "fn": 20,
+            "fp": 90,
+            "n": 357,
+            "tn": 90,
+            "tp": 157
+          },
+          "defined": true,
+          "judge_prevalence": 0.6918767507002801,
+          "kappa": 0.3857343969967152,
+          "threshold": 0.65
+        },
+        {
+          "agreement": 0.6918767507002801,
+          "confusion": {
+            "fn": 20,
+            "fp": 90,
+            "n": 357,
+            "tn": 90,
+            "tp": 157
+          },
+          "defined": true,
+          "judge_prevalence": 0.6918767507002801,
+          "kappa": 0.3857343969967152,
+          "threshold": 0.7
+        },
+        {
+          "agreement": 0.6918767507002801,
+          "confusion": {
+            "fn": 20,
+            "fp": 90,
+            "n": 357,
+            "tn": 90,
+            "tp": 157
+          },
+          "defined": true,
+          "judge_prevalence": 0.6918767507002801,
+          "kappa": 0.3857343969967152,
+          "threshold": 0.75
+        },
+        {
+          "agreement": 0.6946778711484594,
+          "confusion": {
+            "fn": 23,
+            "fp": 86,
+            "n": 357,
+            "tn": 94,
+            "tp": 154
+          },
+          "defined": true,
+          "judge_prevalence": 0.6722689075630253,
+          "kappa": 0.39111862179035806,
+          "threshold": 0.8
+        },
+        {
+          "agreement": 0.7254901960784313,
+          "confusion": {
+            "fn": 25,
+            "fp": 73,
+            "n": 357,
+            "tn": 107,
+            "tp": 152
+          },
+          "defined": true,
+          "judge_prevalence": 0.6302521008403361,
+          "kappa": 0.45217963171739944,
+          "threshold": 0.85
+        },
+        {
+          "agreement": 0.7254901960784313,
+          "confusion": {
+            "fn": 25,
+            "fp": 73,
+            "n": 357,
+            "tn": 107,
+            "tp": 152
+          },
+          "defined": true,
+          "judge_prevalence": 0.6302521008403361,
+          "kappa": 0.45217963171739944,
+          "threshold": 0.9
+        },
+        {
+          "agreement": 0.7254901960784313,
+          "confusion": {
+            "fn": 25,
+            "fp": 73,
+            "n": 357,
+            "tn": 107,
+            "tp": 152
+          },
+          "defined": true,
+          "judge_prevalence": 0.6302521008403361,
+          "kappa": 0.45217963171739944,
+          "threshold": 0.95
+        }
+      ],
+      "variant_id": "v3-rubric-noboundary-4o-mini"
+    },
+    {
+      "at_0.5": {
+        "agreement": 0.6802168021680217,
+        "confusion": {
+          "fn": 9,
+          "fp": 109,
+          "n": 369,
+          "tn": 75,
+          "tp": 176
+        },
+        "defined": true,
+        "kappa": 0.35948808473080324,
+        "n": 369
+      },
+      "best_dev_kappa": 0.5008674684623753,
+      "best_threshold": 0.85,
+      "completion": 0.9946091644204852,
+      "config_hash": "df8718f2d4a71d32",
+      "errors": {
+        "provider_error": 2
+      },
+      "mode": "rubric",
+      "model": "gpt-4.1-mini",
+      "models_served": {
+        "gpt-4.1-mini-2025-04-14": 369
+      },
+      "n_paired": 369,
+      "notes": "stronger judge, same rubric",
+      "spend_after_usd": 0.9731,
+      "threshold_grid": [
+        {
+          "agreement": 0.5880758807588076,
+          "confusion": {
+            "fn": 6,
+            "fp": 146,
+            "n": 369,
+            "tn": 38,
+            "tp": 179
+          },
+          "defined": true,
+          "judge_prevalence": 0.8807588075880759,
+          "kappa": 0.1744480423903444,
+          "threshold": 0.05
+        },
+        {
+          "agreement": 0.5880758807588076,
+          "confusion": {
+            "fn": 6,
+            "fp": 146,
+            "n": 369,
+            "tn": 38,
+            "tp": 179
+          },
+          "defined": true,
+          "judge_prevalence": 0.8807588075880759,
+          "kappa": 0.1744480423903444,
+          "threshold": 0.1
+        },
+        {
+          "agreement": 0.5934959349593496,
+          "confusion": {
+            "fn": 6,
+            "fp": 144,
+            "n": 369,
+            "tn": 40,
+            "tp": 179
+          },
+          "defined": true,
+          "judge_prevalence": 0.8753387533875339,
+          "kappa": 0.18533455005740193,
+          "threshold": 0.15
+        },
+        {
+          "agreement": 0.5934959349593496,
+          "confusion": {
+            "fn": 6,
+            "fp": 144,
+            "n": 369,
+            "tn": 40,
+            "tp": 179
+          },
+          "defined": true,
+          "judge_prevalence": 0.8753387533875339,
+          "kappa": 0.18533455005740193,
+          "threshold": 0.2
+        },
+        {
+          "agreement": 0.5934959349593496,
+          "confusion": {
+            "fn": 6,
+            "fp": 144,
+            "n": 369,
+            "tn": 40,
+            "tp": 179
+          },
+          "defined": true,
+          "judge_prevalence": 0.8753387533875339,
+          "kappa": 0.18533455005740193,
+          "threshold": 0.25
+        },
+        {
+          "agreement": 0.6124661246612466,
+          "confusion": {
+            "fn": 7,
+            "fp": 136,
+            "n": 369,
+            "tn": 48,
+            "tp": 178
+          },
+          "defined": true,
+          "judge_prevalence": 0.8509485094850948,
+          "kappa": 0.22345513678974552,
+          "threshold": 0.3
+        },
+        {
+          "agreement": 0.6124661246612466,
+          "confusion": {
+            "fn": 7,
+            "fp": 136,
+            "n": 369,
+            "tn": 48,
+            "tp": 178
+          },
+          "defined": true,
+          "judge_prevalence": 0.8509485094850948,
+          "kappa": 0.22345513678974552,
+          "threshold": 0.35
+        },
+        {
+          "agreement": 0.6395663956639567,
+          "confusion": {
+            "fn": 9,
+            "fp": 124,
+            "n": 369,
+            "tn": 60,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.8130081300813008,
+          "kappa": 0.2779077466342972,
+          "threshold": 0.4
+        },
+        {
+          "agreement": 0.6802168021680217,
+          "confusion": {
+            "fn": 9,
+            "fp": 109,
+            "n": 369,
+            "tn": 75,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.7723577235772358,
+          "kappa": 0.35948808473080324,
+          "threshold": 0.45
+        },
+        {
+          "agreement": 0.6802168021680217,
+          "confusion": {
+            "fn": 9,
+            "fp": 109,
+            "n": 369,
+            "tn": 75,
+            "tp": 176
+          },
+          "defined": true,
+          "judge_prevalence": 0.7723577235772358,
+          "kappa": 0.35948808473080324,
+          "threshold": 0.5
+        },
+        {
+          "agreement": 0.7073170731707317,
+          "confusion": {
+            "fn": 11,
+            "fp": 97,
+            "n": 369,
+            "tn": 87,
+            "tp": 174
+          },
+          "defined": true,
+          "judge_prevalence": 0.7344173441734417,
+          "kappa": 0.4138894608347795,
+          "threshold": 0.55
+        },
+        {
+          "agreement": 0.7073170731707317,
+          "confusion": {
+            "fn": 11,
+            "fp": 97,
+            "n": 369,
+            "tn": 87,
+            "tp": 174
+          },
+          "defined": true,
+          "judge_prevalence": 0.7344173441734417,
+          "kappa": 0.4138894608347795,
+          "threshold": 0.6
+        },
+        {
+          "agreement": 0.7371273712737128,
+          "confusion": {
+            "fn": 13,
+            "fp": 84,
+            "n": 369,
+            "tn": 100,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.6937669376693767,
+          "kappa": 0.47370201002808454,
+          "threshold": 0.65
+        },
+        {
+          "agreement": 0.7371273712737128,
+          "confusion": {
+            "fn": 13,
+            "fp": 84,
+            "n": 369,
+            "tn": 100,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.6937669376693767,
+          "kappa": 0.47370201002808454,
+          "threshold": 0.7
+        },
+        {
+          "agreement": 0.7371273712737128,
+          "confusion": {
+            "fn": 13,
+            "fp": 84,
+            "n": 369,
+            "tn": 100,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.6937669376693767,
+          "kappa": 0.47370201002808454,
+          "threshold": 0.75
+        },
+        {
+          "agreement": 0.7371273712737128,
+          "confusion": {
+            "fn": 13,
+            "fp": 84,
+            "n": 369,
+            "tn": 100,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.6937669376693767,
+          "kappa": 0.47370201002808454,
+          "threshold": 0.8
+        },
+        {
+          "agreement": 0.7506775067750677,
+          "confusion": {
+            "fn": 13,
+            "fp": 79,
+            "n": 369,
+            "tn": 105,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.6802168021680217,
+          "kappa": 0.5008674684623753,
+          "threshold": 0.85
+        },
+        {
+          "agreement": 0.7506775067750677,
+          "confusion": {
+            "fn": 13,
+            "fp": 79,
+            "n": 369,
+            "tn": 105,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.6802168021680217,
+          "kappa": 0.5008674684623753,
+          "threshold": 0.9
+        },
+        {
+          "agreement": 0.7506775067750677,
+          "confusion": {
+            "fn": 13,
+            "fp": 79,
+            "n": 369,
+            "tn": 105,
+            "tp": 172
+          },
+          "defined": true,
+          "judge_prevalence": 0.6802168021680217,
+          "kappa": 0.5008674684623753,
+          "threshold": 0.95
+        }
+      ],
+      "variant_id": "v4-rubric-4.1-mini"
+    },
+    {
+      "at_0.5": {
+        "agreement": 0.75,
+        "confusion": {
+          "fn": 15,
+          "fp": 65,
+          "n": 320,
+          "tn": 90,
+          "tp": 150
+        },
+        "defined": true,
+        "kappa": 0.4945705824284304,
+        "n": 320
+      },
+      "best_dev_kappa": 0.5266272189349113,
+      "best_threshold": 0.65,
+      "completion": 0.862533692722372,
+      "config_hash": "1d959f1a3205fcc1",
+      "errors": {
+        "provider_error": 51
+      },
+      "mode": "rubric",
+      "model": "gpt-4.1",
+      "models_served": {
+        "gpt-4.1-2025-04-14": 321
+      },
+      "n_paired": 320,
+      "notes": "strongest available judge, same rubric; low concurrency to stay inside TPM limits",
+      "spend_after_usd": 2.7502,
+      "threshold_grid": [
+        {
+          "agreement": 0.646875,
+          "confusion": {
+            "fn": 9,
+            "fp": 104,
+            "n": 320,
+            "tn": 51,
+            "tp": 156
+          },
+          "defined": true,
+          "judge_prevalence": 0.8125,
+          "kappa": 0.27968127490039835,
+          "threshold": 0.05
+        },
+        {
+          "agreement": 0.646875,
+          "confusion": {
+            "fn": 9,
+            "fp": 104,
+            "n": 320,
+            "tn": 51,
+            "tp": 156
+          },
+          "defined": true,
+          "judge_prevalence": 0.8125,
+          "kappa": 0.27968127490039835,
+          "threshold": 0.1
+        },
+        {
+          "agreement": 0.696875,
+          "confusion": {
+            "fn": 9,
+            "fp": 88,
+            "n": 320,
+            "tn": 67,
+            "tp": 156
+          },
+          "defined": true,
+          "judge_prevalence": 0.7625,
+          "kappa": 0.3836378077839556,
+          "threshold": 0.15
+        },
+        {
+          "agreement": 0.696875,
+          "confusion": {
+            "fn": 9,
+            "fp": 88,
+            "n": 320,
+            "tn": 67,
+            "tp": 156
+          },
+          "defined": true,
+          "judge_prevalence": 0.7625,
+          "kappa": 0.3836378077839556,
+          "threshold": 0.2
+        },
+        {
+          "agreement": 0.696875,
+          "confusion": {
+            "fn": 9,
+            "fp": 88,
+            "n": 320,
+            "tn": 67,
+            "tp": 156
+          },
+          "defined": true,
+          "judge_prevalence": 0.7625,
+          "kappa": 0.3836378077839556,
+          "threshold": 0.25
+        },
+        {
+          "agreement": 0.70625,
+          "confusion": {
+            "fn": 9,
+            "fp": 85,
+            "n": 320,
+            "tn": 70,
+            "tp": 156
+          },
+          "defined": true,
+          "judge_prevalence": 0.753125,
+          "kappa": 0.4030561619368923,
+          "threshold": 0.3
+        },
+        {
+          "agreement": 0.70625,
+          "confusion": {
+            "fn": 9,
+            "fp": 85,
+            "n": 320,
+            "tn": 70,
+            "tp": 156
+          },
+          "defined": true,
+          "judge_prevalence": 0.753125,
+          "kappa": 0.4030561619368923,
+          "threshold": 0.35
+        },
+        {
+          "agreement": 0.696875,
+          "confusion": {
+            "fn": 12,
+            "fp": 85,
+            "n": 320,
+            "tn": 70,
+            "tp": 153
+          },
+          "defined": true,
+          "judge_prevalence": 0.74375,
+          "kappa": 0.3843712812376042,
+          "threshold": 0.4
+        },
+        {
+          "agreement": 0.75,
+          "confusion": {
+            "fn": 15,
+            "fp": 65,
+            "n": 320,
+            "tn": 90,
+            "tp": 150
+          },
+          "defined": true,
+          "judge_prevalence": 0.671875,
+          "kappa": 0.4945705824284304,
+          "threshold": 0.45
+        },
+        {
+          "agreement": 0.75,
+          "confusion": {
+            "fn": 15,
+            "fp": 65,
+            "n": 320,
+            "tn": 90,
+            "tp": 150
+          },
+          "defined": true,
+          "judge_prevalence": 0.671875,
+          "kappa": 0.4945705824284304,
+          "threshold": 0.5
+        },
+        {
+          "agreement": 0.753125,
+          "confusion": {
+            "fn": 15,
+            "fp": 64,
+            "n": 320,
+            "tn": 91,
+            "tp": 150
+          },
+          "defined": true,
+          "judge_prevalence": 0.66875,
+          "kappa": 0.5009869719699962,
+          "threshold": 0.55
+        },
+        {
+          "agreement": 0.753125,
+          "confusion": {
+            "fn": 15,
+            "fp": 64,
+            "n": 320,
+            "tn": 91,
+            "tp": 150
+          },
+          "defined": true,
+          "judge_prevalence": 0.66875,
+          "kappa": 0.5009869719699962,
+          "threshold": 0.6
+        },
+        {
+          "agreement": 0.765625,
+          "confusion": {
+            "fn": 15,
+            "fp": 60,
+            "n": 320,
+            "tn": 95,
+            "tp": 150
+          },
+          "defined": true,
+          "judge_prevalence": 0.65625,
+          "kappa": 0.5266272189349113,
+          "threshold": 0.65
+        },
+        {
+          "agreement": 0.765625,
+          "confusion": {
+            "fn": 15,
+            "fp": 60,
+            "n": 320,
+            "tn": 95,
+            "tp": 150
+          },
+          "defined": true,
+          "judge_prevalence": 0.65625,
+          "kappa": 0.5266272189349113,
+          "threshold": 0.7
+        },
+        {
+          "agreement": 0.765625,
+          "confusion": {
+            "fn": 15,
+            "fp": 60,
+            "n": 320,
+            "tn": 95,
+            "tp": 150
+          },
+          "defined": true,
+          "judge_prevalence": 0.65625,
+          "kappa": 0.5266272189349113,
+          "threshold": 0.75
+        },
+        {
+          "agreement": 0.765625,
+          "confusion": {
+            "fn": 15,
+            "fp": 60,
+            "n": 320,
+            "tn": 95,
+            "tp": 150
+          },
+          "defined": true,
+          "judge_prevalence": 0.65625,
+          "kappa": 0.5266272189349113,
+          "threshold": 0.8
+        },
+        {
+          "agreement": 0.7625,
+          "confusion": {
+            "fn": 17,
+            "fp": 59,
+            "n": 320,
+            "tn": 96,
+            "tp": 148
+          },
+          "defined": true,
+          "judge_prevalence": 0.646875,
+          "kappa": 0.5205992509363294,
+          "threshold": 0.85
+        },
+        {
+          "agreement": 0.7625,
+          "confusion": {
+            "fn": 17,
+            "fp": 59,
+            "n": 320,
+            "tn": 96,
+            "tp": 148
+          },
+          "defined": true,
+          "judge_prevalence": 0.646875,
+          "kappa": 0.5205992509363294,
+          "threshold": 0.9
+        },
+        {
+          "agreement": 0.7625,
+          "confusion": {
+            "fn": 17,
+            "fp": 59,
+            "n": 320,
+            "tn": 96,
+            "tp": 148
+          },
+          "defined": true,
+          "judge_prevalence": 0.646875,
+          "kappa": 0.5205992509363294,
+          "threshold": 0.95
+        }
+      ],
+      "variant_id": "v5-rubric-4.1"
+    },
+    {
+      "at_0.5": {
+        "agreement": 0.673972602739726,
+        "confusion": {
+          "fn": 9,
+          "fp": 110,
+          "n": 365,
+          "tn": 73,
+          "tp": 173
+        },
+        "defined": true,
+        "kappa": 0.34892749539070345,
+        "n": 365
+      },
+      "best_dev_kappa": 0.48548377421870303,
+      "best_threshold": 0.85,
+      "completion": 0.9838274932614556,
+      "config_hash": "08517e25e1f5a809",
+      "errors": {
+        "provider_error": 6
+      },
+      "mode": "rubric",
+      "model": "gpt-4.1-mini",
+      "models_served": {
+        "gpt-4.1-mini-2025-04-14": 366
+      },
+      "n_paired": 365,
+      "notes": "rubric + 2 pass/2 fail TRAIN-split exemplars for the case's own task class",
+      "spend_after_usd": 3.2102,
+      "threshold_grid": [
+        {
+          "agreement": 0.5863013698630137,
+          "confusion": {
+            "fn": 4,
+            "fp": 147,
+            "n": 365,
+            "tn": 36,
+            "tp": 178
+          },
+          "defined": true,
+          "judge_prevalence": 0.8904109589041096,
+          "kappa": 0.17436896112650743,
+          "threshold": 0.05
+        },
+        {
+          "agreement": 0.5863013698630137,
+          "confusion": {
+            "fn": 4,
+            "fp": 147,
+            "n": 365,
+            "tn": 36,
+            "tp": 178
+          },
+          "defined": true,
+          "judge_prevalence": 0.8904109589041096,
+          "kappa": 0.17436896112650743,
+          "threshold": 0.1
+        },
+        {
+          "agreement": 0.5917808219178082,
+          "confusion": {
+            "fn": 4,
+            "fp": 145,
+            "n": 365,
+            "tn": 38,
+            "tp": 178
+          },
+          "defined": true,
+          "judge_prevalence": 0.8849315068493151,
+          "kappa": 0.18528006231929647,
+          "threshold": 0.15
+        },
+        {
+          "agreement": 0.5917808219178082,
+          "confusion": {
+            "fn": 4,
+            "fp": 145,
+            "n": 365,
+            "tn": 38,
+            "tp": 178
+          },
+          "defined": true,
+          "judge_prevalence": 0.8849315068493151,
+          "kappa": 0.18528006231929647,
+          "threshold": 0.2
+        },
+        {
+          "agreement": 0.5917808219178082,
+          "confusion": {
+            "fn": 4,
+            "fp": 145,
+            "n": 365,
+            "tn": 38,
+            "tp": 178
+          },
+          "defined": true,
+          "judge_prevalence": 0.8849315068493151,
+          "kappa": 0.18528006231929647,
+          "threshold": 0.25
+        },
+        {
+          "agreement": 0.6109589041095891,
+          "confusion": {
+            "fn": 5,
+            "fp": 137,
+            "n": 365,
+            "tn": 46,
+            "tp": 177
+          },
+          "defined": true,
+          "judge_prevalence": 0.8602739726027397,
+          "kappa": 0.22345079707539264,
+          "threshold": 0.3
+        },
+        {
+          "agreement": 0.6136986301369863,
+          "confusion": {
+            "fn": 5,
+            "fp": 136,
+            "n": 365,
+            "tn": 47,
+            "tp": 177
+          },
+          "defined": true,
+          "judge_prevalence": 0.8575342465753425,
+          "kappa": 0.22890790045398018,
+          "threshold": 0.35
+        },
+        {
+          "agreement": 0.6328767123287671,
+          "confusion": {
+            "fn": 9,
+            "fp": 125,
+            "n": 365,
+            "tn": 58,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.8164383561643835,
+          "kappa": 0.2670243376093992,
+          "threshold": 0.4
+        },
+        {
+          "agreement": 0.673972602739726,
+          "confusion": {
+            "fn": 9,
+            "fp": 110,
+            "n": 365,
+            "tn": 73,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.7753424657534247,
+          "kappa": 0.34892749539070345,
+          "threshold": 0.45
+        },
+        {
+          "agreement": 0.673972602739726,
+          "confusion": {
+            "fn": 9,
+            "fp": 110,
+            "n": 365,
+            "tn": 73,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.7753424657534247,
+          "kappa": 0.34892749539070345,
+          "threshold": 0.5
+        },
+        {
+          "agreement": 0.7041095890410959,
+          "confusion": {
+            "fn": 9,
+            "fp": 99,
+            "n": 365,
+            "tn": 84,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.7452054794520548,
+          "kappa": 0.40901322299181436,
+          "threshold": 0.55
+        },
+        {
+          "agreement": 0.7041095890410959,
+          "confusion": {
+            "fn": 9,
+            "fp": 99,
+            "n": 365,
+            "tn": 84,
+            "tp": 173
+          },
+          "defined": true,
+          "judge_prevalence": 0.7452054794520548,
+          "kappa": 0.40901322299181436,
+          "threshold": 0.6
+        },
+        {
+          "agreement": 0.7287671232876712,
+          "confusion": {
+            "fn": 11,
+            "fp": 88,
+            "n": 365,
+            "tn": 95,
+            "tp": 171
+          },
+          "defined": true,
+          "judge_prevalence": 0.7095890410958904,
+          "kappa": 0.45815651756661513,
+          "threshold": 0.65
+        },
+        {
+          "agreement": 0.7287671232876712,
+          "confusion": {
+            "fn": 11,
+            "fp": 88,
+            "n": 365,
+            "tn": 95,
+            "tp": 171
+          },
+          "defined": true,
+          "judge_prevalence": 0.7095890410958904,
+          "kappa": 0.45815651756661513,
+          "threshold": 0.7
+        },
+        {
+          "agreement": 0.7287671232876712,
+          "confusion": {
+            "fn": 11,
+            "fp": 88,
+            "n": 365,
+            "tn": 95,
+            "tp": 171
+          },
+          "defined": true,
+          "judge_prevalence": 0.7095890410958904,
+          "kappa": 0.45815651756661513,
+          "threshold": 0.75
+        },
+        {
+          "agreement": 0.7287671232876712,
+          "confusion": {
+            "fn": 11,
+            "fp": 88,
+            "n": 365,
+            "tn": 95,
+            "tp": 171
+          },
+          "defined": true,
+          "judge_prevalence": 0.7095890410958904,
+          "kappa": 0.45815651756661513,
+          "threshold": 0.8
+        },
+        {
+          "agreement": 0.7424657534246575,
+          "confusion": {
+            "fn": 11,
+            "fp": 83,
+            "n": 365,
+            "tn": 100,
+            "tp": 171
+          },
+          "defined": true,
+          "judge_prevalence": 0.6958904109589041,
+          "kappa": 0.48548377421870303,
+          "threshold": 0.85
+        },
+        {
+          "agreement": 0.7424657534246575,
+          "confusion": {
+            "fn": 11,
+            "fp": 83,
+            "n": 365,
+            "tn": 100,
+            "tp": 171
+          },
+          "defined": true,
+          "judge_prevalence": 0.6958904109589041,
+          "kappa": 0.48548377421870303,
+          "threshold": 0.9
+        },
+        {
+          "agreement": 0.7424657534246575,
+          "confusion": {
+            "fn": 11,
+            "fp": 83,
+            "n": 365,
+            "tn": 100,
+            "tp": 171
+          },
+          "defined": true,
+          "judge_prevalence": 0.6958904109589041,
+          "kappa": 0.48548377421870303,
+          "threshold": 0.95
+        }
+      ],
+      "variant_id": "v6-rubric-fewshot-4.1-mini"
+    },
+    {
+      "at_0.5": {
+        "agreement": 0.7474048442906575,
+        "confusion": {
+          "fn": 13,
+          "fp": 60,
+          "n": 289,
+          "tn": 75,
+          "tp": 141
+        },
+        "defined": true,
+        "kappa": 0.481480571189815,
+        "n": 289
+      },
+      "best_dev_kappa": 0.5048705271917372,
+      "best_threshold": 0.95,
+      "completion": 0.7789757412398922,
+      "config_hash": "31881c161dd1b148",
+      "errors": {
+        "provider_error": 82
+      },
+      "mode": "rubric",
+      "model": "gpt-4.1",
+      "models_served": {
+        "gpt-4.1-2025-04-14": 289
+      },
+      "n_paired": 289,
+      "notes": "strongest judge plus train-split exemplars",
+      "spend_after_usd": 4.9879,
+      "threshold_grid": [
+        {
+          "agreement": 0.629757785467128,
+          "confusion": {
+            "fn": 7,
+            "fp": 100,
+            "n": 289,
+            "tn": 35,
+            "tp": 147
+          },
+          "defined": true,
+          "judge_prevalence": 0.8546712802768166,
+          "kappa": 0.22329389897772095,
+          "threshold": 0.05
+        },
+        {
+          "agreement": 0.629757785467128,
+          "confusion": {
+            "fn": 7,
+            "fp": 100,
+            "n": 289,
+            "tn": 35,
+            "tp": 147
+          },
+          "defined": true,
+          "judge_prevalence": 0.8546712802768166,
+          "kappa": 0.22329389897772095,
+          "threshold": 0.1
+        },
+        {
+          "agreement": 0.671280276816609,
+          "confusion": {
+            "fn": 8,
+            "fp": 87,
+            "n": 289,
+            "tn": 48,
+            "tp": 146
+          },
+          "defined": true,
+          "judge_prevalence": 0.8062283737024222,
+          "kappa": 0.3149779186107438,
+          "threshold": 0.15
+        },
+        {
+          "agreement": 0.671280276816609,
+          "confusion": {
+            "fn": 8,
+            "fp": 87,
+            "n": 289,
+            "tn": 48,
+            "tp": 146
+          },
+          "defined": true,
+          "judge_prevalence": 0.8062283737024222,
+          "kappa": 0.3149779186107438,
+          "threshold": 0.2
+        },
+        {
+          "agreement": 0.671280276816609,
+          "confusion": {
+            "fn": 8,
+            "fp": 87,
+            "n": 289,
+            "tn": 48,
+            "tp": 146
+          },
+          "defined": true,
+          "judge_prevalence": 0.8062283737024222,
+          "kappa": 0.3149779186107438,
+          "threshold": 0.25
+        },
+        {
+          "agreement": 0.6920415224913494,
+          "confusion": {
+            "fn": 9,
+            "fp": 80,
+            "n": 289,
+            "tn": 55,
+            "tp": 145
+          },
+          "defined": true,
+          "judge_prevalence": 0.7785467128027682,
+          "kappa": 0.3606671472247769,
+          "threshold": 0.3
+        },
+        {
+          "agreement": 0.6920415224913494,
+          "confusion": {
+            "fn": 9,
+            "fp": 80,
+            "n": 289,
+            "tn": 55,
+            "tp": 145
+          },
+          "defined": true,
+          "judge_prevalence": 0.7785467128027682,
+          "kappa": 0.3606671472247769,
+          "threshold": 0.35
+        },
+        {
+          "agreement": 0.6851211072664359,
+          "confusion": {
+            "fn": 11,
+            "fp": 80,
+            "n": 289,
+            "tn": 55,
+            "tp": 143
+          },
+          "defined": true,
+          "judge_prevalence": 0.7716262975778547,
+          "kappa": 0.34691698328739223,
+          "threshold": 0.4
+        },
+        {
+          "agreement": 0.7474048442906575,
+          "confusion": {
+            "fn": 13,
+            "fp": 60,
+            "n": 289,
+            "tn": 75,
+            "tp": 141
+          },
+          "defined": true,
+          "judge_prevalence": 0.6955017301038062,
+          "kappa": 0.481480571189815,
+          "threshold": 0.45
+        },
+        {
+          "agreement": 0.7474048442906575,
+          "confusion": {
+            "fn": 13,
+            "fp": 60,
+            "n": 289,
+            "tn": 75,
+            "tp": 141
+          },
+          "defined": true,
+          "judge_prevalence": 0.6955017301038062,
+          "kappa": 0.481480571189815,
+          "threshold": 0.5
+        },
+        {
+          "agreement": 0.7508650519031141,
+          "confusion": {
+            "fn": 13,
+            "fp": 59,
+            "n": 289,
+            "tn": 76,
+            "tp": 141
+          },
+          "defined": true,
+          "judge_prevalence": 0.6920415224913494,
+          "kappa": 0.48882228664078997,
+          "threshold": 0.55
+        },
+        {
+          "agreement": 0.7508650519031141,
+          "confusion": {
+            "fn": 13,
+            "fp": 59,
+            "n": 289,
+            "tn": 76,
+            "tp": 141
+          },
+          "defined": true,
+          "judge_prevalence": 0.6920415224913494,
+          "kappa": 0.48882228664078997,
+          "threshold": 0.6
+        },
+        {
+          "agreement": 0.754325259515571,
+          "confusion": {
+            "fn": 16,
+            "fp": 55,
+            "n": 289,
+            "tn": 80,
+            "tp": 138
+          },
+          "defined": true,
+          "judge_prevalence": 0.6678200692041523,
+          "kappa": 0.4975636034183012,
+          "threshold": 0.65
+        },
+        {
+          "agreement": 0.754325259515571,
+          "confusion": {
+            "fn": 16,
+            "fp": 55,
+            "n": 289,
+            "tn": 80,
+            "tp": 138
+          },
+          "defined": true,
+          "judge_prevalence": 0.6678200692041523,
+          "kappa": 0.4975636034183012,
+          "threshold": 0.7
+        },
+        {
+          "agreement": 0.754325259515571,
+          "confusion": {
+            "fn": 16,
+            "fp": 55,
+            "n": 289,
+            "tn": 80,
+            "tp": 138
+          },
+          "defined": true,
+          "judge_prevalence": 0.6678200692041523,
+          "kappa": 0.4975636034183012,
+          "threshold": 0.75
+        },
+        {
+          "agreement": 0.754325259515571,
+          "confusion": {
+            "fn": 16,
+            "fp": 55,
+            "n": 289,
+            "tn": 80,
+            "tp": 138
+          },
+          "defined": true,
+          "judge_prevalence": 0.6678200692041523,
+          "kappa": 0.4975636034183012,
+          "threshold": 0.8
+        },
+        {
+          "agreement": 0.754325259515571,
+          "confusion": {
+            "fn": 16,
+            "fp": 55,
+            "n": 289,
+            "tn": 80,
+            "tp": 138
+          },
+          "defined": true,
+          "judge_prevalence": 0.6678200692041523,
+          "kappa": 0.4975636034183012,
+          "threshold": 0.85
+        },
+        {
+          "agreement": 0.754325259515571,
+          "confusion": {
+            "fn": 16,
+            "fp": 55,
+            "n": 289,
+            "tn": 80,
+            "tp": 138
+          },
+          "defined": true,
+          "judge_prevalence": 0.6678200692041523,
+          "kappa": 0.4975636034183012,
+          "threshold": 0.9
+        },
+        {
+          "agreement": 0.7577854671280276,
+          "confusion": {
+            "fn": 16,
+            "fp": 54,
+            "n": 289,
+            "tn": 81,
+            "tp": 138
+          },
+          "defined": true,
+          "judge_prevalence": 0.6643598615916955,
+          "kappa": 0.5048705271917372,
+          "threshold": 0.95
+        }
+      ],
+      "variant_id": "v7-rubric-fewshot-4.1"
+    }
+  ]
+}

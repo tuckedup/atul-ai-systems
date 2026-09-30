@@ -2,9 +2,23 @@
 
 Audit date: 2026-09-28. Cloud baseline: `ea262db` on
 `claude/optimistic-shannon-qmnv1j`. Audit and quota-handling fixes are maintained on
-`codex/routebench-finish-audit`, not pushed or merged.
+`codex/routebench-finish-audit`. This is a historical handoff; see
+`ROUTEBENCH_PROJECT_BRIEF.md` for the current publication scope and results.
 
-## Latest execution attempt (2026-09-28)
+## Latest result (2026-09-28)
+
+Credits were restored and the owner explicitly authorized the four-variant,
+128-case development evaluation within $12. It is now complete: 512/512 usable
+current-config judgments, recorded token-priced cost $2.502474 including retries
+and the health probe. Best single dev kappa is 0.6532; best inspected simple
+combination is 0.6719. The 0.74 target is not achieved. No held-out inference or
+freeze occurred. See `ROUTEBENCH_DEV_RESULTS.md` and
+`../routebench/evalops/data/dev_four_variant_analysis.json`.
+
+The sections below document the earlier audit and execution blocker, not the
+current API/account state. No label or prompt was changed during the paid run.
+
+## Earlier blocked execution attempt (2026-09-28)
 
 The user requested execution. A credential is now configured locally, pointing at
 `api.openai.com`. One actual tiny GPT-4.1 request returned HTTP 429 with
@@ -36,7 +50,7 @@ Retrying `credit_balance_exhausted` does not restore credits. The initial intend
 dev cap was $12; this was not a credit purchase or a claim that the target can be
 achieved for $12.
 
-## Bottom line
+## Pre-experiment assessment (historical)
 
 The 0.74 target is NOT achieved or disproved. The latest work mostly improves
 measurement infrastructure. It contains no measured result for the proposed new

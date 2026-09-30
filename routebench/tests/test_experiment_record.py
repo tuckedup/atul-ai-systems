@@ -159,24 +159,23 @@ def test_verify_record_flags_grid_divergence_on_a_reproducible_row():
     assert result["grid_matches_record"] is False
 
 
-def test_the_committed_dev_record_is_checked_by_this_command():
-    # A live assertion about this checkout: the recorded dev experiment cannot be reproduced from
-    # the current prompts, so the kappas in `dev_experiments.json` describe judges that no longer
-    # exist and the dev split has to be re-judged. If a future re-run fixes that, this assertion
-    # should be inverted deliberately rather than silently stop meaning anything.
+@pytest.mark.parametrize(("record_name", "reproducible"), [
+    ("dev_experiments.json", True),
+    ("dev_experiments.previous.20260928T180211361238Z.json", False),
+])
+def test_the_committed_dev_records_are_checked_by_this_command(record_name, reproducible):
+    # The 2026-09-28 paid dev run now has current prompt/config bindings. Keep the original
+    # eight-variant record as a separate legacy regression: its old hash formula cannot prove
+    # prompt provenance, even though the hash mismatch does not prove the prompts were lost.
     import json
     from pathlib import Path
 
-    path = Path(__file__).parent.parent / "evalops" / "data" / "dev_experiments.json"
-    if not path.exists():
-        pytest.skip("no dev record in this checkout")
+    path = Path(__file__).parent.parent / "evalops" / "data" / record_name
+    assert path.exists(), f"missing committed experiment record: {record_name}"
     rows = verify_record(json.loads(path.read_text(encoding="utf-8")))
     checked = [r for r in rows if "reproducible" in r]
     assert checked, "the record should contain at least one non-skipped variant"
-    assert all(r["reproducible"] is False for r in checked), (
-        "the committed record was measured under prompts that are no longer in the tree; if this "
-        "now passes, the dev split has been re-judged and this test should be updated"
-    )
+    assert all(r["reproducible"] is reproducible for r in checked), checked
 
 
 # ---------------------------------------------------------------- declared experiment design
@@ -200,7 +199,7 @@ def test_matched_pairs_differ_in_exactly_one_respect():
         differing = {
             field for field in ("model", "mode", "restrict_tasks", "max_tokens", "samples",
                                 "temperature", "include_reference", "include_boundary_examples",
-                                "exemplars_path")
+                                "exemplars_path", "reasoning_effort", "context_path")
             if getattr(a, field) != getattr(b, field)
         }
         assert len(differing) == 1, (

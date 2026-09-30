@@ -1,0 +1,36 @@
+{
+ "protocol_hash": "42474034f80cf6fb",
+ "n": 128,
+ "coverage": "128/128",
+ "threshold": 0.25,
+ "combiner_dev_kappa": 0.5929203539823009,
+ "v18_dev_kappa_frozen_threshold": 0.6745182012847966,
+ "minicheck_dev_kappa_at_0.5": 0.5260559517279211,
+ "combiner_errors": 23,
+ "v18_errors": 19,
+ "corrected_vs_v18": [
+  "gnd-c956780fd0b574bb",
+  "gnd-72c8a872b5c969ea",
+  "gnd-f73ca4055a490fca",
+  "gnd-65b135f17ee0e207"
+ ],
+ "new_vs_v18": [
+  "gnd-f88a7954970c5c07",
+  "gnd-848d90d456aaffd8",
+  "gnd-3305aeec1da88fdd",
+  "gnd-2dca7c4256e15455",
+  "gnd-814452f6f1a458f0",
+  "gnd-0abf686860ee7e2e",
+  "gnd-8e8360777b216cb6",
+  "gnd-f3b88f799d2211d9"
+ ],
+ "paired_ci_vs_v18": [
+  -0.21424133056771386,
+  0.015432023616765808
+ ],
+ "paired_ci_vs_minicheck": [
+  -0.029205904509381334,
+  0.21324797621610714
+ ],
+ "note": "dev is NOT independent: inspected and tuned on repeatedly in earlier rounds"
+}

@@ -2,6 +2,12 @@
 
 A shared, observable AI platform expressed through three systems: a bounded coding harness, an evaluation-driven inference gateway, and a governed incident workflow. This checkout is configured for the documented degraded host: SQLite, an in-process cache, subprocess fixture isolation, and console plus JSONL traces.
 
+**RouteBench update (2026-09-29):** [Project brief and current bottleneck](docs/ROUTEBENCH_PROJECT_BRIEF.md).
+The groundedness judge has not reached Cohen's kappa 0.74. Best single-judge dev score is 0.6771;
+the selected v18 baseline scored 0.404 on a separate document sample. Latest HHEM screening did not
+show a convincing improvement. The per-project counts below are earlier infrastructure smoke checks,
+not the latest judge-calibration results or a production-readiness claim.
+
 ```text
 ForgeCode ────────────────┐
                          ├──▶ RouteBench ───▶ Incident Commander

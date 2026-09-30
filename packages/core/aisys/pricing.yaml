@@ -14,3 +14,6 @@ gpt-4.1-nano:       {input_per_1m: 0.10,  output_per_1m: 0.40}
 gpt-5:              {input_per_1m: 1.25,  output_per_1m: 10.00}
 gpt-5-mini:         {input_per_1m: 0.25,  output_per_1m: 2.00}
 gpt-5-nano:         {input_per_1m: 0.05,  output_per_1m: 0.40}
+# Added 2026-09-29 for reasoning-judge calibration (published list prices; reasoning tokens bill as output).
+o3:                 {input_per_1m: 2.00,  output_per_1m: 8.00}
+o4-mini:            {input_per_1m: 1.10,  output_per_1m: 4.40}

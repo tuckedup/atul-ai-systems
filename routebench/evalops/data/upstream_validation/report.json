@@ -1,0 +1,70 @@
+{
+ "status": "COMPLETE",
+ "protocol_hash": "1734d6f6894e8186",
+ "coverage": "320/320",
+ "primary_weighted_kappa": 0.40353369218259827,
+ "primary_weighted_kappa_ci95": [
+  0.28195047978392074,
+  0.5251759259984027
+ ],
+ "unweighted_kappa": 0.41698929628786163,
+ "unweighted_kappa_ci95": [
+  0.2979291184356401,
+  0.53648926629256
+ ],
+ "weighted_rates": {
+  "sensitivity": 0.8476324425691514,
+  "specificity": 0.5963240299523486,
+  "balanced_accuracy": 0.72197823626075
+ },
+ "unweighted_rates": {
+  "sensitivity": 0.8449612403100775,
+  "specificity": 0.6129032258064516,
+  "balanced_accuracy": 0.7289322330582646
+ },
+ "confusion_unweighted": {
+  "tp": 218,
+  "fp": 24,
+  "fn": 40,
+  "tn": 38
+ },
+ "per_source": {
+  "MediaSum": {
+   "n": 160,
+   "unweighted_kappa": 0.36651583710407243,
+   "weighted_kappa": 0.37510140209128695,
+   "confusion": {
+    "tp": 107,
+    "fp": 17,
+    "fn": 18,
+    "tn": 18
+   },
+   "sensitivity": 0.8616044090630741,
+   "specificity": 0.5161469933184856,
+   "balanced_accuracy": 0.6888757011907798,
+   "supported_rate_labels_weighted": 0.7843419788664745
+  },
+  "MeetingBank": {
+   "n": 160,
+   "unweighted_kappa": 0.4710442316461468,
+   "weighted_kappa": 0.44050880647910395,
+   "confusion": {
+    "tp": 111,
+    "fp": 7,
+    "fn": 22,
+    "tn": 20
+   },
+   "sensitivity": 0.8330673475901692,
+   "specificity": 0.7224168126094571,
+   "balanced_accuracy": 0.7777420800998132,
+   "supported_rate_labels_weighted": 0.8458423326133909
+  }
+ },
+ "supported_rate_labels_weighted": 0.8132943568886629,
+ "effective_sample_size_weighted": 310.3059880299552,
+ "bootstrap": {
+  "seed": 20261004,
+  "draws_used": 2000
+ },
+ "note": "separate from the original RouteBench result; evaluation-only on fresh upstream-dev documents; not the original benchmark's target"
+}

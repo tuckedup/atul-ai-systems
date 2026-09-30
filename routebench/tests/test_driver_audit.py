@@ -168,6 +168,23 @@ def test_test_quota_preserves_frozen_bundle_and_existing_report(experiment, monk
     assert report.read_text() == "existing-report"
 
 
+@pytest.mark.parametrize("summary", [
+    SimpleNamespace(errors={"provider_error": 2}, n_ok=38),
+    SimpleNamespace(errors={}, n_ok=10),  # budget stop: fewer judged than in scope, no error rows
+])
+def test_test_incomplete_run_never_publishes_terminal_result(experiment, monkeypatch, summary):
+    path, _, _, _, args = experiment
+    assert driver.cmd_freeze(args) == 0
+    bundle_path = path / "calibration_bundle.json"
+    before = bundle_path.read_bytes()
+    report = path / "calibration_report.json"
+    report.write_text("existing-report")
+    monkeypatch.setattr(driver, "run_variant", lambda *a, **k: ([], summary))
+    assert driver.cmd_test(SimpleNamespace(remeasure=False, budget=1, concurrency=1)) == 3
+    assert bundle_path.read_bytes() == before
+    assert report.read_text() == "existing-report"
+
+
 def test_plan_uses_only_selected_variant_and_headline_cases(experiment, monkeypatch, capsys):
     _, _, _, configs, _ = experiment
     monkeypatch.setattr(driver, "GRID", configs)

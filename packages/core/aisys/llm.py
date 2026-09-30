@@ -168,6 +168,12 @@ def chat_stream(
                 yield str(delta)
 
 
+def is_reasoning_model(model: str) -> bool:
+    """o-series and gpt-5 family reject `max_tokens` and non-default `temperature`."""
+    m = model.lower()
+    return m.startswith(("o1", "o3", "o4", "gpt-5"))
+
+
 def _call(
     model: str,
     messages: list[dict[str, Any]],
@@ -179,6 +185,10 @@ def _call(
     body: dict[str, Any] = {
         "model": model, "messages": messages, "temperature": temperature, "max_tokens": max_tokens, **extra
     }
+    if is_reasoning_model(model):
+        # For reasoning models the completion budget also pays for hidden reasoning tokens.
+        body.pop("temperature", None)
+        body["max_completion_tokens"] = body.pop("max_tokens")
     if tools:
         body["tools"] = tools
     t0 = time.perf_counter()

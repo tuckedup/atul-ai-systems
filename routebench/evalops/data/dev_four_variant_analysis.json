@@ -1,0 +1,1232 @@
+{
+  "dataset_hash": "a5387f856111ac92",
+  "annotations_hash": "1eadae861774a167",
+  "split_membership_hash": "c25ee9a0091b00e8",
+  "split_seed": 20260927,
+  "n_cases": 128,
+  "n_groups": 46,
+  "sources": {
+    "LLM-AggreFact/TofuEval-MediaS": 63,
+    "LLM-AggreFact/AggreFact-CNN": 41,
+    "LLM-AggreFact/TofuEval-MeetB": 24
+  },
+  "variants": [
+    {
+      "variant": "v16-holistic-4.1",
+      "config_hash": "51695bd659270b7f",
+      "threshold": 0.35,
+      "coverage": 1,
+      "kappa_at_0_5": 0.6373448461953589,
+      "agreement": {
+        "kappa": 0.6532105120563533,
+        "defined": true,
+        "observed_agreement": 0.84375,
+        "expected_agreement": 0.5494384765625,
+        "confusion": {
+          "tp": 75,
+          "fp": 16,
+          "fn": 4,
+          "tn": 33,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.7109375,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.360436466033087,
+          "high": 0.7904967602591793,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {
+          "LLM-AggreFact/AggreFact-CNN": {
+            "n": 41,
+            "kappa": 0.45540796963946856,
+            "defined": true,
+            "observed_agreement": 0.8292682926829268,
+            "confusion": {
+              "tp": 30,
+              "fp": 7,
+              "fn": 0,
+              "tn": 4,
+              "n": 41
+            },
+            "reason": ""
+          },
+          "LLM-AggreFact/TofuEval-MediaS": {
+            "n": 63,
+            "kappa": 0.7762557077625569,
+            "defined": true,
+            "observed_agreement": 0.8888888888888888,
+            "confusion": {
+              "tp": 31,
+              "fp": 5,
+              "fn": 2,
+              "tn": 25,
+              "n": 63
+            },
+            "reason": ""
+          },
+          "LLM-AggreFact/TofuEval-MeetB": {
+            "n": 24,
+            "kappa": 0.39999999999999997,
+            "defined": true,
+            "observed_agreement": 0.75,
+            "confusion": {
+              "tp": 14,
+              "fp": 4,
+              "fn": 2,
+              "tn": 4,
+              "n": 24
+            },
+            "reason": ""
+          }
+        }
+      },
+      "errors": [
+        {
+          "case_id": "gnd-25646db21cba15f1",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.125,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-39174de62563f1b4",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-406e875c9ec93511",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-468f88d2d69779b2",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-4ecf23068a339688",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-53ef38e16bd512a5",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-54a1abd246af1ba1",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.125,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-65b135f17ee0e207",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-6d0a6a0bc1619eb9",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-70012ed4168ec7b5",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-71ce0e9a4754c173",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-72c8a872b5c969ea",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.25,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-734ed2455f8a2fdb",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-814452f6f1a458f0",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-848d90d456aaffd8",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-8e655f42aa1fda5e",
+          "human": 0,
+          "prediction": 1,
+          "score": 0.5,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-a13c7ba2cd8cc1cd",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-b23a3beb6bfa2187",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-c956780fd0b574bb",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-f9b9bed541b87d55",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        }
+      ]
+    },
+    {
+      "variant": "v8-decompose-4.1",
+      "config_hash": "9b885c4d22fa26cc",
+      "threshold": 0.8,
+      "coverage": 1,
+      "kappa_at_0_5": 0.4275822273514137,
+      "agreement": {
+        "kappa": 0.6154056268779022,
+        "defined": true,
+        "observed_agreement": 0.828125,
+        "expected_agreement": 0.5531005859375,
+        "confusion": {
+          "tp": 75,
+          "fp": 18,
+          "fn": 4,
+          "tn": 31,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.7265625,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.3634590377113133,
+          "high": 0.7312994752290315,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {
+          "LLM-AggreFact/AggreFact-CNN": {
+            "n": 41,
+            "kappa": 0.45540796963946856,
+            "defined": true,
+            "observed_agreement": 0.8292682926829268,
+            "confusion": {
+              "tp": 30,
+              "fp": 7,
+              "fn": 0,
+              "tn": 4,
+              "n": 41
+            },
+            "reason": ""
+          },
+          "LLM-AggreFact/TofuEval-MediaS": {
+            "n": 63,
+            "kappa": 0.7431192660550459,
+            "defined": true,
+            "observed_agreement": 0.873015873015873,
+            "confusion": {
+              "tp": 32,
+              "fp": 7,
+              "fn": 1,
+              "tn": 23,
+              "n": 63
+            },
+            "reason": ""
+          },
+          "LLM-AggreFact/TofuEval-MeetB": {
+            "n": 24,
+            "kappa": 0.3225806451612904,
+            "defined": true,
+            "observed_agreement": 0.7083333333333334,
+            "confusion": {
+              "tp": 13,
+              "fp": 4,
+              "fn": 3,
+              "tn": 4,
+              "n": 24
+            },
+            "reason": ""
+          }
+        }
+      },
+      "errors": [
+        {
+          "case_id": "gnd-2dca7c4256e15455",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-3305aeec1da88fdd",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-39174de62563f1b4",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-406e875c9ec93511",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-468f88d2d69779b2",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-4ecf23068a339688",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-53ef38e16bd512a5",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-54a1abd246af1ba1",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-65b135f17ee0e207",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-698e6df0942137c9",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-6d0a6a0bc1619eb9",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-70012ed4168ec7b5",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-71ce0e9a4754c173",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-72c8a872b5c969ea",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-734ed2455f8a2fdb",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-814452f6f1a458f0",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-848d90d456aaffd8",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-a13c7ba2cd8cc1cd",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-b23a3beb6bfa2187",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-c956780fd0b574bb",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.5,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-f73ca4055a490fca",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.5,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-f9b9bed541b87d55",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        }
+      ]
+    },
+    {
+      "variant": "v12-addressed-4.1",
+      "config_hash": "19c22f785cbf0646",
+      "threshold": 0.8,
+      "coverage": 1,
+      "kappa_at_0_5": 0.41669040159498716,
+      "agreement": {
+        "kappa": 0.6091343600637281,
+        "defined": true,
+        "observed_agreement": 0.8203125,
+        "expected_agreement": 0.540283203125,
+        "confusion": {
+          "tp": 71,
+          "fp": 15,
+          "fn": 8,
+          "tn": 34,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.671875,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.3030821917808219,
+          "high": 0.7513455328310013,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {
+          "LLM-AggreFact/AggreFact-CNN": {
+            "n": 41,
+            "kappa": 0.3992673992673995,
+            "defined": true,
+            "observed_agreement": 0.8048780487804879,
+            "confusion": {
+              "tp": 29,
+              "fp": 7,
+              "fn": 1,
+              "tn": 4,
+              "n": 41
+            },
+            "reason": ""
+          },
+          "LLM-AggreFact/TofuEval-MediaS": {
+            "n": 63,
+            "kappa": 0.7454545454545455,
+            "defined": true,
+            "observed_agreement": 0.873015873015873,
+            "confusion": {
+              "tp": 29,
+              "fp": 4,
+              "fn": 4,
+              "tn": 26,
+              "n": 63
+            },
+            "reason": ""
+          },
+          "LLM-AggreFact/TofuEval-MeetB": {
+            "n": 24,
+            "kappa": 0.3225806451612904,
+            "defined": true,
+            "observed_agreement": 0.7083333333333334,
+            "confusion": {
+              "tp": 13,
+              "fp": 4,
+              "fn": 3,
+              "tn": 4,
+              "n": 24
+            },
+            "reason": ""
+          }
+        }
+      },
+      "errors": [
+        {
+          "case_id": "gnd-0fccefc4faf92a81",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.6666666666666666,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-39174de62563f1b4",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-406e875c9ec93511",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-468f88d2d69779b2",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-4ecf23068a339688",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-53ef38e16bd512a5",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-65b135f17ee0e207",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-6d0a6a0bc1619eb9",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-70012ed4168ec7b5",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-71ce0e9a4754c173",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-72c8a872b5c969ea",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-734ed2455f8a2fdb",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-814452f6f1a458f0",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-848d90d456aaffd8",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-8a0dc537f6ee72aa",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-97641c14cd97476c",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-a13c7ba2cd8cc1cd",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-af0a355f7a89d68c",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-b23a3beb6bfa2187",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-c956780fd0b574bb",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.5,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-e8ff22d3a3697a89",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.75,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-f73ca4055a490fca",
+          "human": 1,
+          "prediction": 0,
+          "score": 0.5,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-f9b9bed541b87d55",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        }
+      ]
+    },
+    {
+      "variant": "v14-contradict-4.1",
+      "config_hash": "eb5c1091f4981c4d",
+      "threshold": 0.5,
+      "coverage": 1,
+      "kappa_at_0_5": 0.5872077398548777,
+      "agreement": {
+        "kappa": 0.5872077398548777,
+        "defined": true,
+        "observed_agreement": 0.8125,
+        "expected_agreement": 0.5457763671875,
+        "confusion": {
+          "tp": 72,
+          "fp": 17,
+          "fn": 7,
+          "tn": 32,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.6953125,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.2387571545380213,
+          "high": 0.7459016393442622,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {
+          "LLM-AggreFact/AggreFact-CNN": {
+            "n": 41,
+            "kappa": 0.29981024667931694,
+            "defined": true,
+            "observed_agreement": 0.7804878048780488,
+            "confusion": {
+              "tp": 29,
+              "fp": 8,
+              "fn": 1,
+              "tn": 3,
+              "n": 41
+            },
+            "reason": ""
+          },
+          "LLM-AggreFact/TofuEval-MediaS": {
+            "n": 63,
+            "kappa": 0.7132018209408193,
+            "defined": true,
+            "observed_agreement": 0.8571428571428571,
+            "confusion": {
+              "tp": 29,
+              "fp": 5,
+              "fn": 4,
+              "tn": 25,
+              "n": 63
+            },
+            "reason": ""
+          },
+          "LLM-AggreFact/TofuEval-MeetB": {
+            "n": 24,
+            "kappa": 0.39999999999999997,
+            "defined": true,
+            "observed_agreement": 0.75,
+            "confusion": {
+              "tp": 14,
+              "fp": 4,
+              "fn": 2,
+              "tn": 4,
+              "n": 24
+            },
+            "reason": ""
+          }
+        }
+      },
+      "errors": [
+        {
+          "case_id": "gnd-0fccefc4faf92a81",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-2dca7c4256e15455",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-39174de62563f1b4",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-406e875c9ec93511",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-468f88d2d69779b2",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-4ecf23068a339688",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-53ef38e16bd512a5",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-54a1abd246af1ba1",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-65b135f17ee0e207",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-6d0a6a0bc1619eb9",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-70012ed4168ec7b5",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-72c8a872b5c969ea",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-734ed2455f8a2fdb",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-814452f6f1a458f0",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-848d90d456aaffd8",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-8a0dc537f6ee72aa",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-97641c14cd97476c",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-a13c7ba2cd8cc1cd",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-b23a3beb6bfa2187",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-b3fba425b99581ec",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-ba4d788971a10b00",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/TofuEval-MediaS"
+        },
+        {
+          "case_id": "gnd-c956780fd0b574bb",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/TofuEval-MeetB"
+        },
+        {
+          "case_id": "gnd-e8ff22d3a3697a89",
+          "human": 1,
+          "prediction": 0,
+          "score": 0,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        },
+        {
+          "case_id": "gnd-f9b9bed541b87d55",
+          "human": 0,
+          "prediction": 1,
+          "score": 1,
+          "source": "LLM-AggreFact/AggreFact-CNN"
+        }
+      ]
+    }
+  ],
+  "combinations": [
+    {
+      "name": "holistic+decomposed",
+      "method": "MeanScore",
+      "components": [
+        "v16-holistic-4.1",
+        "v8-decompose-4.1"
+      ],
+      "threshold": 0.6,
+      "coverage": 1,
+      "agreement": {
+        "kappa": 0.6718834322719913,
+        "defined": true,
+        "observed_agreement": 0.8515625,
+        "expected_agreement": 0.547607421875,
+        "confusion": {
+          "tp": 75,
+          "fp": 15,
+          "fn": 4,
+          "tn": 34,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.703125,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.3809523809523809,
+          "high": 0.8043478260869565,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {}
+      }
+    },
+    {
+      "name": "holistic+decomposed",
+      "method": "MajorityVote",
+      "components": [
+        "v16-holistic-4.1",
+        "v8-decompose-4.1"
+      ],
+      "threshold": 0.55,
+      "coverage": 1,
+      "agreement": {
+        "kappa": 0.6560064498790648,
+        "defined": true,
+        "observed_agreement": 0.84375,
+        "expected_agreement": 0.5457763671875,
+        "confusion": {
+          "tp": 74,
+          "fp": 15,
+          "fn": 5,
+          "tn": 34,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.6953125,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.3583180987202925,
+          "high": 0.8010360254297152,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {}
+      }
+    },
+    {
+      "name": "holistic+addressed",
+      "method": "MeanScore",
+      "components": [
+        "v16-holistic-4.1",
+        "v12-addressed-4.1"
+      ],
+      "threshold": 0.55,
+      "coverage": 1,
+      "agreement": {
+        "kappa": 0.6560064498790648,
+        "defined": true,
+        "observed_agreement": 0.84375,
+        "expected_agreement": 0.5457763671875,
+        "confusion": {
+          "tp": 74,
+          "fp": 15,
+          "fn": 5,
+          "tn": 34,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.6953125,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.3670886075949367,
+          "high": 0.7849025974025975,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {}
+      }
+    },
+    {
+      "name": "holistic+addressed",
+      "method": "MajorityVote",
+      "components": [
+        "v16-holistic-4.1",
+        "v12-addressed-4.1"
+      ],
+      "threshold": 0.55,
+      "coverage": 1,
+      "agreement": {
+        "kappa": 0.624633431085044,
+        "defined": true,
+        "observed_agreement": 0.828125,
+        "expected_agreement": 0.5421142578125,
+        "confusion": {
+          "tp": 72,
+          "fp": 15,
+          "fn": 7,
+          "tn": 34,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.6796875,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.32139737991266404,
+          "high": 0.7718360071301247,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {}
+      }
+    },
+    {
+      "name": "holistic+addressed+contradiction",
+      "method": "MeanScore",
+      "components": [
+        "v16-holistic-4.1",
+        "v12-addressed-4.1",
+        "v14-contradict-4.1"
+      ],
+      "threshold": 0.55,
+      "coverage": 1,
+      "agreement": {
+        "kappa": 0.6402569593147751,
+        "defined": true,
+        "observed_agreement": 0.8359375,
+        "expected_agreement": 0.5439453125,
+        "confusion": {
+          "tp": 73,
+          "fp": 15,
+          "fn": 6,
+          "tn": 34,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.6875,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.3457880434782611,
+          "high": 0.778116928856539,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {}
+      }
+    },
+    {
+      "name": "holistic+addressed+contradiction",
+      "method": "MajorityVote",
+      "components": [
+        "v16-holistic-4.1",
+        "v12-addressed-4.1",
+        "v14-contradict-4.1"
+      ],
+      "threshold": 0.5,
+      "coverage": 1,
+      "agreement": {
+        "kappa": 0.6560064498790648,
+        "defined": true,
+        "observed_agreement": 0.84375,
+        "expected_agreement": 0.5457763671875,
+        "confusion": {
+          "tp": 74,
+          "fp": 15,
+          "fn": 5,
+          "tn": 34,
+          "n": 128
+        },
+        "human_prevalence": 0.6171875,
+        "judge_prevalence": 0.6953125,
+        "n": 128,
+        "n_groups": 46,
+        "reason": "",
+        "interval": {
+          "low": 0.3609684519442404,
+          "high": 0.7886435331230285,
+          "level": 0.95,
+          "method": "group-bootstrap-percentile",
+          "replicates": 2000,
+          "undefined_replicates": 0,
+          "usable": true,
+          "note": ""
+        },
+        "per_task": {}
+      }
+    }
+  ],
+  "measurement": "dev-only; thresholds and candidate comparison use these labels; not held-out evidence",
+  "bootstrap_note": "2000 group-bootstrap replicates at fixed selected threshold; does not adjust for threshold or variant selection",
+  "code_commit": "994e3da",
+  "served_model": "gpt-4.1-2025-04-14",
+  "spend": {
+    "first_pass_usd": 2.229768,
+    "retry_pass_usd": 0.27267,
+    "probe_usd": 0.000036,
+    "total_usd": 2.502474,
+    "authorized_cap_usd": 12,
+    "kind": "token-priced estimate; not provider invoice",
+    "first_pass_record": "dev_experiments.previous.20260928T180550372310Z.json",
+    "retry_pass_record": "dev_experiments.json"
+  },
+  "common_single_variant_errors": [
+    "gnd-39174de62563f1b4",
+    "gnd-406e875c9ec93511",
+    "gnd-468f88d2d69779b2",
+    "gnd-4ecf23068a339688",
+    "gnd-53ef38e16bd512a5",
+    "gnd-65b135f17ee0e207",
+    "gnd-6d0a6a0bc1619eb9",
+    "gnd-70012ed4168ec7b5",
+    "gnd-72c8a872b5c969ea",
+    "gnd-734ed2455f8a2fdb",
+    "gnd-814452f6f1a458f0",
+    "gnd-848d90d456aaffd8",
+    "gnd-a13c7ba2cd8cc1cd",
+    "gnd-b23a3beb6bfa2187",
+    "gnd-c956780fd0b574bb",
+    "gnd-f9b9bed541b87d55"
+  ]
+}

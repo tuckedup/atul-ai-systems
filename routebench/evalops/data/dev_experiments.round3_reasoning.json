@@ -1,0 +1,1441 @@
+{
+ "annotations_hash": "1eadae861774a167",
+ "blocked": null,
+ "dataset_hash": "a5387f856111ac92",
+ "n_dev_cases": 128,
+ "run_summaries": [
+  {
+   "config": {
+    "concurrency": 4,
+    "config_hash": "0043f7d49ec5d2bb",
+    "exemplars_path": "",
+    "include_boundary_examples": true,
+    "include_reference": true,
+    "max_attempts": 3,
+    "max_tokens": 10000,
+    "mode": "decompose",
+    "model": "o4-mini",
+    "notes": "per-fact decomposition with the reasoning judge; different failure mode from v18",
+    "reasoning_effort": "medium",
+    "restrict_tasks": [
+     "summarize"
+    ],
+    "rubric_dir": null,
+    "samples": 1,
+    "temperature": 0.0,
+    "variant_id": "v20-decompose-o4mini"
+   },
+   "errors": {},
+   "models_served": {
+    "o4-mini-2025-04-16": 128
+   },
+   "n_cached": 0,
+   "n_cases": 128,
+   "n_ok": 128,
+   "spend": {
+    "calls": 128,
+    "cap_exceeded": false,
+    "cap_usd": 3.5,
+    "committed_usd": 0.729678,
+    "in_flight": 0,
+    "reservation_breaches": 0,
+    "reserved_usd": 0.0,
+    "spent_usd": 0.729678,
+    "worst_breach_usd": 0.0
+   },
+   "variant_id": "v20-decompose-o4mini",
+   "wall_s": 233.8
+  },
+  {
+   "config": {
+    "concurrency": 4,
+    "config_hash": "68db84df02d60f66",
+    "exemplars_path": "",
+    "include_boundary_examples": true,
+    "include_reference": true,
+    "max_attempts": 3,
+    "max_tokens": 12000,
+    "mode": "rubric",
+    "model": "o4-mini",
+    "notes": "v18 with high reasoning effort: does more thinking reduce false passes?",
+    "reasoning_effort": "high",
+    "restrict_tasks": [
+     "summarize"
+    ],
+    "rubric_dir": null,
+    "samples": 1,
+    "temperature": 0.0,
+    "variant_id": "v21-reasoning-o4mini-high"
+   },
+   "errors": {},
+   "models_served": {
+    "o4-mini-2025-04-16": 128
+   },
+   "n_cached": 0,
+   "n_cases": 128,
+   "n_ok": 128,
+   "spend": {
+    "calls": 256,
+    "cap_exceeded": false,
+    "cap_usd": 3.5,
+    "committed_usd": 2.363755,
+    "in_flight": 0,
+    "reservation_breaches": 0,
+    "reserved_usd": 0.0,
+    "spent_usd": 2.363755,
+    "worst_breach_usd": 0.0
+   },
+   "variant_id": "v21-reasoning-o4mini-high",
+   "wall_s": 805.6
+  }
+ ],
+ "selection_track": "headline",
+ "spend": {
+  "calls": 256,
+  "cap_exceeded": false,
+  "cap_usd": 3.5,
+  "committed_usd": 2.363755,
+  "in_flight": 0,
+  "reservation_breaches": 0,
+  "reserved_usd": 0.0,
+  "spent_usd": 2.363755,
+  "worst_breach_usd": 0.0
+ },
+ "split_membership_hash": "c25ee9a0091b00e8",
+ "split_seed": 20260927,
+ "unavailable": {
+  "gpt-5": "needs OpenAI organization verification on this key (model_not_found)",
+  "gpt-5-mini": "needs OpenAI organization verification on this key (model_not_found)"
+ },
+ "variants": [
+  {
+   "at_0.5": {
+    "agreement": 0.8046875,
+    "confusion": {
+     "fn": 5,
+     "fp": 20,
+     "n": 128,
+     "tn": 29,
+     "tp": 74
+    },
+    "defined": true,
+    "kappa": 0.5611629182665935,
+    "n": 128
+   },
+   "best_dev_kappa": 0.6745182012847966,
+   "best_threshold": 0.55,
+   "completion": 1.0,
+   "config_hash": "12fc8b550d954359",
+   "errors": {},
+   "judge_config": {
+    "concurrency": 4,
+    "config_hash": "12fc8b550d954359",
+    "exemplars_path": "",
+    "include_boundary_examples": true,
+    "include_reference": true,
+    "max_attempts": 3,
+    "max_tokens": 8000,
+    "mode": "rubric",
+    "model": "o4-mini",
+    "notes": "matched to v16 (same rubric, scope) with a reasoning judge",
+    "reasoning_effort": "medium",
+    "restrict_tasks": [
+     "summarize"
+    ],
+    "rubric_dir": null,
+    "samples": 1,
+    "temperature": 0.0,
+    "variant_id": "v18-reasoning-o4mini"
+   },
+   "mode": "rubric",
+   "model": "o4-mini",
+   "models_served": {
+    "o4-mini-2025-04-16": 128
+   },
+   "n_paired": 128,
+   "notes": "matched to v16 (same rubric, scope) with a reasoning judge",
+   "prompt_template_hash": "ef895d791c0bd860",
+   "spend_after_usd": 0.9878,
+   "threshold_grid": [
+    {
+     "agreement": 0.6171875,
+     "confusion": {
+      "fn": 3,
+      "fp": 46,
+      "n": 128,
+      "tn": 3,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.953125,
+     "kappa": 0.027898326100433975,
+     "threshold": 0.05
+    },
+    {
+     "agreement": 0.6171875,
+     "confusion": {
+      "fn": 3,
+      "fp": 46,
+      "n": 128,
+      "tn": 3,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.953125,
+     "kappa": 0.027898326100433975,
+     "threshold": 0.1
+    },
+    {
+     "agreement": 0.734375,
+     "confusion": {
+      "fn": 3,
+      "fp": 31,
+      "n": 128,
+      "tn": 18,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.8359375,
+     "kappa": 0.3694581280788177,
+     "threshold": 0.15
+    },
+    {
+     "agreement": 0.734375,
+     "confusion": {
+      "fn": 3,
+      "fp": 31,
+      "n": 128,
+      "tn": 18,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.8359375,
+     "kappa": 0.3694581280788177,
+     "threshold": 0.2
+    },
+    {
+     "agreement": 0.734375,
+     "confusion": {
+      "fn": 3,
+      "fp": 31,
+      "n": 128,
+      "tn": 18,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.8359375,
+     "kappa": 0.3694581280788177,
+     "threshold": 0.25
+    },
+    {
+     "agreement": 0.765625,
+     "confusion": {
+      "fn": 3,
+      "fp": 27,
+      "n": 128,
+      "tn": 22,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.8046875,
+     "kappa": 0.4531472514953005,
+     "threshold": 0.3
+    },
+    {
+     "agreement": 0.765625,
+     "confusion": {
+      "fn": 3,
+      "fp": 27,
+      "n": 128,
+      "tn": 22,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.8046875,
+     "kappa": 0.4531472514953005,
+     "threshold": 0.35
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 5,
+      "fp": 20,
+      "n": 128,
+      "tn": 29,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.734375,
+     "kappa": 0.5611629182665935,
+     "threshold": 0.4
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 5,
+      "fp": 20,
+      "n": 128,
+      "tn": 29,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.734375,
+     "kappa": 0.5611629182665935,
+     "threshold": 0.45
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 5,
+      "fp": 20,
+      "n": 128,
+      "tn": 29,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.734375,
+     "kappa": 0.5611629182665935,
+     "threshold": 0.5
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.55
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.6
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.65
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.7
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.75
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.8
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.85
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.9
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 0.95
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 5,
+      "fp": 14,
+      "n": 128,
+      "tn": 35,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.6745182012847966,
+     "threshold": 1.0
+    }
+   ],
+   "variant_id": "v18-reasoning-o4mini"
+  },
+  {
+   "at_0.5": {
+    "agreement": 0.8046875,
+    "confusion": {
+     "fn": 8,
+     "fp": 17,
+     "n": 128,
+     "tn": 32,
+     "tp": 71
+    },
+    "defined": true,
+    "kappa": 0.5717344753747323,
+    "n": 128
+   },
+   "best_dev_kappa": 0.5751460435475305,
+   "best_threshold": 0.55,
+   "completion": 1.0,
+   "config_hash": "61026aad3c5b89d7",
+   "errors": {},
+   "judge_config": {
+    "concurrency": 1,
+    "config_hash": "61026aad3c5b89d7",
+    "exemplars_path": "",
+    "include_boundary_examples": true,
+    "include_reference": true,
+    "max_attempts": 3,
+    "max_tokens": 10000,
+    "mode": "rubric",
+    "model": "o3",
+    "notes": "matched to v16 with the strongest priced reasoning judge",
+    "reasoning_effort": "medium",
+    "restrict_tasks": [
+     "summarize"
+    ],
+    "rubric_dir": null,
+    "samples": 1,
+    "temperature": 0.0,
+    "variant_id": "v19-reasoning-o3"
+   },
+   "mode": "rubric",
+   "model": "o3",
+   "models_served": {
+    "o3-2025-04-16": 128
+   },
+   "n_paired": 128,
+   "notes": "matched to v16 with the strongest priced reasoning judge",
+   "prompt_template_hash": "ef895d791c0bd860",
+   "spend_after_usd": 0.3445,
+   "threshold_grid": [
+    {
+     "agreement": 0.625,
+     "confusion": {
+      "fn": 3,
+      "fp": 45,
+      "n": 128,
+      "tn": 4,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.9453125,
+     "kappa": 0.0521443998765813,
+     "threshold": 0.05
+    },
+    {
+     "agreement": 0.625,
+     "confusion": {
+      "fn": 3,
+      "fp": 45,
+      "n": 128,
+      "tn": 4,
+      "tp": 76
+     },
+     "defined": true,
+     "judge_prevalence": 0.9453125,
+     "kappa": 0.0521443998765813,
+     "threshold": 0.1
+    },
+    {
+     "agreement": 0.765625,
+     "confusion": {
+      "fn": 4,
+      "fp": 26,
+      "n": 128,
+      "tn": 23,
+      "tp": 75
+     },
+     "defined": true,
+     "judge_prevalence": 0.7890625,
+     "kappa": 0.457780288054222,
+     "threshold": 0.15
+    },
+    {
+     "agreement": 0.765625,
+     "confusion": {
+      "fn": 4,
+      "fp": 26,
+      "n": 128,
+      "tn": 23,
+      "tp": 75
+     },
+     "defined": true,
+     "judge_prevalence": 0.7890625,
+     "kappa": 0.457780288054222,
+     "threshold": 0.2
+    },
+    {
+     "agreement": 0.765625,
+     "confusion": {
+      "fn": 4,
+      "fp": 26,
+      "n": 128,
+      "tn": 23,
+      "tp": 75
+     },
+     "defined": true,
+     "judge_prevalence": 0.7890625,
+     "kappa": 0.457780288054222,
+     "threshold": 0.25
+    },
+    {
+     "agreement": 0.7890625,
+     "confusion": {
+      "fn": 5,
+      "fp": 22,
+      "n": 128,
+      "tn": 27,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.75,
+     "kappa": 0.5221238938053098,
+     "threshold": 0.3
+    },
+    {
+     "agreement": 0.7890625,
+     "confusion": {
+      "fn": 5,
+      "fp": 22,
+      "n": 128,
+      "tn": 27,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.75,
+     "kappa": 0.5221238938053098,
+     "threshold": 0.35
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 8,
+      "fp": 17,
+      "n": 128,
+      "tn": 32,
+      "tp": 71
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.5717344753747323,
+     "threshold": 0.4
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 8,
+      "fp": 17,
+      "n": 128,
+      "tn": 32,
+      "tp": 71
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.5717344753747323,
+     "threshold": 0.45
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 8,
+      "fp": 17,
+      "n": 128,
+      "tn": 32,
+      "tp": 71
+     },
+     "defined": true,
+     "judge_prevalence": 0.6875,
+     "kappa": 0.5717344753747323,
+     "threshold": 0.5
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.55
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.6
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.65
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.7
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.75
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.8
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.85
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.9
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 0.95
+    },
+    {
+     "agreement": 0.8046875,
+     "confusion": {
+      "fn": 9,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 70
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.5751460435475305,
+     "threshold": 1.0
+    }
+   ],
+   "variant_id": "v19-reasoning-o3"
+  },
+  {
+   "at_0.5": {
+    "agreement": 0.75,
+    "confusion": {
+     "fn": 1,
+     "fp": 31,
+     "n": 128,
+     "tn": 18,
+     "tp": 78
+    },
+    "defined": true,
+    "kappa": 0.4013446360713242,
+    "n": 128
+   },
+   "best_dev_kappa": 0.6028062601187264,
+   "best_threshold": 0.85,
+   "completion": 1.0,
+   "config_hash": "0043f7d49ec5d2bb",
+   "errors": {},
+   "judge_config": {
+    "concurrency": 4,
+    "config_hash": "0043f7d49ec5d2bb",
+    "exemplars_path": "",
+    "include_boundary_examples": true,
+    "include_reference": true,
+    "max_attempts": 3,
+    "max_tokens": 10000,
+    "mode": "decompose",
+    "model": "o4-mini",
+    "notes": "per-fact decomposition with the reasoning judge; different failure mode from v18",
+    "reasoning_effort": "medium",
+    "restrict_tasks": [
+     "summarize"
+    ],
+    "rubric_dir": null,
+    "samples": 1,
+    "temperature": 0.0,
+    "variant_id": "v20-decompose-o4mini"
+   },
+   "mode": "decompose",
+   "model": "o4-mini",
+   "models_served": {
+    "o4-mini-2025-04-16": 128
+   },
+   "n_paired": 128,
+   "notes": "per-fact decomposition with the reasoning judge; different failure mode from v18",
+   "prompt_template_hash": "ef895d791c0bd860",
+   "spend_after_usd": 0.7297,
+   "threshold_grid": [
+    {
+     "agreement": 0.71875,
+     "confusion": {
+      "fn": 1,
+      "fp": 35,
+      "n": 128,
+      "tn": 14,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.8828125,
+     "kappa": 0.3144897351978578,
+     "threshold": 0.05
+    },
+    {
+     "agreement": 0.71875,
+     "confusion": {
+      "fn": 1,
+      "fp": 35,
+      "n": 128,
+      "tn": 14,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.8828125,
+     "kappa": 0.3144897351978578,
+     "threshold": 0.1
+    },
+    {
+     "agreement": 0.71875,
+     "confusion": {
+      "fn": 1,
+      "fp": 35,
+      "n": 128,
+      "tn": 14,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.8828125,
+     "kappa": 0.3144897351978578,
+     "threshold": 0.15
+    },
+    {
+     "agreement": 0.71875,
+     "confusion": {
+      "fn": 1,
+      "fp": 35,
+      "n": 128,
+      "tn": 14,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.8828125,
+     "kappa": 0.3144897351978578,
+     "threshold": 0.2
+    },
+    {
+     "agreement": 0.71875,
+     "confusion": {
+      "fn": 1,
+      "fp": 35,
+      "n": 128,
+      "tn": 14,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.8828125,
+     "kappa": 0.3144897351978578,
+     "threshold": 0.25
+    },
+    {
+     "agreement": 0.71875,
+     "confusion": {
+      "fn": 1,
+      "fp": 35,
+      "n": 128,
+      "tn": 14,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.8828125,
+     "kappa": 0.3144897351978578,
+     "threshold": 0.3
+    },
+    {
+     "agreement": 0.7421875,
+     "confusion": {
+      "fn": 1,
+      "fp": 32,
+      "n": 128,
+      "tn": 17,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.859375,
+     "kappa": 0.3799177921315326,
+     "threshold": 0.35
+    },
+    {
+     "agreement": 0.7421875,
+     "confusion": {
+      "fn": 1,
+      "fp": 32,
+      "n": 128,
+      "tn": 17,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.859375,
+     "kappa": 0.3799177921315326,
+     "threshold": 0.4
+    },
+    {
+     "agreement": 0.75,
+     "confusion": {
+      "fn": 1,
+      "fp": 31,
+      "n": 128,
+      "tn": 18,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.8515625,
+     "kappa": 0.4013446360713242,
+     "threshold": 0.45
+    },
+    {
+     "agreement": 0.75,
+     "confusion": {
+      "fn": 1,
+      "fp": 31,
+      "n": 128,
+      "tn": 18,
+      "tp": 78
+     },
+     "defined": true,
+     "judge_prevalence": 0.8515625,
+     "kappa": 0.4013446360713242,
+     "threshold": 0.5
+    },
+    {
+     "agreement": 0.78125,
+     "confusion": {
+      "fn": 5,
+      "fp": 23,
+      "n": 128,
+      "tn": 26,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.7578125,
+     "kappa": 0.5023604554290475,
+     "threshold": 0.55
+    },
+    {
+     "agreement": 0.78125,
+     "confusion": {
+      "fn": 5,
+      "fp": 23,
+      "n": 128,
+      "tn": 26,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.7578125,
+     "kappa": 0.5023604554290475,
+     "threshold": 0.6
+    },
+    {
+     "agreement": 0.78125,
+     "confusion": {
+      "fn": 5,
+      "fp": 23,
+      "n": 128,
+      "tn": 26,
+      "tp": 74
+     },
+     "defined": true,
+     "judge_prevalence": 0.7578125,
+     "kappa": 0.5023604554290475,
+     "threshold": 0.65
+    },
+    {
+     "agreement": 0.78125,
+     "confusion": {
+      "fn": 6,
+      "fp": 22,
+      "n": 128,
+      "tn": 27,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.7421875,
+     "kappa": 0.5064720462682457,
+     "threshold": 0.7
+    },
+    {
+     "agreement": 0.78125,
+     "confusion": {
+      "fn": 6,
+      "fp": 22,
+      "n": 128,
+      "tn": 27,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.7421875,
+     "kappa": 0.5064720462682457,
+     "threshold": 0.75
+    },
+    {
+     "agreement": 0.8125,
+     "confusion": {
+      "fn": 6,
+      "fp": 18,
+      "n": 128,
+      "tn": 31,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.7109375,
+     "kappa": 0.5838526144676239,
+     "threshold": 0.8
+    },
+    {
+     "agreement": 0.8203125,
+     "confusion": {
+      "fn": 6,
+      "fp": 17,
+      "n": 128,
+      "tn": 32,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.703125,
+     "kappa": 0.6028062601187264,
+     "threshold": 0.85
+    },
+    {
+     "agreement": 0.8203125,
+     "confusion": {
+      "fn": 6,
+      "fp": 17,
+      "n": 128,
+      "tn": 32,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.703125,
+     "kappa": 0.6028062601187264,
+     "threshold": 0.9
+    },
+    {
+     "agreement": 0.8203125,
+     "confusion": {
+      "fn": 6,
+      "fp": 17,
+      "n": 128,
+      "tn": 32,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.703125,
+     "kappa": 0.6028062601187264,
+     "threshold": 0.95
+    },
+    {
+     "agreement": 0.8203125,
+     "confusion": {
+      "fn": 6,
+      "fp": 17,
+      "n": 128,
+      "tn": 32,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.703125,
+     "kappa": 0.6028062601187264,
+     "threshold": 1.0
+    }
+   ],
+   "variant_id": "v20-decompose-o4mini"
+  },
+  {
+   "at_0.5": {
+    "agreement": 0.84375,
+    "confusion": {
+     "fn": 4,
+     "fp": 16,
+     "n": 128,
+     "tn": 33,
+     "tp": 75
+    },
+    "defined": true,
+    "kappa": 0.6532105120563533,
+    "n": 128
+   },
+   "best_dev_kappa": 0.6771109930961232,
+   "best_threshold": 0.55,
+   "completion": 1.0,
+   "config_hash": "68db84df02d60f66",
+   "errors": {},
+   "judge_config": {
+    "concurrency": 4,
+    "config_hash": "68db84df02d60f66",
+    "exemplars_path": "",
+    "include_boundary_examples": true,
+    "include_reference": true,
+    "max_attempts": 3,
+    "max_tokens": 12000,
+    "mode": "rubric",
+    "model": "o4-mini",
+    "notes": "v18 with high reasoning effort: does more thinking reduce false passes?",
+    "reasoning_effort": "high",
+    "restrict_tasks": [
+     "summarize"
+    ],
+    "rubric_dir": null,
+    "samples": 1,
+    "temperature": 0.0,
+    "variant_id": "v21-reasoning-o4mini-high"
+   },
+   "mode": "rubric",
+   "model": "o4-mini",
+   "models_served": {
+    "o4-mini-2025-04-16": 128
+   },
+   "n_paired": 128,
+   "notes": "v18 with high reasoning effort: does more thinking reduce false passes?",
+   "prompt_template_hash": "ef895d791c0bd860",
+   "spend_after_usd": 2.3638,
+   "threshold_grid": [
+    {
+     "agreement": 0.625,
+     "confusion": {
+      "fn": 2,
+      "fp": 46,
+      "n": 128,
+      "tn": 3,
+      "tp": 77
+     },
+     "defined": true,
+     "judge_prevalence": 0.9609375,
+     "kappa": 0.04328869511055746,
+     "threshold": 0.05
+    },
+    {
+     "agreement": 0.625,
+     "confusion": {
+      "fn": 2,
+      "fp": 46,
+      "n": 128,
+      "tn": 3,
+      "tp": 77
+     },
+     "defined": true,
+     "judge_prevalence": 0.9609375,
+     "kappa": 0.04328869511055746,
+     "threshold": 0.1
+    },
+    {
+     "agreement": 0.7578125,
+     "confusion": {
+      "fn": 2,
+      "fp": 29,
+      "n": 128,
+      "tn": 20,
+      "tp": 77
+     },
+     "defined": true,
+     "judge_prevalence": 0.828125,
+     "kappa": 0.4275822273514137,
+     "threshold": 0.15
+    },
+    {
+     "agreement": 0.7578125,
+     "confusion": {
+      "fn": 2,
+      "fp": 29,
+      "n": 128,
+      "tn": 20,
+      "tp": 77
+     },
+     "defined": true,
+     "judge_prevalence": 0.828125,
+     "kappa": 0.4275822273514137,
+     "threshold": 0.2
+    },
+    {
+     "agreement": 0.7578125,
+     "confusion": {
+      "fn": 2,
+      "fp": 29,
+      "n": 128,
+      "tn": 20,
+      "tp": 77
+     },
+     "defined": true,
+     "judge_prevalence": 0.828125,
+     "kappa": 0.4275822273514137,
+     "threshold": 0.25
+    },
+    {
+     "agreement": 0.78125,
+     "confusion": {
+      "fn": 2,
+      "fp": 26,
+      "n": 128,
+      "tn": 23,
+      "tp": 77
+     },
+     "defined": true,
+     "judge_prevalence": 0.8046875,
+     "kappa": 0.4896041013956138,
+     "threshold": 0.3
+    },
+    {
+     "agreement": 0.78125,
+     "confusion": {
+      "fn": 2,
+      "fp": 26,
+      "n": 128,
+      "tn": 23,
+      "tp": 77
+     },
+     "defined": true,
+     "judge_prevalence": 0.8046875,
+     "kappa": 0.4896041013956138,
+     "threshold": 0.35
+    },
+    {
+     "agreement": 0.84375,
+     "confusion": {
+      "fn": 4,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 75
+     },
+     "defined": true,
+     "judge_prevalence": 0.7109375,
+     "kappa": 0.6532105120563533,
+     "threshold": 0.4
+    },
+    {
+     "agreement": 0.84375,
+     "confusion": {
+      "fn": 4,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 75
+     },
+     "defined": true,
+     "judge_prevalence": 0.7109375,
+     "kappa": 0.6532105120563533,
+     "threshold": 0.45
+    },
+    {
+     "agreement": 0.84375,
+     "confusion": {
+      "fn": 4,
+      "fp": 16,
+      "n": 128,
+      "tn": 33,
+      "tp": 75
+     },
+     "defined": true,
+     "judge_prevalence": 0.7109375,
+     "kappa": 0.6532105120563533,
+     "threshold": 0.5
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.55
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.6
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.65
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.7
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.75
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.8
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.85
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.9
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 0.95
+    },
+    {
+     "agreement": 0.8515625,
+     "confusion": {
+      "fn": 6,
+      "fp": 13,
+      "n": 128,
+      "tn": 36,
+      "tp": 73
+     },
+     "defined": true,
+     "judge_prevalence": 0.671875,
+     "kappa": 0.6771109930961232,
+     "threshold": 1.0
+    }
+   ],
+   "variant_id": "v21-reasoning-o4mini-high"
+  }
+ ],
+ "note": "Round-3 reasoning-judge dev runs merged from separate CLI invocations (each overwrote the file). Spend per invocation: o4-mini 0.988, o3 0.89 (35 rate-limit errors) + 0.345 serial retry, v20+v21 2.364 => ~4.59 USD total. Dev only; test split untouched."
+}

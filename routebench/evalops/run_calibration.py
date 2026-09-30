@@ -34,6 +34,7 @@ from .calibrate import (
     select_threshold,
 )
 from .dataset import HEADLINE_PROVENANCE, Corpus, LabelProvenance, content_hash
+from .exemplars import validate_for_corpus
 from .experiments import (
     JudgmentCache,
     RunSummary,
@@ -164,12 +165,63 @@ GRID: tuple[JudgeConfig, ...] = (
         notes=("matched holistic baseline for v8/v12: same model, scope, token budget and "
                "concurrency, whole-response rubric instead of per-fact decomposition"),
     ),
+    JudgeConfig(
+        variant_id="v17-expert-fewshot-4.1", model="gpt-4.1", mode="rubric", concurrency=1,
+        restrict_tasks=("summarize",), max_tokens=2000,
+        exemplars_path=str(DATA / "gedd_train_exemplars.json"),
+        notes=("UNMEASURED: matched v16 with complete-source TRAIN demonstrations and published "
+               "expert failure explanations; six failure types, no dev/test exemplars"),
+    ),
+    # --- third round: reasoning judges. gpt-4.1 was the ceiling of every earlier round, and the
+    # "gpt-5 unavailable" note was about gpt-5/gpt-5-mini needing org verification; o3, o4-mini and
+    # gpt-5.4/5.5 answer on this key. Errors were shared across four gpt-4.1 prompts, i.e. the
+    # bottleneck is the judge's capability, not its prompt. max_tokens includes hidden reasoning.
+    JudgeConfig(
+        variant_id="v18-reasoning-o4mini", model="o4-mini", mode="rubric", concurrency=4,
+        restrict_tasks=("summarize",), max_tokens=8000, reasoning_effort="medium",
+        notes="matched to v16 (same rubric, scope) with a reasoning judge",
+    ),
+    JudgeConfig(
+        variant_id="v19-reasoning-o3", model="o3", mode="rubric", concurrency=1,
+        restrict_tasks=("summarize",), max_tokens=10000, reasoning_effort="medium",
+        notes="matched to v16 with the strongest priced reasoning judge",
+    ),
+    JudgeConfig(
+        variant_id="v20-decompose-o4mini", model="o4-mini", mode="decompose", concurrency=4,
+        restrict_tasks=("summarize",), max_tokens=10000, reasoning_effort="medium",
+        notes="per-fact decomposition with the reasoning judge; different failure mode from v18",
+    ),
+    JudgeConfig(
+        variant_id="v21-reasoning-o4mini-high", model="o4-mini", mode="rubric", concurrency=4,
+        restrict_tasks=("summarize",), max_tokens=12000, reasoning_effort="high",
+        notes="v18 with high reasoning effort: does more thinking reduce false passes?",
+    ),
+    JudgeConfig(
+        variant_id="v22-context-o4mini", model="o4-mini", mode="rubric", concurrency=4,
+        restrict_tasks=("summarize",), max_tokens=8000, reasoning_effort="medium",
+        context_path=str(DATA / "tofu_context.json"),
+        notes=("MEASURED, no gain: v18 plus the recovered full TofuEval summary and topic with the "
+               "graded sentence marked (input-fidelity fix; no labels or exemplars change)"),
+    ),
+    JudgeConfig(
+        variant_id="v23-diverse-fewshot-o4mini", model="o4-mini", mode="rubric", concurrency=4,
+        restrict_tasks=("summarize",), max_tokens=8000, reasoning_effort="medium",
+        exemplars_path=str(DATA / "gedd_diverse_exemplars.json"),
+        notes=("UNMEASURED: v18 plus six source-complete TRAIN demonstrations, one per document "
+               "(4 FAIL with published expert memos, 2 PASS); exemplars are the only change"),
+    ),
 )
 
 #: Comparisons declared BEFORE the run, so "decomposition helped" is a prediction being tested
 #: rather than a pattern found afterwards. Each entry is (label, treatment, matched control) and
 #: names the single thing that differs between them.
 MATCHED_PAIRS: tuple[tuple[str, str, str, str], ...] = (
+    ("source-complete expert examples vs holistic", "v17-expert-fewshot-4.1", "v16-holistic-4.1",
+     "train-split source-complete expert demonstrations only"),
+    ("recovered summary context vs sentence-only", "v22-context-o4mini", "v18-reasoning-o4mini",
+     "full original summary + topic shown, graded sentence marked; nothing else"),
+    ("diverse expert demonstrations vs none (o4-mini)", "v23-diverse-fewshot-o4mini",
+     "v18-reasoning-o4mini", "six train-only source-complete demonstrations only"),
     ("decomposition vs holistic", "v8-decompose-4.1", "v16-holistic-4.1",
      "mechanism: per-fact verification vs one whole-response rubric judgement"),
     ("addressed vs unaddressed decomposition", "v12-addressed-4.1", "v8-decompose-4.1",
@@ -193,8 +245,8 @@ ENSEMBLE_CANDIDATES: tuple[tuple[str, tuple[str, ...]], ...] = (
 )
 
 UNAVAILABLE = {
-    "gpt-5-mini": "HTTP 404 from /v1/chat/completions for the gpt-5 family on this key",
-    "gpt-5": "HTTP 404 from /v1/chat/completions for the gpt-5 family on this key",
+    "gpt-5-mini": "needs OpenAI organization verification on this key (model_not_found)",
+    "gpt-5": "needs OpenAI organization verification on this key (model_not_found)",
 }
 
 
@@ -278,6 +330,8 @@ def cmd_dev(args: argparse.Namespace) -> int:
     selection_track = getattr(args, "select_on", "pooled")
     dev_cases = _dev_cases(corpus, sp, selection_track)
     grid = _requested_grid(args)
+    for config in grid:
+        _validate_exemplar_provenance(config, corpus, sp)
     labels = corpus.resolved_labels()
     cache = JudgmentCache(DATA / "judgment_cache.jsonl")
     meter = SpendMeter(cap_usd=args.budget, reserve_usd=0.02)
@@ -351,6 +405,14 @@ def cmd_dev(args: argparse.Namespace) -> int:
     record_path.write_text(json.dumps(out, indent=2, sort_keys=True), encoding="utf-8")
     print(f"\nwrote {DATA / 'dev_experiments.json'}  total spend ${meter.spent_usd:.4f}")
     return 3 if blocked else 0
+
+
+def _validate_exemplar_provenance(config: JudgeConfig, corpus: Corpus, sp: SplitPlan) -> None:
+    if config.exemplars_path:
+        try:
+            validate_for_corpus(config.exemplars_path, corpus, sp)
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            raise CalibrationError(f"invalid train exemplars for {config.variant_id}: {exc}") from exc
 
 
 def _recorded_config(row: dict[str, Any], experiments: dict[str, Any]) -> JudgeConfig:
@@ -614,6 +676,7 @@ def cmd_freeze(args: argparse.Namespace) -> int:
         if row.get("skipped") or (args.variant and row["variant_id"] != args.variant):
             continue
         config = _recorded_config(row, experiments)
+        _validate_exemplar_provenance(config, corpus, sp)
         judgments = [j for c in _scope(dev, config)
                      if (j := cache.get(_cache_key(c, config))) is not None]
         # Pair against ALL labelled dev cases before track restriction. Scoping must not erase
@@ -740,6 +803,7 @@ def cmd_test(args: argparse.Namespace) -> int:
         print(f"bundle variant_id {bundle.variant_id!r} != reconstructed "
               f"{config.variant_id!r}", file=sys.stderr)
         return 1
+    _validate_exemplar_provenance(config, corpus, sp)
     print(f"  reconstructed frozen judge {config.variant_id} "
           f"(config_hash {config.config_hash}, verified against the bundle)")
 
@@ -759,6 +823,14 @@ def cmd_test(args: argparse.Namespace) -> int:
         print("Provider quota exhausted; cached outputs retained, but bundle and test report "
               "left unchanged. Resume the SAME frozen judge after quota is restored.",
               file=sys.stderr)
+        return 3
+    # A terminal test report must describe a COMPLETE run. Any provider/parse error, or a budget
+    # stop that left cases unjudged, would make the kappa a statistic over a self-selected subset.
+    n_ok = getattr(summary, "n_ok", None)
+    if summary.errors or (n_ok is not None and n_ok < len(scoped)):
+        print(f"INCOMPLETE test run (errors={dict(summary.errors)}, judged "
+              f"{n_ok}/{len(scoped)}); bundle and test report left unchanged. Successful "
+              "judgments stay cached; resume the SAME frozen judge to finish.", file=sys.stderr)
         return 3
     # Include the declared task scope AND the complete headline population. A specialist need
     # not grade SQL, but cannot make human-labelled cases disappear by narrowing its scope.
