@@ -108,7 +108,8 @@ def _quality_table() -> list[str]:
         lines += [
             "",
             f"quality matrix:      {MISSING}",
-            "  produce it with:   python -m evalops.offline (needs live backends + a valid bundle)",
+            "  produce it using:  evalops.offline.measure() with explicit live adapters, a real suite and a valid bundle",
+            "  verify an artifact: python -m evalops.offline --check-artifact <quality_matrix.json>",
         ]
     else:
         lines += [

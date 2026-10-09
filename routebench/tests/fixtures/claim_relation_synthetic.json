@@ -1,0 +1,486 @@
+[
+ {
+  "case_id": "syn-01",
+  "document_family": "fam-1",
+  "synthetic": true,
+  "source": "On the show the group sang \"Wanna Dance With You\" and then took a bow.",
+  "candidate": "The group sang \"Wanna Dance With U\" on the show.",
+  "expected_verdict": "supported",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "The group sang \"Wanna Dance With U\" on the show.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "sang \"Wanna Dance With You\""
+     ]
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "supported"
+  }
+ },
+ {
+  "case_id": "syn-02",
+  "document_family": "fam-1",
+  "synthetic": true,
+  "source": "On the show the group sang \"Wanna Dance With You\" and then took a bow.",
+  "candidate": "The group sang \"Wanna Dance With Me\" on the show.",
+  "expected_verdict": "unsupported",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "The group sang \"Wanna Dance With Me\" on the show.",
+     "verdict": "unsupported",
+     "issue_type": "entity_mismatch",
+     "evidence": [
+      "sang \"Wanna Dance With You\""
+     ]
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "unsupported"
+  }
+ },
+ {
+  "case_id": "syn-03",
+  "document_family": "fam-2",
+  "synthetic": true,
+  "source": "The clerk mailed a letter to make sure residents would receive answers to their questions.",
+  "candidate": "The clerk sent a letter to ensure residents get answers.",
+  "expected_verdict": "supported",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "The clerk sent a letter to ensure residents get answers.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "mailed a letter to make sure residents would receive answers"
+     ],
+     "relation": {
+      "type": "purpose",
+      "stated_in_source": true,
+      "source_span": null
+     }
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "supported"
+  }
+ },
+ {
+  "case_id": "syn-04",
+  "document_family": "fam-2",
+  "synthetic": true,
+  "source": "The clerk mailed a letter to make sure residents would receive answers to their questions.",
+  "candidate": "The letter guaranteed that residents received answers.",
+  "expected_verdict": "unsupported",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "The letter guaranteed that residents received answers.",
+     "verdict": "unsupported",
+     "issue_type": "purpose_vs_result",
+     "evidence": [
+      "mailed a letter to make sure residents would receive answers"
+     ],
+     "relation": {
+      "type": "purpose",
+      "stated_in_source": false,
+      "source_span": null
+     }
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "unsupported"
+  }
+ },
+ {
+  "case_id": "syn-05",
+  "document_family": "fam-3",
+  "synthetic": true,
+  "source": "The board authorized up to $50,000 for the roof repair.",
+  "candidate": "The board authorized up to $50,000.",
+  "expected_verdict": "supported",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "The board authorized up to $50,000.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "authorized up to $50,000"
+     ],
+     "numeric": {
+      "candidate_value": "$50,000",
+      "source_value": "$50,000",
+      "same_entity": true,
+      "comparison": "equal"
+     }
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "supported"
+  }
+ },
+ {
+  "case_id": "syn-06",
+  "document_family": "fam-3",
+  "synthetic": true,
+  "source": "The board authorized up to $50,000 for the roof repair.",
+  "candidate": "The board paid $50,000 for the roof repair.",
+  "expected_verdict": "unsupported",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "The board paid $50,000 for the roof repair.",
+     "verdict": "unsupported",
+     "issue_type": "authorization_vs_payment",
+     "evidence": [
+      "authorized up to $50,000"
+     ],
+     "numeric": {
+      "candidate_value": "$50,000",
+      "source_value": "up to $50,000",
+      "same_entity": true,
+      "comparison": "differs"
+     }
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "unsupported"
+  }
+ },
+ {
+  "case_id": "syn-07",
+  "document_family": "fam-4",
+  "synthetic": true,
+  "source": "Sales tax collections reached 28 percent of the annual forecast by March.",
+  "candidate": "Collections reached 28 percent of the forecast by March.",
+  "expected_verdict": "supported",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "Collections reached 28 percent of the forecast by March.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "reached 28 percent of the annual forecast by March"
+     ]
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "supported"
+  }
+ },
+ {
+  "case_id": "syn-08",
+  "document_family": "fam-4",
+  "synthetic": true,
+  "source": "Sales tax collections reached 28 percent of the annual forecast by March.",
+  "candidate": "Collections increased 28 percent by March.",
+  "expected_verdict": "unsupported",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "Collections increased 28 percent by March.",
+     "verdict": "unsupported",
+     "issue_type": "share_vs_increase",
+     "evidence": [
+      "reached 28 percent of the annual forecast"
+     ],
+     "numeric": {
+      "candidate_value": "28 percent increase",
+      "source_value": "28 percent share",
+      "same_entity": true,
+      "comparison": "differs"
+     }
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "unsupported"
+  }
+ },
+ {
+  "case_id": "syn-09",
+  "document_family": "fam-5",
+  "synthetic": true,
+  "source": "Officials said the bridge may close next month for repairs.",
+  "candidate": "The bridge may close next month.",
+  "expected_verdict": "supported",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "The bridge may close next month.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "the bridge may close next month"
+     ],
+     "modality": "possible"
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "supported"
+  }
+ },
+ {
+  "case_id": "syn-10",
+  "document_family": "fam-5",
+  "synthetic": true,
+  "source": "Officials said the bridge may close next month for repairs.",
+  "candidate": "The bridge will close next month.",
+  "expected_verdict": "unsupported",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "The bridge will close next month.",
+     "verdict": "unsupported",
+     "issue_type": "possible_vs_confirmed",
+     "evidence": [
+      "the bridge may close next month"
+     ],
+     "modality": "possible"
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "unsupported"
+  }
+ },
+ {
+  "case_id": "syn-11",
+  "document_family": "fam-6",
+  "synthetic": true,
+  "source": "Measure A would restrict gun sales. Measure B is also on the November ballot.",
+  "candidate": "Measures A and B are gun-control measures.",
+  "expected_verdict": "unsupported",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "Measures A and B are gun-control measures.",
+     "verdict": "unsupported",
+     "issue_type": "attribute_transfer",
+     "evidence": [
+      "Measure A would restrict gun sales",
+      "Measure B is also on the November ballot"
+     ]
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "unsupported"
+  }
+ },
+ {
+  "case_id": "syn-12",
+  "document_family": "fam-6",
+  "synthetic": true,
+  "source": "Measure A would restrict gun sales. Measure B is also on the November ballot.",
+  "candidate": "Measure A would restrict gun sales.",
+  "expected_verdict": "supported",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "Measure A would restrict gun sales.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "Measure A would restrict gun sales"
+     ]
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "supported"
+  }
+ },
+ {
+  "case_id": "syn-13",
+  "document_family": "fam-7",
+  "synthetic": true,
+  "source": "Rainfall was heavy in May. The reservoir was full by June.",
+  "candidate": "Heavy May rainfall filled the reservoir.",
+  "expected_verdict": "unsupported",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "Heavy May rainfall filled the reservoir.",
+     "verdict": "unsupported",
+     "issue_type": "unlinked_facts",
+     "evidence": [
+      "Rainfall was heavy in May",
+      "The reservoir was full by June"
+     ],
+     "relation": {
+      "type": "causal",
+      "stated_in_source": false,
+      "source_span": null
+     }
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "unsupported"
+  }
+ },
+ {
+  "case_id": "syn-14",
+  "document_family": "fam-7",
+  "synthetic": true,
+  "source": "The manager said heavy May rainfall filled the reservoir.",
+  "candidate": "Heavy rainfall filled the reservoir.",
+  "expected_verdict": "supported",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "Heavy rainfall filled the reservoir.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "heavy May rainfall filled the reservoir"
+     ],
+     "relation": {
+      "type": "causal",
+      "stated_in_source": true,
+      "source_span": null
+     }
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "supported"
+  }
+ },
+ {
+  "case_id": "syn-15",
+  "document_family": "fam-8",
+  "synthetic": true,
+  "source": "The council approved the budget on Tuesday.",
+  "candidate": "The council approved the budget on Tuesday and hired a new auditor.",
+  "expected_verdict": "unsupported",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "The council approved the budget on Tuesday",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "The council approved the budget on Tuesday"
+     ]
+    },
+    {
+     "span": "hired a new auditor",
+     "verdict": "unsupported",
+     "issue_type": "unsupported_addition",
+     "evidence": []
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "unsupported"
+  }
+ },
+ {
+  "case_id": "syn-16",
+  "document_family": "fam-9",
+  "synthetic": true,
+  "source": "The mayor opened the meeting. Later the clerk read the minutes aloud.",
+  "candidate": "The mayor opened the meeting and the clerk read the minutes.",
+  "expected_verdict": "uncertain",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "The mayor opened the meeting",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "The mayor opened the meeting"
+     ]
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "uncertain"
+  }
+ },
+ {
+  "case_id": "syn-17",
+  "document_family": "fam-10",
+  "synthetic": true,
+  "source": "The mayor opened the meeting.",
+  "candidate": "The mayor opened the meeting and the treasurer resigned.",
+  "expected_verdict": "uncertain",
+  "label": 0,
+  "script": {
+   "assertions": [
+    {
+     "span": "The mayor opened the meeting and the treasurer resigned.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": [
+      "The mayor opened the meeting"
+     ]
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "uncertain"
+  }
+ },
+ {
+  "case_id": "syn-18",
+  "document_family": "fam-11",
+  "synthetic": true,
+  "source": "The fund received a gift in March.",
+  "candidate": "The fund received a gift in March.",
+  "expected_verdict": "uncertain",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "The fund received a gift in March.",
+     "verdict": "supported",
+     "issue_type": "paraphrase_ok",
+     "evidence": []
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "uncertain"
+  }
+ },
+ {
+  "case_id": "syn-19",
+  "document_family": "fam-12",
+  "synthetic": true,
+  "source": "The fund received a gift.",
+  "candidate": "The fund received a significant gift.",
+  "expected_verdict": "uncertain",
+  "label": 1,
+  "script": {
+   "assertions": [
+    {
+     "span": "The fund received a significant gift.",
+     "verdict": "uncertain",
+     "issue_type": "other",
+     "evidence": [
+      "The fund received a gift"
+     ],
+     "rationale": "'significant' is not addressed by the source"
+    }
+   ],
+   "uncovered_spans": [],
+   "overall": "uncertain"
+  }
+ }
+]

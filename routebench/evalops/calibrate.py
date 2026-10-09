@@ -248,6 +248,7 @@ class CalibrationBundle:
     test_result: dict[str, Any] | None = None
     software: dict[str, str] = field(default_factory=dict)
     notes: str = ""
+    selection_record: dict[str, Any] = field(default_factory=dict)
 
     def save(self, path: str | Path) -> Path:
         p = Path(path)
@@ -276,6 +277,7 @@ def identity_hash(
     split_seed: int,
     annotations_hash: str = "",
     split_membership_hash: str = "",
+    selection_record: dict[str, Any] | None = None,
 ) -> str:
     """Hash the fields that define a bundle's identity. The one place `bundle_id` is computed.
 
@@ -298,6 +300,8 @@ def identity_hash(
         payload["annotations"] = annotations_hash
     if split_membership_hash:
         payload["split_membership"] = split_membership_hash
+    if selection_record:
+        payload["selection_record"] = selection_record
     return content_hash(payload)
 
 
@@ -312,6 +316,7 @@ def expected_bundle_id(bundle: CalibrationBundle) -> str:
         split_seed=bundle.split_seed,
         annotations_hash=bundle.annotations_hash,
         split_membership_hash=bundle.split_membership_hash,
+        selection_record=bundle.selection_record,
     )
 
 
@@ -327,6 +332,7 @@ def freeze(
     annotations_hash: str = "",
     split_membership_hash: str = "",
     notes: str = "",
+    selection_record: dict[str, Any] | None = None,
 ) -> CalibrationBundle:
     counts: dict[str, int] = {}
     for p in dev.provenance:
@@ -336,6 +342,7 @@ def freeze(
             variant_id=variant_id, threshold=choice.threshold, judge_config=judge_config,
             rubric_bundle_hash=bundle_hash(), dataset_hash=dataset_hash, split_seed=split_seed,
             annotations_hash=annotations_hash, split_membership_hash=split_membership_hash,
+            selection_record=selection_record,
         ),
         created_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         variant_id=variant_id,
@@ -352,6 +359,7 @@ def freeze(
         label_provenance_counts=counts,
         annotations_hash=annotations_hash,
         split_membership_hash=split_membership_hash,
+        selection_record=dict(selection_record or {}),
         software={
             "python": sys.version.split()[0],
             "platform": platform.platform(),

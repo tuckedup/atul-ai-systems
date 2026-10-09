@@ -255,3 +255,38 @@ def test_status_computes_interannotator_kappa_correctly():
     # By hand: tp=1, fn=1, tn=2, fp=0 -> po=0.75, pe=0.5 -> kappa=0.5
     assert pair["kappa"] == pytest.approx(0.5)
     assert pair["observed_agreement"] == pytest.approx(0.75)
+
+
+def test_review_cannot_write_to_acceptance_labels(tmp_path, monkeypatch):
+    monkeypatch.setattr(annotate, "DATA", tmp_path)
+    acceptance = tmp_path / "annotations.jsonl"
+    acceptance.write_text("untouched\n")
+    with pytest.raises(annotate.AnnotateError, match="acceptance annotations are protected"):
+        annotate.run_labeling_session([_queue_row("c1")], annotator_id="alice", out_path=acceptance,
+                                      get_key=lambda: pytest.fail("must refuse before collecting labels"))
+    assert acceptance.read_text() == "untouched\n"
+
+
+def test_review_cli_defaults_are_non_test_and_separate(monkeypatch):
+    exports, outputs = [], []
+    monkeypatch.setattr(annotate, "cmd_export", lambda args: exports.append(args.split) or 0)
+    monkeypatch.setattr(annotate, "cmd_label", lambda args: outputs.append(args.out) or 0)
+    assert annotate.main(["export"]) == 0
+    assert annotate.main(["label", "--annotator", "alice"]) == 0
+    assert exports == ["dev"]
+    assert outputs == [str(annotate.REVIEW_OUTPUT)]
+
+
+def test_test_export_requires_explicit_review_authorization(monkeypatch):
+    monkeypatch.setattr(annotate.Corpus, "load", lambda *a, **k: pytest.fail("must refuse before reading corpus"))
+    assert annotate.main(["export", "--split", "test"]) == 2
+
+
+def test_queue_export_cannot_overwrite_acceptance_labels(tmp_path, monkeypatch):
+    monkeypatch.setattr(annotate, "DATA", tmp_path)
+    cases, annotations, plan = _synthetic_corpus()
+    path = tmp_path / "annotations.jsonl"
+    path.write_text("protected\n")
+    with pytest.raises(annotate.AnnotateError, match="acceptance annotations are protected"):
+        annotate.export_queue(cases, annotations, plan, split="test", n=2, seed=1, out_path=path)
+    assert path.read_text() == "protected\n"

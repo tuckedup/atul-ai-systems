@@ -157,6 +157,7 @@ def test_dev_quota_stops_later_variants_and_reports_failure(experiment, monkeypa
 def test_test_quota_preserves_frozen_bundle_and_existing_report(experiment, monkeypatch):
     path, _, _, _, args = experiment
     assert driver.cmd_freeze(args) == 0
+    assert driver.cmd_readiness(SimpleNamespace()) == 0  # the sealed split needs a READY report
     bundle_path = path / "calibration_bundle.json"
     before = bundle_path.read_bytes()
     report = path / "calibration_report.json"
@@ -175,6 +176,7 @@ def test_test_quota_preserves_frozen_bundle_and_existing_report(experiment, monk
 def test_test_incomplete_run_never_publishes_terminal_result(experiment, monkeypatch, summary):
     path, _, _, _, args = experiment
     assert driver.cmd_freeze(args) == 0
+    assert driver.cmd_readiness(SimpleNamespace()) == 0  # the sealed split needs a READY report
     bundle_path = path / "calibration_bundle.json"
     before = bundle_path.read_bytes()
     report = path / "calibration_report.json"

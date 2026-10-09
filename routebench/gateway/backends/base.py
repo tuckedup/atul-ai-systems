@@ -1,7 +1,9 @@
 """Backend protocol and OpenAI-wire implementation."""
 from __future__ import annotations
 
+import json
 import time
+from collections.abc import Iterator
 from typing import Any, Protocol
 
 import httpx
@@ -55,3 +57,23 @@ class OpenAICompatibleBackend:
         })
         return result
 
+
+    def stream_chat(self, payload: dict[str, Any]) -> Iterator[dict[str, Any]]:
+        """Native streaming: yield each parsed `chat.completion.chunk` as it arrives; stop at `[DONE]`.
+
+        The HTTP status is checked BEFORE the first chunk is yielded, so a rejected request raises `httpx.HTTPStatusError` on the first `next()` and the caller can still
+        reroute. Keep-alive comments are ignored; a malformed data line raises (the caller treats it as a mid-stream failure). Closing the generator closes the connection.
+        """
+        with httpx.Client(transport=self.transport, timeout=httpx.Timeout(60.0)) as client, client.stream(
+            "POST", f"{self.base_url}/chat/completions", headers={"Authorization": f"Bearer {self.api_key}"}, json={**payload, "stream": True}
+        ) as response:
+            if response.status_code >= 400:
+                response.read()
+                response.raise_for_status()
+            for line in response.iter_lines():
+                if not line or line.startswith(":") or not line.startswith("data:"):
+                    continue
+                data = line[5:].strip()
+                if data == "[DONE]":
+                    return
+                yield json.loads(data)

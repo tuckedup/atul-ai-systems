@@ -10,7 +10,7 @@ built from `rubrics.for_task(...)` and `Rubric.as_prompt_block()`, the exact obj
 anywhere in this file.
 
 The second defect this file exists to prevent is losing an evening of labelling to a crash.
-Every verdict is appended to `annotations.jsonl` (via `dataset.append_jsonl`) the instant it
+Every verdict is appended to a separate review file (via `dataset.append_jsonl`) the instant it
 is entered, never buffered in memory for a final write at the end of the session.
 
 The third defect: label leakage into the queue. `export` reads the pre-existing label only to
@@ -62,6 +62,7 @@ except ImportError:  # pragma: no cover - exercised only off Windows
     msvcrt = None  # type: ignore[assignment]
 
 DATA = Path(__file__).parent / "data"
+REVIEW_OUTPUT = Path(".local/label-review/annotations.jsonl")
 
 #: The exact, and only, fields a queue row may carry. Anything else -- most importantly a
 #: label -- must never appear here; `_queue_row` is the single place rows are constructed.
@@ -210,6 +211,8 @@ def export_queue(
     claim it is meant to support -- and that scope has to be stated wherever the number is
     quoted, because a kappa over one task mix is not a kappa over another.
     """
+    if out_path.resolve() == (DATA / "annotations.jsonl").resolve():
+        raise AnnotateError("acceptance annotations are protected; export the queue to a separate file")
     split_cases = select(cases, split_plan, split)  # type: ignore[arg-type]
     if tasks:
         wanted = {canonical(x) for x in tasks}
@@ -230,6 +233,8 @@ def export_queue(
 
 
 def cmd_export(args: argparse.Namespace) -> int:
+    if args.split == "test" and not getattr(args, "allow_test_review", False):
+        raise AnnotateError("test review requires explicit --allow-test-review; use dev for a label study")
     corpus = Corpus.load(DATA)
     sp = SplitPlan.load(DATA / "splits.json")
     verify(corpus.cases, sp)
@@ -407,6 +412,8 @@ def run_labeling_session(
     `get_key`/`get_reason`/`now` are looked up as bare names when not supplied, so
     `monkeypatch.setattr(annotate, "get_keypress", ...)` also works without passing anything.
     """
+    if out_path.resolve() == (DATA / "annotations.jsonl").resolve():
+        raise AnnotateError("acceptance annotations are protected; write review labels to a separate file")
     _check_rubric_freshness(queue_rows)
     key_fn = get_key if get_key is not None else get_keypress
     reason_fn = get_reason if get_reason is not None else _prompt_reason
@@ -486,6 +493,14 @@ def cmd_label(args: argparse.Namespace) -> int:
         print(f"queue {queue_path} is empty or missing; run `export` first.", file=sys.stderr)
         return 1
     out_path = Path(args.out)
+    corpus = Corpus.load(DATA)
+    sp = SplitPlan.load(DATA / "splits.json")
+    by_id = corpus.by_id()
+    unknown = [row["case_id"] for row in rows if row["case_id"] not in by_id]
+    if unknown:
+        raise AnnotateError(f"review queue has unknown case IDs: {unknown[:5]}")
+    if not getattr(args, "allow_test_review", False) and any(sp.of_case(by_id[row["case_id"]]) == "test" for row in rows):
+        raise AnnotateError("queue contains test cases; explicit --allow-test-review is required")
     try:
         counts = run_labeling_session(
             rows, annotator_id=args.annotator, out_path=out_path, limit=args.limit,
@@ -591,6 +606,12 @@ def _print_status(report: dict[str, Any]) -> None:
 
 def cmd_status(args: argparse.Namespace) -> int:
     corpus = Corpus.load(DATA)
+    review_path = Path(args.annotations)
+    review = list(read_jsonl(review_path, Annotation)) if review_path.exists() else []
+    known = corpus.by_id()
+    if any(a.case_id not in known for a in review):
+        raise AnnotateError("review labels contain unknown case IDs")
+    corpus = Corpus(cases=corpus.cases, annotations=review)
     queue_rows = read_queue(Path(args.queue))
     _print_status(compute_status(corpus, queue_rows))
     return 0
@@ -605,7 +626,8 @@ def main(argv: list[str] | None = None) -> int:
 
     p_export = sub.add_parser("export", help="build a stratified annotation queue")
     p_export.add_argument("--n", type=int, default=100)
-    p_export.add_argument("--split", default="test")
+    p_export.add_argument("--split", choices=["train", "dev", "test"], default="dev")
+    p_export.add_argument("--allow-test-review", action="store_true", help="explicitly expose test items for human review")
     p_export.add_argument("--seed", type=int, default=20260927)
     p_export.add_argument("--out", default=str(DATA / "annotation_queue.jsonl"))
     p_export.add_argument(
@@ -618,12 +640,14 @@ def main(argv: list[str] | None = None) -> int:
     p_label = sub.add_parser("label", help="interactive terminal labelling loop")
     p_label.add_argument("--queue", default=str(DATA / "annotation_queue.jsonl"))
     p_label.add_argument("--annotator", required=True, help="the annotator's id string")
-    p_label.add_argument("--out", default=str(DATA / "annotations.jsonl"))
+    p_label.add_argument("--out", default=str(REVIEW_OUTPUT))
+    p_label.add_argument("--allow-test-review", action="store_true")
     p_label.add_argument("--limit", type=int, default=None)
     p_label.set_defaults(fn=cmd_label)
 
     p_status = sub.add_parser("status", help="labelling progress and inter-annotator agreement")
     p_status.add_argument("--queue", default=str(DATA / "annotation_queue.jsonl"))
+    p_status.add_argument("--annotations", default=str(REVIEW_OUTPUT), help="separate review-label file to summarize")
     p_status.set_defaults(fn=cmd_status)
 
     args = ap.parse_args(argv)

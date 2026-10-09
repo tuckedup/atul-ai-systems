@@ -15,20 +15,52 @@ class ResponseCache:
         self.misses = 0
 
     @staticmethod
-    def key(payload: dict[str, Any]) -> str:
-        stable = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
+    def key(
+        payload: dict[str, Any],
+        *,
+        tenant: str = "",
+        policy_fingerprint: str = "",
+    ) -> str:
+        # A response is valid only for both the authenticated billing identity and
+        # the exact routing rollout.  Including these values prevents one tenant
+        # from observing another's cached answer and prevents a weight/policy
+        # change from continuing to serve stale backend choices.
+        namespaced = {
+            "tenant": tenant,
+            "policy_fingerprint": policy_fingerprint,
+            "payload": payload,
+        }
+        stable = json.dumps(namespaced, sort_keys=True, separators=(",", ":"), default=str)
         return "response:" + hashlib.sha256(stable.encode()).hexdigest()
 
-    def get(self, payload: dict[str, Any]) -> dict[str, Any] | None:
-        value = self.cache.get(self.key(payload))
+    def get(
+        self,
+        payload: dict[str, Any],
+        *,
+        tenant: str = "",
+        policy_fingerprint: str = "",
+    ) -> dict[str, Any] | None:
+        value = self.cache.get(self.key(payload, tenant=tenant, policy_fingerprint=policy_fingerprint))
         if isinstance(value, dict):
             self.hits += 1
             return value
         self.misses += 1
         return None
 
-    def set(self, payload: dict[str, Any], value: dict[str, Any], ttl_s: float = 300) -> None:
-        self.cache.set(self.key(payload), value, ttl_s)
+    def set(
+        self,
+        payload: dict[str, Any],
+        value: dict[str, Any],
+        ttl_s: float = 300,
+        *,
+        tenant: str = "",
+        policy_fingerprint: str = "",
+    ) -> None:
+        self.cache.set(
+            self.key(payload, tenant=tenant, policy_fingerprint=policy_fingerprint),
+            value,
+            ttl_s,
+        )
 
     @property
     def hit_rate(self) -> float:

@@ -1,0 +1,190 @@
+{
+ "version": "claim-fidelity-regression-v1",
+ "status": "SYNTHETIC; written for the proposed claim_fidelity criterion; expected values follow the criterion text and have NOT been checked against any model; no text comes from a benchmark case, source document or published expert explanation; the guard 'authority-reported-fact' encodes a policy assumption that needs the owner's approval",
+ "items": [
+  {
+   "id": "attribution-opinion-violation",
+   "pair": "attribution-opinion",
+   "source": "ANALYST DANA REYES: In my view the steelmaker's board has grown complacent, and I'd expect it to keep ignoring the unions.",
+   "sentence": "The steelmaker's board has grown complacent.",
+   "expected": "fails_claim_fidelity",
+   "mode": "attribution"
+  },
+  {
+   "id": "attribution-opinion-control",
+   "pair": "attribution-opinion",
+   "source": "ANALYST DANA REYES: In my view the steelmaker's board has grown complacent, and I'd expect it to keep ignoring the unions.",
+   "sentence": "An analyst says the steelmaker's board has grown complacent.",
+   "expected": "passes",
+   "mode": "attribution"
+  },
+  {
+   "id": "attribution-prediction-violation",
+   "pair": "attribution-prediction",
+   "source": "REYES: I predict the board will not negotiate before spring.",
+   "sentence": "The board will not negotiate before spring.",
+   "expected": "fails_claim_fidelity",
+   "mode": "attribution"
+  },
+  {
+   "id": "attribution-prediction-control",
+   "pair": "attribution-prediction",
+   "source": "REYES: I predict the board will not negotiate before spring.",
+   "sentence": "Reyes predicts the board will not negotiate before spring.",
+   "expected": "passes",
+   "mode": "attribution"
+  },
+  {
+   "id": "hedge-concern-violation",
+   "pair": "hedge-concern",
+   "source": "There is a concern that the outbreak may have reached the northern villages.",
+   "sentence": "The outbreak has reached the northern villages.",
+   "expected": "fails_claim_fidelity",
+   "mode": "hedge"
+  },
+  {
+   "id": "hedge-concern-control",
+   "pair": "hedge-concern",
+   "source": "There is a concern that the outbreak may have reached the northern villages.",
+   "sentence": "There is concern that the outbreak may have reached the northern villages.",
+   "expected": "passes",
+   "mode": "hedge"
+  },
+  {
+   "id": "hedge-unconfirmed-violation",
+   "pair": "hedge-unconfirmed",
+   "source": "By our count that makes more than 40 sites, though we have not confirmed the newest one.",
+   "sentence": "More than 40 sites are affected.",
+   "expected": "fails_claim_fidelity",
+   "mode": "hedge"
+  },
+  {
+   "id": "hedge-unconfirmed-control",
+   "pair": "hedge-unconfirmed",
+   "source": "By our count that makes more than 40 sites, though we have not confirmed the newest one.",
+   "sentence": "A count puts the number of affected sites above 40, though the newest is unconfirmed.",
+   "expected": "passes",
+   "mode": "hedge"
+  },
+  {
+   "id": "tense-preview-violation",
+   "pair": "tense-preview",
+   "source": "Coming up after the break: we compare the two budgets.",
+   "sentence": "The programme compared the two budgets.",
+   "expected": "fails_claim_fidelity",
+   "mode": "tense"
+  },
+  {
+   "id": "tense-preview-control",
+   "pair": "tense-preview",
+   "source": "Coming up after the break: we compare the two budgets.",
+   "sentence": "The programme will compare the two budgets after the break.",
+   "expected": "passes",
+   "mode": "tense"
+  },
+  {
+   "id": "strength-verb-violation",
+   "pair": "strength-verb",
+   "source": "The guild urged its members to avoid the new store.",
+   "sentence": "The guild organized a boycott of the new store.",
+   "expected": "fails_claim_fidelity",
+   "mode": "strength"
+  },
+  {
+   "id": "strength-verb-control",
+   "pair": "strength-verb",
+   "source": "The guild urged its members to avoid the new store.",
+   "sentence": "The guild urged its members to avoid the new store.",
+   "expected": "passes",
+   "mode": "strength"
+  },
+  {
+   "id": "strength-simile-violation",
+   "pair": "strength-simile",
+   "source": "He called the reviewer 'something like a paid publicist'.",
+   "sentence": "He accused the reviewer of being a paid publicist.",
+   "expected": "fails_claim_fidelity",
+   "mode": "strength"
+  },
+  {
+   "id": "strength-simile-control",
+   "pair": "strength-simile",
+   "source": "He called the reviewer 'something like a paid publicist'.",
+   "sentence": "He likened the reviewer to a paid publicist.",
+   "expected": "passes",
+   "mode": "strength"
+  },
+  {
+   "id": "strength-connotation-violation",
+   "pair": "strength-connotation",
+   "source": "Residents of the island may stay for ten years; other arrivals are usually sent back.",
+   "sentence": "Island residents are welcomed while other arrivals are sent back.",
+   "expected": "fails_claim_fidelity",
+   "mode": "strength"
+  },
+  {
+   "id": "strength-connotation-control",
+   "pair": "strength-connotation",
+   "source": "Residents of the island may stay for ten years; other arrivals are usually sent back.",
+   "sentence": "Island residents may stay while other arrivals are usually sent back.",
+   "expected": "passes",
+   "mode": "strength"
+  },
+  {
+   "id": "merged-claims-violation",
+   "pair": "merged-claims",
+   "source": "The clinic supports the registry. Its running cost is low.",
+   "sentence": "The registry's low running cost is supported by the clinic.",
+   "expected": "fails_claim_fidelity",
+   "mode": "merged"
+  },
+  {
+   "id": "merged-claims-control",
+   "pair": "merged-claims",
+   "source": "The clinic supports the registry. Its running cost is low.",
+   "sentence": "The clinic supports the registry, and its running cost is low.",
+   "expected": "passes",
+   "mode": "merged"
+  },
+  {
+   "id": "narrator-fact-guard",
+   "pair": null,
+   "source": "The council voted 7-2 on Tuesday to approve the budget.",
+   "sentence": "The council approved the budget on Tuesday.",
+   "expected": "passes",
+   "mode": "none"
+  },
+  {
+   "id": "speaker-tag-kept-guard",
+   "pair": null,
+   "source": "MAYOR LEE: The new bridge will cut commute times by ten minutes.",
+   "sentence": "Mayor Lee said the new bridge will cut commute times by ten minutes.",
+   "expected": "passes",
+   "mode": "none"
+  },
+  {
+   "id": "faithful-paraphrase-guard",
+   "pair": null,
+   "source": "The report says unemployment fell from 6.1 to 5.4 percent over the year.",
+   "sentence": "The report says the jobless rate dropped from 6.1% to 5.4% during the year.",
+   "expected": "passes",
+   "mode": "none"
+  },
+  {
+   "id": "hedge-reworded-guard",
+   "pair": null,
+   "source": "It is possible the line will reopen in March.",
+   "sentence": "The line might reopen in March.",
+   "expected": "passes",
+   "mode": "none"
+  },
+  {
+   "id": "authority-reported-fact-guard",
+   "pair": null,
+   "source": "The ministry reported 12 new cases on Monday.",
+   "sentence": "There were 12 new cases on Monday.",
+   "expected": "passes",
+   "mode": "none"
+  }
+ ]
+}

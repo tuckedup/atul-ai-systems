@@ -2,13 +2,15 @@
 
 Run order is enforced by the CLI, not by documentation:
 
-    python -m evalops.run_calibration dev     # judge the dev split across the variant grid
-    python -m evalops.run_calibration freeze  # pick the winner + threshold, write the bundle
-    python -m evalops.run_calibration test    # judge the test split with the frozen bundle only
+    python -m evalops.run_calibration dev        # judge the dev split across the variant grid
+    python -m evalops.run_calibration freeze     # pick the winner + threshold, write the bundle
+    python -m evalops.run_calibration readiness  # may the sealed split be spent on it? (no calls)
+    python -m evalops.run_calibration test       # judge the test split with the frozen bundle only
 
-`test` refuses to run without a bundle on disk, and refuses to re-select anything. That
-ordering is the entire experimental protocol: every choice is made on dev, and the test split
-is scored exactly once with a configuration that can no longer change.
+`test` refuses to run without a bundle on disk, refuses to re-select anything, and refuses to
+spend the sealed split without a READY readiness report bound to that bundle (or a recorded
+human override). That ordering is the entire experimental protocol: every choice is made on
+dev, and the test split is scored exactly once with a configuration that can no longer change.
 
 The variant grid is declared in `GRID` below, before any of it was run, so the experiment
 record shows what was tried rather than only what won.
@@ -16,7 +18,10 @@ record shows what was tried rather than only what won.
 from __future__ import annotations
 
 import argparse
+import getpass
 import json
+import platform
+import socket
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -44,12 +49,34 @@ from .experiments import (
     worst_case_call_usd,
 )
 from .judge import JudgeConfig, prompt_template_hash
-from .metrics import agreement, binarize
+from .metrics import MetricInputError, agreement, binarize
+from .readiness import (
+    DEFAULT_RULE,
+    READY,
+    Candidate,
+    DevEvidence,
+    ReadinessError,
+    assess,
+    finalize_report,
+    gate_problems,
+    heldout_composition,
+    nested_predictions,
+    report_digest,
+    stratum_of,
+)
 from .rubrics import bundle_hash
 from .splits import SplitPlan, select, verify
 from .taxonomy import canonical
 
 DATA = Path(__file__).parent / "data"
+
+#: Written by `readiness`, required by `test`. See `evalops/readiness.py`.
+READINESS_REPORT = "readiness_report.json"
+#: The track the release gate measures (`validate_bundle(require_headline=True)`), so the track
+#: readiness is assessed on. A different acceptance track is a contract change, not a flag.
+READINESS_TRACK = "headline"
+#: An override is a human accepting the risk of a one-shot measurement; it must say why.
+MIN_OVERRIDE_REASON_CHARS = 20
 
 #: Pre-declared candidate grid. gpt-5-mini was in the original plan but this key returns HTTP
 #: 404 for the gpt-5 family on /v1/chat/completions, so it is recorded as unavailable rather
@@ -663,7 +690,8 @@ def cmd_freeze(args: argparse.Namespace) -> int:
         return 1
     corpus, sp, dataset_hash = _load()
     dev = select(corpus.cases, sp, "dev")
-    labels = corpus.resolved_labels()
+    dev_ids = {c.case_id for c in dev}
+    labels = Corpus(dev, [a for a in corpus.annotations if a.case_id in dev_ids]).resolved_labels()
     experiments = json.loads((DATA / "dev_experiments.json").read_text(encoding="utf-8"))
     for key, expected in (("dataset_hash", dataset_hash), ("split_seed", sp.seed),
                           ("annotations_hash", corpus.annotations_hash),
@@ -712,6 +740,9 @@ def cmd_freeze(args: argparse.Namespace) -> int:
         min_kappa=args.min_kappa,
         annotations_hash=corpus.annotations_hash,
         split_membership_hash=sp.membership_hash,
+        selection_record={"track": args.select_on, "variant_override": args.variant,
+                          "candidate_configs": [item[1].as_dict() for item in usable],
+                          "rule": "max-dev-kappa; candidate-order ties; select_threshold-v1"},
         notes=(
             f"Threshold selected on the dev split only, optimising the '{args.select_on}' label "
             f"track (n={len(selection)}). Variant chosen by dev kappa among {len(usable)} "
@@ -738,6 +769,320 @@ def cmd_freeze(args: argparse.Namespace) -> int:
                   f"agreement={row['agreement']:.3f}")
     print(f"wrote {path}")
     return 0
+
+
+# ---------------------------------------------------------------- held-out readiness
+
+
+def _frozen_config(bundle: CalibrationBundle) -> JudgeConfig:
+    """The judge the bundle names, verified against its stored hash, as `cmd_test` rebuilds it."""
+    try:
+        config = JudgeConfig.from_dict(bundle.judge_config)
+    except (TypeError, ValueError) as e:
+        raise CalibrationError(f"cannot reconstruct the frozen judge config: {e}") from e
+    stored = str(bundle.judge_config.get("config_hash", ""))
+    if stored and config.config_hash != stored:
+        raise CalibrationError(
+            f"FROZEN CONFIG MISMATCH: the bundle recorded config_hash {stored}, reconstructing it "
+            f"here yields {config.config_hash}; something the judge depends on changed after freeze"
+        )
+    if config.variant_id != bundle.variant_id:
+        raise CalibrationError(
+            f"bundle variant_id {bundle.variant_id!r} != reconstructed {config.variant_id!r}")
+    return config
+
+
+def _binding_problems(
+    bundle: CalibrationBundle, corpus: Corpus, sp: SplitPlan, dataset_hash: str
+) -> list[str]:
+    checks = {
+        "bundle_id": (bundle.bundle_id, expected_bundle_id(bundle)),
+        "annotations_hash": (bundle.annotations_hash, corpus.annotations_hash),
+        "split_membership_hash": (bundle.split_membership_hash, sp.membership_hash),
+        "rubric_bundle_hash": (bundle.rubric_bundle_hash, bundle_hash()),
+        "split_seed": (bundle.split_seed, sp.seed),
+        "dataset_hash": (bundle.dataset_hash, dataset_hash),
+    }
+    return [f"frozen {name} missing or changed" for name, (a, b) in checks.items() if a != b]
+
+
+def _readiness_bindings(
+    bundle: CalibrationBundle, config: JudgeConfig, corpus: Corpus, sp: SplitPlan,
+    dataset_hash: str,
+) -> dict[str, Any]:
+    """Everything a readiness verdict is about. A report bound to anything else clears nothing."""
+    return {
+        "bundle_id": bundle.bundle_id, "variant_id": bundle.variant_id,
+        "threshold": bundle.threshold, "config_hash": config.config_hash,
+        "dataset_hash": dataset_hash, "annotations_hash": corpus.annotations_hash,
+        "split_membership_hash": sp.membership_hash, "rubric_bundle_hash": bundle_hash(),
+        "track": READINESS_TRACK,
+    }
+
+
+def _readiness_target(bundle: CalibrationBundle) -> float:
+    """The bar readiness is assessed against: never below the release policy.
+
+    A bundle frozen with `--min-kappa 0.3` records 0.3, and `validate_bundle` still rejects it
+    against the 0.74 policy afterwards. Assessing readiness at the bundle's lowered bar would let
+    that bundle spend the sealed split while being unable to pass the gate the split feeds.
+    """
+    return max(float(bundle.min_kappa), ROUTEBENCH_MIN_KAPPA)
+
+
+def _annotation_provenance(corpus: Corpus, case_ids: set[str]) -> dict[str, list[str]]:
+    """case_id -> provenance of each of its annotation records. Reads `case_id` and `provenance`
+    ONLY: which track a held-out case belongs to depends on WHO labelled it, never on the label.
+    """
+    index: dict[str, list[str]] = {}
+    for a in corpus.annotations:
+        if a.case_id in case_ids:
+            index.setdefault(a.case_id, []).append(a.provenance.value)
+    return index
+
+
+def _track_paired(
+    cases: list[Any], labels: dict[str, Any], cache: JudgmentCache, config: JudgeConfig
+) -> Paired:
+    judged = [j for c in _scope(cases, config) if (j := cache.get(_cache_key(c, config))) is not None]
+    return _track(pair(cases, labels, judged, split="dev"), READINESS_TRACK)
+
+
+def _selection_candidates(
+    dev: list[Any], labels: dict[str, Any], cache: JudgmentCache, frozen: JudgeConfig,
+    frozen_paired: Paired, corpus: Corpus, sp: SplitPlan, dataset_hash: str,
+    lineage: Any,
+) -> tuple[list[Candidate], dict[str, Any]]:
+    """The variants `freeze` chose among, as far as the record and the cache can reproduce them.
+
+    Every candidate must cover exactly the frozen variant's judged items, so the nested estimate
+    compares variants on the same documents. Anything that cannot be rebuilt is listed, not
+    dropped silently: any missing bound candidate prevents the OOF diagnostic. Even complete
+    replay cannot correct earlier adaptive model or prompt design on this development set.
+    """
+    info: dict[str, Any] = {
+        "method": ("nested document-grouped k-fold: freeze's rule (select_threshold per variant, "
+                   "then highest dev kappa, ties to the earlier variant) re-run on each fold's "
+                   "training documents; the held-out fold is predicted by that choice"),
+        "selection_track": READINESS_TRACK, "candidates": [], "excluded": [], "notes": [],
+    }
+    order: list[JudgeConfig] = []
+    if not isinstance(lineage, dict) or lineage.get("track") != "headline" or \
+            lineage.get("rule") != "max-dev-kappa; candidate-order ties; select_threshold-v1" or \
+            not isinstance(lineage.get("candidate_configs"), list) or not lineage["candidate_configs"]:
+        info["notes"].append("missing headline selection lineage; cannot replay this freeze")
+        return [], info
+    for raw in lineage["candidate_configs"]:
+        if not isinstance(raw, dict):
+            info["excluded"].append({"variant_id": None, "reason": "malformed candidate configuration"})
+            continue
+        try:
+            candidate = JudgeConfig.from_dict(raw)
+            if candidate.config_hash != raw.get("config_hash"):
+                raise ValueError("candidate identity changed since freeze")
+            order.append(candidate)
+        except (TypeError, ValueError) as e:
+            info["excluded"].append({"variant_id": raw.get("variant_id"), "reason": str(e)})
+    if not any(c.config_hash == frozen.config_hash for c in order):
+        info["notes"].append("frozen variant absent from its bound selection lineage")
+        return [], info
+    candidates: list[Candidate] = []
+    for config in order:
+        paired = (frozen_paired if config.config_hash == frozen.config_hash
+                  else _track_paired(dev, labels, cache, config))
+        if paired.unjudged or paired.case_ids != frozen_paired.case_ids:
+            info["excluded"].append({
+                "variant_id": config.variant_id,
+                "reason": (f"dev coverage on the gated track is {len(paired)}/"
+                           f"{len(paired) + len(paired.unjudged)}, or on different items"),
+            })
+            continue
+        candidates.append(Candidate(config.variant_id, tuple(paired.judge_scores)))
+        info["candidates"].append(config.variant_id)
+    return candidates, info
+
+
+def cmd_readiness(args: argparse.Namespace) -> int:
+    """May the sealed held-out split be spent on the frozen bundle? No provider calls.
+
+    Reads the frozen bundle, dev judgments from the cache, dev labels, and the held-out split's
+    label-blind composition. Writes `readiness_report.json` and exits 0 only for READY. An
+    existing report is archived after bundle preflight and before recomputation. A failed
+    recomputation leaves no current report. Earlier preflight failures can leave the old
+    report, but test independently validates both bundle and source evidence.
+    """
+    bundle_path = DATA / "calibration_bundle.json"
+    if not bundle_path.exists():
+        print("no calibration_bundle.json; run `freeze` first", file=sys.stderr)
+        return 1
+    bundle = CalibrationBundle.load(bundle_path)
+    if bundle.frozen:
+        print("REFUSING: this bundle already carries a measured test_result. Readiness is decided "
+              "before the held-out measurement and cannot be re-derived after seeing it.",
+              file=sys.stderr)
+        return 1
+    corpus, sp, dataset_hash = _load()
+    problems = _binding_problems(bundle, corpus, sp, dataset_hash)
+    if problems:
+        for problem in problems:
+            print(f"{problem}; refusing to assess readiness", file=sys.stderr)
+        return 1
+    config = _frozen_config(bundle)
+
+    report_path = DATA / READINESS_REPORT
+    if report_path.exists():
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+        archived = report_path.with_name(f"readiness_report.previous.{stamp}.json")
+        archived.write_text(report_path.read_text(encoding="utf-8"), encoding="utf-8")
+        report_path.unlink()
+        print(f"archived the previous readiness report to {archived}")
+
+    report = _compute_readiness_report(bundle, config, corpus, sp, dataset_hash)
+    report_path.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+
+    est = report["estimates"]
+
+    def show(value: Any) -> str:
+        return "undefined" if value is None else f"{value:.4f}"
+
+    def ci(key: str) -> str:
+        interval = est.get(key) or {}
+        if not interval.get("usable"):
+            return ""
+        return f"  95% [{interval['low']:.3f}, {interval['high']:.3f}]"
+
+    print(f"readiness: {report['verdict']}  bundle {bundle.bundle_id}  {bundle.variant_id} "
+          f"@ threshold {bundle.threshold}  (min_kappa {_readiness_target(bundle)})")
+    mix = ", ".join(f"{s} {row['weight']:.0%} ({row['groups']} docs)"
+                    for s, row in report["heldout_composition"].items())
+    print(f"  held-out mix: {mix}")
+    print(f"  dev kappa, frozen threshold (in-sample)      {show(est['dev_kappa_in_sample'])}")
+    print(f"  reweighted to held-out mix (in-sample)       "
+          f"{show(est['reweighted_kappa_in_sample'])}{ci('reweighted_kappa_in_sample_interval')}")
+    print(f"  reweighted to held-out mix (OOF diagnostic) "
+          f"{show(est['reweighted_kappa_honest'])}{ci('reweighted_kappa_honest_interval')}")
+    print(f"  Conditional bootstrap pass fraction >= {_readiness_target(bundle)}: OOF "
+          f"{show(est['p_pass_honest'])}, in-sample {show(est['p_pass_in_sample'])}")
+    print("  Exploratory policy only: not a calibrated pass probability, unbiased estimate, or achievable-score ceiling.")
+    for reason in report["reasons"]:
+        print(f"  - {reason}")
+    print(f"wrote {report_path}")
+    return 0 if report["verdict"] == READY else 1
+
+
+def _compute_readiness_report(
+    bundle: CalibrationBundle, config: JudgeConfig, corpus: Corpus, sp: SplitPlan, dataset_hash: str,
+) -> dict[str, Any]:
+    """Recompute from cached dev evidence only; no inference and no artifact writes."""
+    dev = select(corpus.cases, sp, "dev")
+    dev_ids = {c.case_id for c in dev}
+    # Dev labels are resolved from dev annotations alone, so no held-out label value is read --
+    # not even inside `resolved_labels`' unanimity check.
+    labels = Corpus(dev, [a for a in corpus.annotations if a.case_id in dev_ids]).resolved_labels()
+    cache = JudgmentCache(DATA / "judgment_cache.jsonl")
+    frozen_paired = _track_paired(dev, labels, cache, config)
+    try:
+        in_sample = binarize(frozen_paired.judge_scores, bundle.threshold)
+    except MetricInputError as e:
+        raise CalibrationError(f"dev scores of the frozen variant are invalid: {e}") from e
+    candidates, selection = _selection_candidates(
+        dev, labels, cache, config, frozen_paired, corpus, sp, dataset_hash, bundle.selection_record)
+    honest: list[int] | None = None
+    honest_note = ""
+    try:
+        if selection["excluded"]:
+            raise ReadinessError("not all frozen selection candidates can be replayed")
+        honest, folds = nested_predictions(frozen_paired.human, frozen_paired.groups, candidates,
+                                           folds=DEFAULT_RULE.folds)
+        selection["folds"] = folds
+    except ReadinessError as e:
+        honest_note = str(e)
+
+    test_cases = select(corpus.cases, sp, "test")
+    provenance = _annotation_provenance(corpus, {c.case_id for c in test_cases})
+    track_values = {p.value for p in HEADLINE_PROVENANCE}
+    population = [c for c in test_cases if track_values & set(provenance.get(c.case_id, []))]
+    by_id = {c.case_id: c for c in dev}
+    evidence = DevEvidence(
+        case_ids=list(frozen_paired.case_ids), human=list(frozen_paired.human),
+        groups=list(frozen_paired.groups),
+        strata=[stratum_of(by_id[cid]) for cid in frozen_paired.case_ids],
+        in_sample=in_sample, honest=honest, unjudged=len(frozen_paired.unjudged),
+        honest_note=honest_note, selection=selection,
+    )
+    try:
+        core = assess(evidence, heldout_composition(population), min_kappa=_readiness_target(bundle))
+    except ReadinessError as e:
+        raise CalibrationError(f"readiness could not be assessed: {e}") from e
+    multi = sum(1 for c in population if len(provenance.get(c.case_id, [])) > 1)
+    if multi:
+        core["notes"].append(
+            f"{multi} held-out cases carry more than one annotation; any whose raters disagree "
+            "without adjudication will block test instead of shrinking its denominator; "
+            "composition is provenance-filtered, not a check of resolved held-out labels")
+    return finalize_report(
+        core, bindings=_readiness_bindings(bundle, config, corpus, sp, dataset_hash),
+        computed_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        software={"python": sys.version.split()[0], "platform": platform.platform()},
+    )
+
+
+def _readiness_clearance(
+    bundle: CalibrationBundle, config: JudgeConfig, corpus: Corpus, sp: SplitPlan,
+    dataset_hash: str, override: str | None,
+) -> dict[str, Any] | None:
+    """A record to store with the test result, or None after printing why the split stays sealed."""
+    path = DATA / READINESS_REPORT
+    report: Any = None
+    if not path.exists():
+        problems = [f"no {READINESS_REPORT}; run `readiness` for this bundle first"]
+    else:
+        try:
+            report = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            problems = [f"{READINESS_REPORT} is unreadable: {type(e).__name__}: {e}"]
+        else:
+            problems = gate_problems(
+                report, bindings=_readiness_bindings(bundle, config, corpus, sp, dataset_hash),
+                min_kappa=_readiness_target(bundle))
+    # A content hash is not an attestation. Rebuild the report from source evidence,
+    # so editing all summary fields and recomputing report_id cannot clear test.
+    if not problems:
+        try:
+            fresh = _compute_readiness_report(bundle, config, corpus, sp, dataset_hash)
+            if report_digest(fresh) != report_digest(report):
+                problems.append("readiness report does not reproduce from current cached dev evidence")
+            problems += gate_problems(fresh, bindings=_readiness_bindings(bundle, config, corpus, sp, dataset_hash),
+                                      min_kappa=_readiness_target(bundle))
+        except (CalibrationError, ReadinessError, ValueError, TypeError, KeyError, OSError) as e:
+            problems.append(f"cannot reproduce readiness from source evidence: {e}")
+    report_id = report.get("report_id") if isinstance(report, dict) else None
+    if not problems:
+        est = report.get("estimates", {})
+        return {"override": False, "verdict": READY, "report_id": report_id,
+                "reweighted_kappa_honest": est.get("reweighted_kappa_honest"),
+                "p_pass_honest": est.get("p_pass_honest")}
+    reason = (override or "").strip()
+    if len(reason) >= MIN_OVERRIDE_REASON_CHARS:
+        print("WARNING: held-out readiness is NOT established; measuring on a recorded human "
+              "override. The override and its reason are written into the test result.",
+              file=sys.stderr)
+        for problem in problems:
+            print(f"  - {problem}", file=sys.stderr)
+        return {"override": True, "reason": reason, "problems": problems, "report_id": report_id,
+                "by": getpass.getuser(), "host": socket.gethostname(),
+                "at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+    print("REFUSING: the held-out split stays sealed; readiness is not established.",
+          file=sys.stderr)
+    for problem in problems:
+        print(f"  - {problem}", file=sys.stderr)
+    if override is not None:
+        print(f"  --override-readiness needs a reason of at least {MIN_OVERRIDE_REASON_CHARS} "
+              "characters.", file=sys.stderr)
+    print("  Run `readiness`. A person who accepts the risk of a one-shot measurement anyway may "
+          "pass --override-readiness \"<reason>\"; it is recorded in the artifact.",
+          file=sys.stderr)
+    return None
 
 
 def cmd_test(args: argparse.Namespace) -> int:
@@ -807,8 +1152,24 @@ def cmd_test(args: argparse.Namespace) -> int:
     print(f"  reconstructed frozen judge {config.variant_id} "
           f"(config_hash {config.config_hash}, verified against the bundle)")
 
+    # The sealed split is spent only on a bundle whose own dev evidence makes a pass plausible
+    # (see evalops/readiness.py), or on a human's recorded override. Checked before any
+    # inference, after every identity check above, so those keep refusing first.
+    clearance = _readiness_clearance(bundle, config, corpus, sp, dataset_hash,
+                                     getattr(args, "override_readiness", None))
+    if clearance is None:
+        return 1
+
     test_cases = select(corpus.cases, sp, "test")
     labels = corpus.resolved_labels()
+    # Never silently shrink the acceptance denominator when a second annotation
+    # introduces an unresolved disagreement. This guard precedes provider calls.
+    headline_ids = {a.case_id for a in corpus.annotations if a.provenance in HEADLINE_PROVENANCE}
+    unresolved = [c.case_id for c in test_cases if c.case_id in headline_ids and c.case_id not in labels]
+    if unresolved:
+        print(f"REFUSING: {len(unresolved)} headline test cases have unresolved labels; "
+              "the acceptance population cannot silently shrink. Keep review labels separate.", file=sys.stderr)
+        return 1
     cache = JudgmentCache(DATA / "judgment_cache.jsonl")
     meter = SpendMeter(cap_usd=args.budget, reserve_usd=0.02)
     print(f"test: {len(test_cases)} cases, variant {bundle.variant_id}, "
@@ -840,6 +1201,7 @@ def cmd_test(args: argparse.Namespace) -> int:
     p = pair(population, labels, judgments, split="test")
     result = evaluate(bundle, p, bootstrap=args.bootstrap)
     result["run_summary"] = summary.as_dict()
+    result["readiness"] = clearance
     bundle.test_result = result
     if args.remeasure:
         # Never overwrite an existing measurement; a re-measurement is a separate artifact so
@@ -874,7 +1236,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name, fn in (("plan", cmd_plan), ("dev", cmd_dev), ("verify", cmd_verify), ("freeze", cmd_freeze),
-                     ("test", cmd_test)):
+                     ("readiness", cmd_readiness), ("test", cmd_test)):
         p = sub.add_parser(name)
         p.set_defaults(fn=fn)
         p.add_argument("--budget", type=float, default=25.0, help="hard spend cap in USD")
@@ -888,11 +1250,14 @@ def main(argv: list[str] | None = None) -> int:
                            help="replace an existing MEASURED bundle, archiving it first")
         if name in {"plan", "dev", "freeze"}:
             p.add_argument("--select-on", choices=["pooled", "headline", "oracle"],
-                           default="pooled",
+                           default="headline" if name == "freeze" else "pooled",
                            help="which dev label track the threshold is optimised against")
         if name == "test":
             p.add_argument("--bootstrap", type=int, default=2000)
             p.add_argument("--remeasure", action="store_true")
+            p.add_argument("--override-readiness", default=None, metavar="REASON",
+                           help="measure without a READY readiness report; a person's stated "
+                                "reason (>= 20 characters), written into the test result")
     args = ap.parse_args(argv)
     try:
         return int(args.fn(args))

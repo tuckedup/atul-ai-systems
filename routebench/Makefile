@@ -3,7 +3,7 @@
 PY := ../.venv/Scripts/python.exe
 ROOT := cd .. && PYTHONPATH=routebench .venv/Scripts/python.exe
 
-.PHONY: test lint bench corpus splits calibrate-dev calibrate-verify calibrate-freeze calibrate-test calibrate-check probe-combiners annotate-export annotate annotate-status
+.PHONY: test lint bench corpus splits calibrate-dev calibrate-verify calibrate-freeze calibrate-readiness calibrate-test calibrate-check probe-combiners annotate-export annotate annotate-status
 
 test:  ; $(ROOT) -m pytest routebench/tests -q --basetemp .local/pytest-routebench
 ## Lints the WHOLE routebench tree, tests included. The narrower `gateway evalops` scope
@@ -29,7 +29,11 @@ calibrate-dev:    ; $(ROOT) -m evalops.run_calibration dev --budget 25
 ## it. `config_hash` covers the prompt scaffolding, so editing a template after a run renames
 ## every judge in the record and every cache lookup silently misses. Run this before `freeze`.
 calibrate-verify: ; $(ROOT) -m evalops.run_calibration verify
-calibrate-freeze: ; $(ROOT) -m evalops.run_calibration freeze
+calibrate-freeze: ; $(ROOT) -m evalops.run_calibration freeze --select-on headline
+## Offline, no provider calls: may the sealed test split be spent on the frozen bundle? Nested
+## selection diagnostics reweighted to the test mix, plus assumption-dependent bootstrap
+## scenarios (not calibrated pass probabilities). Test refuses without READY or recorded override.
+calibrate-readiness: ; $(ROOT) -m evalops.run_calibration readiness
 calibrate-test:   ; $(ROOT) -m evalops.run_calibration test --budget 10
 ## Validate the frozen artifact the way CI and the promotion gate do. Exits non-zero on failure.
 calibrate-check:  ; $(ROOT) -m evalops.calibrate routebench/evalops/data/calibration_bundle.json
