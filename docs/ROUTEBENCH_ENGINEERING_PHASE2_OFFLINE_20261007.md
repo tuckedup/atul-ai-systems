@@ -1,0 +1,31 @@
+# RouteBench engineering phase 2: offline production mechanics (2026-10-07)
+
+**Scope.** The "safe next sequence" step 1 from `ROUTEBENCH_ENGINEERING_COMPLETION_STATUS.md`, implemented and verified **offline only**: fake providers, `httpx.MockTransport`, temporary SQLite and files. No provider call, GPU work, Docker, download, purchase, label edit, held-out access or commit. Changes are local and uncommitted, on top of the earlier engineering phase's uncommitted work. **This does not change the research result: the original mixed-benchmark kappa >= 0.74 target remains unmet, and none of the live-measurement criteria below are verified.**
+
+## What was added
+| Open item in the handoff | What now exists | Where | Tests |
+|---|---|---|---|
+| Tenant budgets are process-local and reset on restart | `DurableBudgetLedger` + `DurableTenantBudget`: every reservation is fsynced BEFORE it is granted, every settlement before the books change; unsettled reservations at startup are charged at their bound (a crash can only over-count); strict parse that refuses a corrupt ledger and leaves it untouched; one owner process (lock file; takeover is explicit and refused while the recorded pid is alive); optional `budget_ledger` in the runtime config; released on shutdown | `gateway/durable_budget.py`; small hooks in `gateway/bootstrap.py`, `gateway/app.py` | `test_gateway_durable_budget.py` (11), `test_gateway_durable_bootstrap.py` (5) |
+| `x-tenant-id` is a trusted-edge assertion, not authentication | `TenantAuth`: optional bearer keys (only SHA-256 digests in configuration), tenant derived from the key, a conflicting `x-tenant-id` refused (403), missing/invalid key 401, `/v1/models` and `/v1/usage` protected, health/readiness/metrics left open for probes; startup requires a spending limit for every authenticated tenant | `gateway/auth.py`; hooks in `gateway/app.py`, `gateway/bootstrap.py` | `test_gateway_auth.py` (13) |
+| Downstream SSE is buffered, not native streaming | `OpenAICompatibleBackend.stream_chat` + `gateway/streaming.py`: true incremental delivery, opt-in (`native_streaming`) and only when every backend client implements `stream_chat`; the bound is reserved first; upstream always asked for usage; final usage settles the real cost (overshoot recorded as a breach); no usage, mid-stream failure or client disconnect settles the bound; failures before the first chunk reroute, none after; streams never cached; admission released exactly once; `routebench_ttft_seconds` and `routebench_streams_total` exported | `gateway/streaming.py`, `gateway/backends/base.py`; hook in `gateway/app.py` | `test_gateway_native_streaming.py` (15) |
+| Controller has no restart-resume and no observation worker | `RolloutController.resume` rebuilds the active rollout from SQL (re-validating calibration and registry quality, reloading the current window and every observation id, resynchronising the router, enforcing an expired deadline so downtime cannot extend a canary, restoring the baseline if stored weights diverged); non-wall-clock records are refused and `rollback_active` restores their baseline; `RolloutWorker` ingests from an injected source, skips duplicates, quarantines invalid observations, and ticks every step so a dead telemetry source cannot keep a canary alive | `evalops/rollout_controller.py` (additive methods), `evalops/rollout_worker.py`, `gateway/state.py` (two read methods) | `test_rollout_resume_and_worker.py` (14) |
+
+## Verification boundary (what these tests do and do not show)
+- They show the mechanics against fakes: budgets survive a simulated restart; a crash charges the bound; spoofed tenant ids are refused; streamed chunks arrive separately and spend is bounded in every failure path; a restarted rollout keeps its window, its deadline and its baseline.
+- They do **not** show provider behaviour: the streaming adapter was exercised only against `httpx.MockTransport`, not a real endpoint or the real OpenAI SDK; stream usage formats of Anthropic-compatible or vLLM endpoints are untested.
+- They do **not** show latency, TTFT or throughput (the TTFT histogram is gateway-observed and was fed fake timings), a measured rollback time, or any quality number.
+- Keys, ledger and database are local files; this is single-host, single-worker durability, not a distributed commit.
+
+## Remaining open (unchanged or newly noted)
+1. **Real OpenAI SDK smoke:** the `openai` package is not installed and installing it is a download I was not authorised to make; `test_openai_sdk_compat.py` remains SDK-shaped only.
+2. Multi-worker budgets need a shared store; the ledger lock deliberately refuses to share a file between workers.
+3. The observation worker is a library loop; nothing starts it in the application, and no real telemetry source exists. Resume needs a wall-clock `clock` and wall-clock timestamps in the recorded rollout.
+4. Authentication has no rate limiting, key rotation tooling or TLS (terminate TLS at the edge); `/metrics`, `/healthz` and `/readyz` are unauthenticated by design.
+5. Anthropic/vLLM adapters inherit `stream_chat` as OpenAI-wire clients; whether those endpoints honour `stream_options.include_usage` is unverified. Without it a stream is charged at the bound.
+6. Everything in the handoff's "acceptance work still open" table that needs live backends, Docker, Phoenix, a bound calibration artifact or real canary evidence is **still open**, as are the original benchmark target and the résumé figures.
+
+## Files changed or added in this phase
+New: `gateway/durable_budget.py`, `gateway/auth.py`, `gateway/streaming.py`, `evalops/rollout_worker.py`, five test files. Additive edits: `gateway/app.py` (runtime fields, tenant resolution, shutdown, stream branch), `gateway/bootstrap.py` (ledger, digests, flag), `gateway/backends/base.py` (`stream_chat`), `gateway/state.py` (two reads), `evalops/rollout_controller.py` (`resume`, `rollback_active`). Frozen research protocols and artifacts were not touched and still verify.
+
+## Verification results (2026-10-07)
+Full suite, run once, serially and detached after a memory check: **1587 passed, 5 warnings, 595.92 s**; `ruff check routebench` clean. The five new test files hold 58 tests (11 + 5 + 13 + 15 + 14). All frozen research protocols (judge-v19, claim-fidelity v1 unrun and v2, srcint-v3) still verify.

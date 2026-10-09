@@ -1,5 +1,15 @@
 # RouteBench status
 
+## Current evidence override
+
+The checked historical entries below are retained as history, **not current acceptance proof**. The original mixed groundedness κ >= 0.74 remains unmet and the held-out test has not been run. Reveal's historical-probe κ = 0.828125 is a separate, inspected-dataset result.
+
+Local gateway, budget/cache, tracing, quality-publication and persisted caller-driven rollout safeguards have been implemented and tested with fake providers. Since then (2026-10-07/08, offline, fake providers): durable database-backed tenant budgets with fail-closed ledger validation, bearer-key tenant authentication, opt-in native token streaming with safe settlement, and rollout resume plus an observation worker were added (see `../docs/ROUTEBENCH_DURABLE_BUDGETS_DB_20261007.md` and `../docs/ROUTEBENCH_ENGINEERING_PHASE2_OFFLINE_20261007.md`). Production readiness, three live measured backends, the full inference matrix, real online rollback, a real OpenAI-SDK smoke test, PostgreSQL verification and a measured CI regression gate remain open. M2/M3 and Phoenix Docker-dependent proof are BLOCKED: requires docker. No forbidden services were checked or started.
+
+See `../docs/ROUTEBENCH_ENGINEERING_COMPLETION_STATUS.md` for the current handoff, verification scope and remaining deployment limits. Older test counts and performance figures below do not describe this engineering phase.
+
+## Historical entries (superseded for current acceptance)
+
 - [x] M1 gateway parity — request, streaming SSE, model list, health, metrics, trace/audit integration, and OpenAI wire-shape tests pass
 - [x] M2 backends + vLLM — provider adapters and live self-hosted fallback-model proof completed; vLLM 0.29 was incompatible with Docker Desktop/WSL UVA, so measurements used v0.10.2's V0 engine
 - [x] M3 inference experiments — four 50-request GPU configurations measured; p95 TTFT ranged from 69.065400 to 242.420700 ms, throughput from 10.349351 to 24.807449 tokens/s, TPOT from 18.141688 to 20.138633 ms, and peak VRAM from 6,488 to 6,490 MiB
