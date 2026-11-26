@@ -1,0 +1,327 @@
+{
+  "baseline": {
+    "count": 40,
+    "correct": 2,
+    "accuracy": 0.05,
+    "macro_f1": 0.042483660130718956,
+    "invalid": 20,
+    "per_class": {
+      "classify": {
+        "support": 5,
+        "correct": 0,
+        "f1": 0.0
+      },
+      "extract": {
+        "support": 5,
+        "correct": 0,
+        "f1": 0.0
+      },
+      "summarize": {
+        "support": 5,
+        "correct": 0,
+        "f1": 0.0
+      },
+      "code": {
+        "support": 5,
+        "correct": 0,
+        "f1": 0.0
+      },
+      "sql": {
+        "support": 5,
+        "correct": 0,
+        "f1": 0.0
+      },
+      "reason": {
+        "support": 5,
+        "correct": 1,
+        "f1": 0.11764705882352941
+      },
+      "tool_use": {
+        "support": 5,
+        "correct": 1,
+        "f1": 0.2222222222222222
+      },
+      "chat": {
+        "support": 5,
+        "correct": 0,
+        "f1": 0.0
+      }
+    },
+    "confusion": {
+      "classify": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 0,
+        "tool_use": 0,
+        "chat": 1,
+        "INVALID": 4
+      },
+      "extract": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 3,
+        "tool_use": 1,
+        "chat": 0,
+        "INVALID": 1
+      },
+      "summarize": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 4,
+        "tool_use": 0,
+        "chat": 0,
+        "INVALID": 1
+      },
+      "code": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 1,
+        "reason": 1,
+        "tool_use": 1,
+        "chat": 0,
+        "INVALID": 2
+      },
+      "sql": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 1,
+        "tool_use": 0,
+        "chat": 0,
+        "INVALID": 4
+      },
+      "reason": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 1,
+        "tool_use": 0,
+        "chat": 1,
+        "INVALID": 3
+      },
+      "tool_use": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 1,
+        "reason": 2,
+        "tool_use": 1,
+        "chat": 0,
+        "INVALID": 1
+      },
+      "chat": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 0,
+        "tool_use": 1,
+        "chat": 0,
+        "INVALID": 4
+      }
+    }
+  },
+  "tuned": {
+    "count": 40,
+    "correct": 32,
+    "accuracy": 0.8,
+    "macro_f1": 0.8275301087801088,
+    "invalid": 2,
+    "per_class": {
+      "classify": {
+        "support": 5,
+        "correct": 4,
+        "f1": 0.8888888888888888
+      },
+      "extract": {
+        "support": 5,
+        "correct": 4,
+        "f1": 0.8888888888888888
+      },
+      "summarize": {
+        "support": 5,
+        "correct": 4,
+        "f1": 0.8888888888888888
+      },
+      "code": {
+        "support": 5,
+        "correct": 4,
+        "f1": 0.8888888888888888
+      },
+      "sql": {
+        "support": 5,
+        "correct": 5,
+        "f1": 0.7692307692307693
+      },
+      "reason": {
+        "support": 5,
+        "correct": 5,
+        "f1": 1.0
+      },
+      "tool_use": {
+        "support": 5,
+        "correct": 3,
+        "f1": 0.75
+      },
+      "chat": {
+        "support": 5,
+        "correct": 3,
+        "f1": 0.5454545454545454
+      }
+    },
+    "confusion": {
+      "classify": {
+        "classify": 4,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 0,
+        "tool_use": 0,
+        "chat": 1,
+        "INVALID": 0
+      },
+      "extract": {
+        "classify": 0,
+        "extract": 4,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 0,
+        "tool_use": 0,
+        "chat": 0,
+        "INVALID": 1
+      },
+      "summarize": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 4,
+        "code": 0,
+        "sql": 0,
+        "reason": 0,
+        "tool_use": 0,
+        "chat": 1,
+        "INVALID": 0
+      },
+      "code": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 4,
+        "sql": 1,
+        "reason": 0,
+        "tool_use": 0,
+        "chat": 0,
+        "INVALID": 0
+      },
+      "sql": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 5,
+        "reason": 0,
+        "tool_use": 0,
+        "chat": 0,
+        "INVALID": 0
+      },
+      "reason": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 0,
+        "reason": 5,
+        "tool_use": 0,
+        "chat": 0,
+        "INVALID": 0
+      },
+      "tool_use": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 1,
+        "reason": 0,
+        "tool_use": 3,
+        "chat": 1,
+        "INVALID": 0
+      },
+      "chat": {
+        "classify": 0,
+        "extract": 0,
+        "summarize": 0,
+        "code": 0,
+        "sql": 1,
+        "reason": 0,
+        "tool_use": 0,
+        "chat": 3,
+        "INVALID": 1
+      }
+    }
+  },
+  "paired": {
+    "fixed": [
+      "test-classify-00-0",
+      "test-classify-01-0",
+      "test-classify-02-0",
+      "test-classify-03-0",
+      "test-extract-00-0",
+      "test-extract-01-0",
+      "test-extract-02-0",
+      "test-extract-03-0",
+      "test-summarize-01-0",
+      "test-summarize-02-0",
+      "test-summarize-03-0",
+      "test-summarize-04-0",
+      "test-code-00-0",
+      "test-code-01-0",
+      "test-code-03-0",
+      "test-code-04-0",
+      "test-sql-00-0",
+      "test-sql-01-0",
+      "test-sql-02-0",
+      "test-sql-03-0",
+      "test-sql-04-0",
+      "test-reason-00-0",
+      "test-reason-01-0",
+      "test-reason-02-0",
+      "test-reason-03-0",
+      "test-tool_use-03-0",
+      "test-tool_use-04-0",
+      "test-chat-01-0",
+      "test-chat-02-0",
+      "test-chat-04-0"
+    ],
+    "regressed": [],
+    "both_wrong": [
+      "test-classify-04-0",
+      "test-extract-04-0",
+      "test-summarize-00-0",
+      "test-code-02-0",
+      "test-tool_use-00-0",
+      "test-tool_use-01-0",
+      "test-chat-00-0",
+      "test-chat-03-0"
+    ]
+  },
+  "gate_passed": false,
+  "selected_epoch": 2
+}

@@ -1,0 +1,240 @@
+{"id": "train-classify-00-0", "group": "train-classify-00", "text": "Tag this review as positive or negative: The service was excellent.", "label": "classify"}
+{"id": "train-classify-00-1", "group": "train-classify-00", "text": "Please help with this request: Tag this review as positive or negative: The service was excellent.", "label": "classify"}
+{"id": "train-classify-00-2", "group": "train-classify-00", "text": "Task for you: Tag this review as positive or negative: The service was excellent.", "label": "classify"}
+{"id": "train-classify-01-0", "group": "train-classify-01", "text": "Is this message spam? Claim your free prize by clicking here.", "label": "classify"}
+{"id": "train-classify-01-1", "group": "train-classify-01", "text": "Please help with this request: Is this message spam? Claim your free prize by clicking here.", "label": "classify"}
+{"id": "train-classify-01-2", "group": "train-classify-01", "text": "Task for you: Is this message spam? Claim your free prize by clicking here.", "label": "classify"}
+{"id": "train-classify-02-0", "group": "train-classify-02", "text": "Categorize this ticket: My password reset link expired.", "label": "classify"}
+{"id": "train-classify-02-1", "group": "train-classify-02", "text": "Please help with this request: Categorize this ticket: My password reset link expired.", "label": "classify"}
+{"id": "train-classify-02-2", "group": "train-classify-02", "text": "Task for you: Categorize this ticket: My password reset link expired.", "label": "classify"}
+{"id": "train-classify-03-0", "group": "train-classify-03", "text": "Identify the language of this sentence: Bonjour tout le monde.", "label": "classify"}
+{"id": "train-classify-03-1", "group": "train-classify-03", "text": "Please help with this request: Identify the language of this sentence: Bonjour tout le monde.", "label": "classify"}
+{"id": "train-classify-03-2", "group": "train-classify-03", "text": "Task for you: Identify the language of this sentence: Bonjour tout le monde.", "label": "classify"}
+{"id": "train-classify-04-0", "group": "train-classify-04", "text": "Label the topic of this headline: Parliament passes the budget.", "label": "classify"}
+{"id": "train-classify-04-1", "group": "train-classify-04", "text": "Please help with this request: Label the topic of this headline: Parliament passes the budget.", "label": "classify"}
+{"id": "train-classify-04-2", "group": "train-classify-04", "text": "Task for you: Label the topic of this headline: Parliament passes the budget.", "label": "classify"}
+{"id": "train-classify-05-0", "group": "train-classify-05", "text": "Mark this feedback urgent or routine: The production site is down.", "label": "classify"}
+{"id": "train-classify-05-1", "group": "train-classify-05", "text": "Please help with this request: Mark this feedback urgent or routine: The production site is down.", "label": "classify"}
+{"id": "train-classify-05-2", "group": "train-classify-05", "text": "Task for you: Mark this feedback urgent or routine: The production site is down.", "label": "classify"}
+{"id": "train-classify-06-0", "group": "train-classify-06", "text": "Classify the tone: I cannot believe you lost my package again!", "label": "classify"}
+{"id": "train-classify-06-1", "group": "train-classify-06", "text": "Please help with this request: Classify the tone: I cannot believe you lost my package again!", "label": "classify"}
+{"id": "train-classify-06-2", "group": "train-classify-06", "text": "Task for you: Classify the tone: I cannot believe you lost my package again!", "label": "classify"}
+{"id": "train-classify-07-0", "group": "train-classify-07", "text": "Assign an intent to: How do I cancel my subscription?", "label": "classify"}
+{"id": "train-classify-07-1", "group": "train-classify-07", "text": "Please help with this request: Assign an intent to: How do I cancel my subscription?", "label": "classify"}
+{"id": "train-classify-07-2", "group": "train-classify-07", "text": "Task for you: Assign an intent to: How do I cancel my subscription?", "label": "classify"}
+{"id": "train-classify-08-0", "group": "train-classify-08", "text": "Does this text describe a bug or a feature? Add dark mode.", "label": "classify"}
+{"id": "train-classify-08-1", "group": "train-classify-08", "text": "Please help with this request: Does this text describe a bug or a feature? Add dark mode.", "label": "classify"}
+{"id": "train-classify-08-2", "group": "train-classify-08", "text": "Task for you: Does this text describe a bug or a feature? Add dark mode.", "label": "classify"}
+{"id": "train-classify-09-0", "group": "train-classify-09", "text": "Sort this product into a category: wireless noise-cancelling headphones.", "label": "classify"}
+{"id": "train-classify-09-1", "group": "train-classify-09", "text": "Please help with this request: Sort this product into a category: wireless noise-cancelling headphones.", "label": "classify"}
+{"id": "train-classify-09-2", "group": "train-classify-09", "text": "Task for you: Sort this product into a category: wireless noise-cancelling headphones.", "label": "classify"}
+{"id": "train-extract-00-0", "group": "train-extract-00", "text": "Return the email address from: Contact Mira at mira@example.test.", "label": "extract"}
+{"id": "train-extract-00-1", "group": "train-extract-00", "text": "Please help with this request: Return the email address from: Contact Mira at mira@example.test.", "label": "extract"}
+{"id": "train-extract-00-2", "group": "train-extract-00", "text": "Task for you: Return the email address from: Contact Mira at mira@example.test.", "label": "extract"}
+{"id": "train-extract-01-0", "group": "train-extract-01", "text": "Pull the date from: Our meeting is scheduled for March 14.", "label": "extract"}
+{"id": "train-extract-01-1", "group": "train-extract-01", "text": "Please help with this request: Pull the date from: Our meeting is scheduled for March 14.", "label": "extract"}
+{"id": "train-extract-01-2", "group": "train-extract-01", "text": "Task for you: Pull the date from: Our meeting is scheduled for March 14.", "label": "extract"}
+{"id": "train-extract-02-0", "group": "train-extract-02", "text": "List the names in: Alice and Bob attended the workshop.", "label": "extract"}
+{"id": "train-extract-02-1", "group": "train-extract-02", "text": "Please help with this request: List the names in: Alice and Bob attended the workshop.", "label": "extract"}
+{"id": "train-extract-02-2", "group": "train-extract-02", "text": "Task for you: List the names in: Alice and Bob attended the workshop.", "label": "extract"}
+{"id": "train-extract-03-0", "group": "train-extract-03", "text": "Find the invoice amount in: Invoice 42 totals $17.50.", "label": "extract"}
+{"id": "train-extract-03-1", "group": "train-extract-03", "text": "Please help with this request: Find the invoice amount in: Invoice 42 totals $17.50.", "label": "extract"}
+{"id": "train-extract-03-2", "group": "train-extract-03", "text": "Task for you: Find the invoice amount in: Invoice 42 totals $17.50.", "label": "extract"}
+{"id": "train-extract-04-0", "group": "train-extract-04", "text": "Return the tracking number from: Your parcel ID is ZX1234.", "label": "extract"}
+{"id": "train-extract-04-1", "group": "train-extract-04", "text": "Please help with this request: Return the tracking number from: Your parcel ID is ZX1234.", "label": "extract"}
+{"id": "train-extract-04-2", "group": "train-extract-04", "text": "Task for you: Return the tracking number from: Your parcel ID is ZX1234.", "label": "extract"}
+{"id": "train-extract-05-0", "group": "train-extract-05", "text": "Copy the phone number: Call support at 555-0100.", "label": "extract"}
+{"id": "train-extract-05-1", "group": "train-extract-05", "text": "Please help with this request: Copy the phone number: Call support at 555-0100.", "label": "extract"}
+{"id": "train-extract-05-2", "group": "train-extract-05", "text": "Task for you: Copy the phone number: Call support at 555-0100.", "label": "extract"}
+{"id": "train-extract-06-0", "group": "train-extract-06", "text": "Find the city in this address: 12 Oak Street, Denver, CO.", "label": "extract"}
+{"id": "train-extract-06-1", "group": "train-extract-06", "text": "Please help with this request: Find the city in this address: 12 Oak Street, Denver, CO.", "label": "extract"}
+{"id": "train-extract-06-2", "group": "train-extract-06", "text": "Task for you: Find the city in this address: 12 Oak Street, Denver, CO.", "label": "extract"}
+{"id": "train-extract-07-0", "group": "train-extract-07", "text": "Get the SKU from: Blue mug, SKU MUG-81, price $9.", "label": "extract"}
+{"id": "train-extract-07-1", "group": "train-extract-07", "text": "Please help with this request: Get the SKU from: Blue mug, SKU MUG-81, price $9.", "label": "extract"}
+{"id": "train-extract-07-2", "group": "train-extract-07", "text": "Task for you: Get the SKU from: Blue mug, SKU MUG-81, price $9.", "label": "extract"}
+{"id": "train-extract-08-0", "group": "train-extract-08", "text": "Pull all URLs from: Visit https://example.test/help for support.", "label": "extract"}
+{"id": "train-extract-08-1", "group": "train-extract-08", "text": "Please help with this request: Pull all URLs from: Visit https://example.test/help for support.", "label": "extract"}
+{"id": "train-extract-08-2", "group": "train-extract-08", "text": "Task for you: Pull all URLs from: Visit https://example.test/help for support.", "label": "extract"}
+{"id": "train-extract-09-0", "group": "train-extract-09", "text": "Return the temperature value in: Sensor reads 23 degrees Celsius.", "label": "extract"}
+{"id": "train-extract-09-1", "group": "train-extract-09", "text": "Please help with this request: Return the temperature value in: Sensor reads 23 degrees Celsius.", "label": "extract"}
+{"id": "train-extract-09-2", "group": "train-extract-09", "text": "Task for you: Return the temperature value in: Sensor reads 23 degrees Celsius.", "label": "extract"}
+{"id": "train-summarize-00-0", "group": "train-summarize-00", "text": "Condense this note: We shipped the patch. Error rates dropped. Monitoring continues.", "label": "summarize"}
+{"id": "train-summarize-00-1", "group": "train-summarize-00", "text": "Please help with this request: Condense this note: We shipped the patch. Error rates dropped. Monitoring continues.", "label": "summarize"}
+{"id": "train-summarize-00-2", "group": "train-summarize-00", "text": "Task for you: Condense this note: We shipped the patch. Error rates dropped. Monitoring continues.", "label": "summarize"}
+{"id": "train-summarize-01-0", "group": "train-summarize-01", "text": "Give a short recap: The team discussed hiring, reviewed the budget, and postponed the launch.", "label": "summarize"}
+{"id": "train-summarize-01-1", "group": "train-summarize-01", "text": "Please help with this request: Give a short recap: The team discussed hiring, reviewed the budget, and postponed the launch.", "label": "summarize"}
+{"id": "train-summarize-01-2", "group": "train-summarize-01", "text": "Task for you: Give a short recap: The team discussed hiring, reviewed the budget, and postponed the launch.", "label": "summarize"}
+{"id": "train-summarize-02-0", "group": "train-summarize-02", "text": "Shorten this paragraph: Rain arrived at noon. The match stopped and resumed at three.", "label": "summarize"}
+{"id": "train-summarize-02-1", "group": "train-summarize-02", "text": "Please help with this request: Shorten this paragraph: Rain arrived at noon. The match stopped and resumed at three.", "label": "summarize"}
+{"id": "train-summarize-02-2", "group": "train-summarize-02", "text": "Task for you: Shorten this paragraph: Rain arrived at noon. The match stopped and resumed at three.", "label": "summarize"}
+{"id": "train-summarize-03-0", "group": "train-summarize-03", "text": "Create a one-line digest: Sales rose in Europe but fell in Asia. Total revenue stayed flat.", "label": "summarize"}
+{"id": "train-summarize-03-1", "group": "train-summarize-03", "text": "Please help with this request: Create a one-line digest: Sales rose in Europe but fell in Asia. Total revenue stayed flat.", "label": "summarize"}
+{"id": "train-summarize-03-2", "group": "train-summarize-03", "text": "Task for you: Create a one-line digest: Sales rose in Europe but fell in Asia. Total revenue stayed flat.", "label": "summarize"}
+{"id": "train-summarize-04-0", "group": "train-summarize-04", "text": "Boil down this incident: A cache failed, requests slowed, and a restart restored normal service.", "label": "summarize"}
+{"id": "train-summarize-04-1", "group": "train-summarize-04", "text": "Please help with this request: Boil down this incident: A cache failed, requests slowed, and a restart restored normal service.", "label": "summarize"}
+{"id": "train-summarize-04-2", "group": "train-summarize-04", "text": "Task for you: Boil down this incident: A cache failed, requests slowed, and a restart restored normal service.", "label": "summarize"}
+{"id": "train-summarize-05-0", "group": "train-summarize-05", "text": "Make these notes concise: Monday is design review. Tuesday is implementation. Friday is the demo.", "label": "summarize"}
+{"id": "train-summarize-05-1", "group": "train-summarize-05", "text": "Please help with this request: Make these notes concise: Monday is design review. Tuesday is implementation. Friday is the demo.", "label": "summarize"}
+{"id": "train-summarize-05-2", "group": "train-summarize-05", "text": "Task for you: Make these notes concise: Monday is design review. Tuesday is implementation. Friday is the demo.", "label": "summarize"}
+{"id": "train-summarize-06-0", "group": "train-summarize-06", "text": "Give the key points: The release adds search and fixes login. Older browsers are unsupported.", "label": "summarize"}
+{"id": "train-summarize-06-1", "group": "train-summarize-06", "text": "Please help with this request: Give the key points: The release adds search and fixes login. Older browsers are unsupported.", "label": "summarize"}
+{"id": "train-summarize-06-2", "group": "train-summarize-06", "text": "Task for you: Give the key points: The release adds search and fixes login. Older browsers are unsupported.", "label": "summarize"}
+{"id": "train-summarize-07-0", "group": "train-summarize-07", "text": "Write a brief abstract: This study measures how sunlight affects bean growth over six weeks.", "label": "summarize"}
+{"id": "train-summarize-07-1", "group": "train-summarize-07", "text": "Please help with this request: Write a brief abstract: This study measures how sunlight affects bean growth over six weeks.", "label": "summarize"}
+{"id": "train-summarize-07-2", "group": "train-summarize-07", "text": "Task for you: Write a brief abstract: This study measures how sunlight affects bean growth over six weeks.", "label": "summarize"}
+{"id": "train-summarize-08-0", "group": "train-summarize-08", "text": "Reduce this to a sentence: The bus broke down. Riders waited an hour for a replacement.", "label": "summarize"}
+{"id": "train-summarize-08-1", "group": "train-summarize-08", "text": "Please help with this request: Reduce this to a sentence: The bus broke down. Riders waited an hour for a replacement.", "label": "summarize"}
+{"id": "train-summarize-08-2", "group": "train-summarize-08", "text": "Task for you: Reduce this to a sentence: The bus broke down. Riders waited an hour for a replacement.", "label": "summarize"}
+{"id": "train-summarize-09-0", "group": "train-summarize-09", "text": "Recap this changelog: Added CSV export, improved page loading, removed the legacy editor.", "label": "summarize"}
+{"id": "train-summarize-09-1", "group": "train-summarize-09", "text": "Please help with this request: Recap this changelog: Added CSV export, improved page loading, removed the legacy editor.", "label": "summarize"}
+{"id": "train-summarize-09-2", "group": "train-summarize-09", "text": "Task for you: Recap this changelog: Added CSV export, improved page loading, removed the legacy editor.", "label": "summarize"}
+{"id": "train-code-00-0", "group": "train-code-00", "text": "Write a Python function that reverses a list.", "label": "code"}
+{"id": "train-code-00-1", "group": "train-code-00", "text": "Please help with this request: Write a Python function that reverses a list.", "label": "code"}
+{"id": "train-code-00-2", "group": "train-code-00", "text": "Task for you: Write a Python function that reverses a list.", "label": "code"}
+{"id": "train-code-01-0", "group": "train-code-01", "text": "Debug this JavaScript: const x = [1,2]; x.map(n => n *);", "label": "code"}
+{"id": "train-code-01-1", "group": "train-code-01", "text": "Please help with this request: Debug this JavaScript: const x = [1,2]; x.map(n => n *);", "label": "code"}
+{"id": "train-code-01-2", "group": "train-code-01", "text": "Task for you: Debug this JavaScript: const x = [1,2]; x.map(n => n *);", "label": "code"}
+{"id": "train-code-02-0", "group": "train-code-02", "text": "Explain how a Rust borrow checker error happens.", "label": "code"}
+{"id": "train-code-02-1", "group": "train-code-02", "text": "Please help with this request: Explain how a Rust borrow checker error happens.", "label": "code"}
+{"id": "train-code-02-2", "group": "train-code-02", "text": "Task for you: Explain how a Rust borrow checker error happens.", "label": "code"}
+{"id": "train-code-03-0", "group": "train-code-03", "text": "Add a unit test for a function that computes factorial.", "label": "code"}
+{"id": "train-code-03-1", "group": "train-code-03", "text": "Please help with this request: Add a unit test for a function that computes factorial.", "label": "code"}
+{"id": "train-code-03-2", "group": "train-code-03", "text": "Task for you: Add a unit test for a function that computes factorial.", "label": "code"}
+{"id": "train-code-04-0", "group": "train-code-04", "text": "Implement a binary search in Java.", "label": "code"}
+{"id": "train-code-04-1", "group": "train-code-04", "text": "Please help with this request: Implement a binary search in Java.", "label": "code"}
+{"id": "train-code-04-2", "group": "train-code-04", "text": "Task for you: Implement a binary search in Java.", "label": "code"}
+{"id": "train-code-05-0", "group": "train-code-05", "text": "Refactor a nested loop into a Python comprehension.", "label": "code"}
+{"id": "train-code-05-1", "group": "train-code-05", "text": "Please help with this request: Refactor a nested loop into a Python comprehension.", "label": "code"}
+{"id": "train-code-05-2", "group": "train-code-05", "text": "Task for you: Refactor a nested loop into a Python comprehension.", "label": "code"}
+{"id": "train-code-06-0", "group": "train-code-06", "text": "Create a TypeScript interface for an invoice.", "label": "code"}
+{"id": "train-code-06-1", "group": "train-code-06", "text": "Please help with this request: Create a TypeScript interface for an invoice.", "label": "code"}
+{"id": "train-code-06-2", "group": "train-code-06", "text": "Task for you: Create a TypeScript interface for an invoice.", "label": "code"}
+{"id": "train-code-07-0", "group": "train-code-07", "text": "Fix an IndexError in this loop: for i in range(len(a)+1): print(a[i])", "label": "code"}
+{"id": "train-code-07-1", "group": "train-code-07", "text": "Please help with this request: Fix an IndexError in this loop: for i in range(len(a)+1): print(a[i])", "label": "code"}
+{"id": "train-code-07-2", "group": "train-code-07", "text": "Task for you: Fix an IndexError in this loop: for i in range(len(a)+1): print(a[i])", "label": "code"}
+{"id": "train-code-08-0", "group": "train-code-08", "text": "Write a Bash script to rename local text files.", "label": "code"}
+{"id": "train-code-08-1", "group": "train-code-08", "text": "Please help with this request: Write a Bash script to rename local text files.", "label": "code"}
+{"id": "train-code-08-2", "group": "train-code-08", "text": "Task for you: Write a Bash script to rename local text files.", "label": "code"}
+{"id": "train-code-09-0", "group": "train-code-09", "text": "Show how to parse a JSON string in Go.", "label": "code"}
+{"id": "train-code-09-1", "group": "train-code-09", "text": "Please help with this request: Show how to parse a JSON string in Go.", "label": "code"}
+{"id": "train-code-09-2", "group": "train-code-09", "text": "Task for you: Show how to parse a JSON string in Go.", "label": "code"}
+{"id": "train-sql-00-0", "group": "train-sql-00", "text": "Write a SELECT query to count users by country.", "label": "sql"}
+{"id": "train-sql-00-1", "group": "train-sql-00", "text": "Please help with this request: Write a SELECT query to count users by country.", "label": "sql"}
+{"id": "train-sql-00-2", "group": "train-sql-00", "text": "Task for you: Write a SELECT query to count users by country.", "label": "sql"}
+{"id": "train-sql-01-0", "group": "train-sql-01", "text": "Fix this query: SELECT name FROM users WHERE age > ;", "label": "sql"}
+{"id": "train-sql-01-1", "group": "train-sql-01", "text": "Please help with this request: Fix this query: SELECT name FROM users WHERE age > ;", "label": "sql"}
+{"id": "train-sql-01-2", "group": "train-sql-01", "text": "Task for you: Fix this query: SELECT name FROM users WHERE age > ;", "label": "sql"}
+{"id": "train-sql-02-0", "group": "train-sql-02", "text": "Join orders to customers and return customer names.", "label": "sql"}
+{"id": "train-sql-02-1", "group": "train-sql-02", "text": "Please help with this request: Join orders to customers and return customer names.", "label": "sql"}
+{"id": "train-sql-02-2", "group": "train-sql-02", "text": "Task for you: Join orders to customers and return customer names.", "label": "sql"}
+{"id": "train-sql-03-0", "group": "train-sql-03", "text": "Write SQL to find duplicate email addresses.", "label": "sql"}
+{"id": "train-sql-03-1", "group": "train-sql-03", "text": "Please help with this request: Write SQL to find duplicate email addresses.", "label": "sql"}
+{"id": "train-sql-03-2", "group": "train-sql-03", "text": "Task for you: Write SQL to find duplicate email addresses.", "label": "sql"}
+{"id": "train-sql-04-0", "group": "train-sql-04", "text": "Explain the difference between INNER JOIN and LEFT JOIN.", "label": "sql"}
+{"id": "train-sql-04-1", "group": "train-sql-04", "text": "Please help with this request: Explain the difference between INNER JOIN and LEFT JOIN.", "label": "sql"}
+{"id": "train-sql-04-2", "group": "train-sql-04", "text": "Task for you: Explain the difference between INNER JOIN and LEFT JOIN.", "label": "sql"}
+{"id": "train-sql-05-0", "group": "train-sql-05", "text": "Create a query for the top ten products by revenue.", "label": "sql"}
+{"id": "train-sql-05-1", "group": "train-sql-05", "text": "Please help with this request: Create a query for the top ten products by revenue.", "label": "sql"}
+{"id": "train-sql-05-2", "group": "train-sql-05", "text": "Task for you: Create a query for the top ten products by revenue.", "label": "sql"}
+{"id": "train-sql-06-0", "group": "train-sql-06", "text": "Use a window function to rank employees by salary.", "label": "sql"}
+{"id": "train-sql-06-1", "group": "train-sql-06", "text": "Please help with this request: Use a window function to rank employees by salary.", "label": "sql"}
+{"id": "train-sql-06-2", "group": "train-sql-06", "text": "Task for you: Use a window function to rank employees by salary.", "label": "sql"}
+{"id": "train-sql-07-0", "group": "train-sql-07", "text": "Write an INSERT statement for the inventory table.", "label": "sql"}
+{"id": "train-sql-07-1", "group": "train-sql-07", "text": "Please help with this request: Write an INSERT statement for the inventory table.", "label": "sql"}
+{"id": "train-sql-07-2", "group": "train-sql-07", "text": "Task for you: Write an INSERT statement for the inventory table.", "label": "sql"}
+{"id": "train-sql-08-0", "group": "train-sql-08", "text": "Optimize a slow SQL query that filters on created_at.", "label": "sql"}
+{"id": "train-sql-08-1", "group": "train-sql-08", "text": "Please help with this request: Optimize a slow SQL query that filters on created_at.", "label": "sql"}
+{"id": "train-sql-08-2", "group": "train-sql-08", "text": "Task for you: Optimize a slow SQL query that filters on created_at.", "label": "sql"}
+{"id": "train-sql-09-0", "group": "train-sql-09", "text": "Find customers with no orders using a database query.", "label": "sql"}
+{"id": "train-sql-09-1", "group": "train-sql-09", "text": "Please help with this request: Find customers with no orders using a database query.", "label": "sql"}
+{"id": "train-sql-09-2", "group": "train-sql-09", "text": "Task for you: Find customers with no orders using a database query.", "label": "sql"}
+{"id": "train-reason-00-0", "group": "train-reason-00", "text": "A train travels 60 miles per hour for two hours. How far does it go?", "label": "reason"}
+{"id": "train-reason-00-1", "group": "train-reason-00", "text": "Please help with this request: A train travels 60 miles per hour for two hours. How far does it go?", "label": "reason"}
+{"id": "train-reason-00-2", "group": "train-reason-00", "text": "Task for you: A train travels 60 miles per hour for two hours. How far does it go?", "label": "reason"}
+{"id": "train-reason-01-0", "group": "train-reason-01", "text": "If all roses are flowers and some flowers fade, must all roses fade?", "label": "reason"}
+{"id": "train-reason-01-1", "group": "train-reason-01", "text": "Please help with this request: If all roses are flowers and some flowers fade, must all roses fade?", "label": "reason"}
+{"id": "train-reason-01-2", "group": "train-reason-01", "text": "Task for you: If all roses are flowers and some flowers fade, must all roses fade?", "label": "reason"}
+{"id": "train-reason-02-0", "group": "train-reason-02", "text": "Plan three tasks where B depends on A and C depends on B.", "label": "reason"}
+{"id": "train-reason-02-1", "group": "train-reason-02", "text": "Please help with this request: Plan three tasks where B depends on A and C depends on B.", "label": "reason"}
+{"id": "train-reason-02-2", "group": "train-reason-02", "text": "Task for you: Plan three tasks where B depends on A and C depends on B.", "label": "reason"}
+{"id": "train-reason-03-0", "group": "train-reason-03", "text": "Split a $90 bill equally among six people.", "label": "reason"}
+{"id": "train-reason-03-1", "group": "train-reason-03", "text": "Please help with this request: Split a $90 bill equally among six people.", "label": "reason"}
+{"id": "train-reason-03-2", "group": "train-reason-03", "text": "Task for you: Split a $90 bill equally among six people.", "label": "reason"}
+{"id": "train-reason-04-0", "group": "train-reason-04", "text": "What comes next in the sequence 2, 4, 8, 16?", "label": "reason"}
+{"id": "train-reason-04-1", "group": "train-reason-04", "text": "Please help with this request: What comes next in the sequence 2, 4, 8, 16?", "label": "reason"}
+{"id": "train-reason-04-2", "group": "train-reason-04", "text": "Task for you: What comes next in the sequence 2, 4, 8, 16?", "label": "reason"}
+{"id": "train-reason-05-0", "group": "train-reason-05", "text": "A box has three red and two blue balls. What is the chance of drawing blue?", "label": "reason"}
+{"id": "train-reason-05-1", "group": "train-reason-05", "text": "Please help with this request: A box has three red and two blue balls. What is the chance of drawing blue?", "label": "reason"}
+{"id": "train-reason-05-2", "group": "train-reason-05", "text": "Task for you: A box has three red and two blue balls. What is the chance of drawing blue?", "label": "reason"}
+{"id": "train-reason-06-0", "group": "train-reason-06", "text": "Solve for x: 3x + 5 = 20.", "label": "reason"}
+{"id": "train-reason-06-1", "group": "train-reason-06", "text": "Please help with this request: Solve for x: 3x + 5 = 20.", "label": "reason"}
+{"id": "train-reason-06-2", "group": "train-reason-06", "text": "Task for you: Solve for x: 3x + 5 = 20.", "label": "reason"}
+{"id": "train-reason-07-0", "group": "train-reason-07", "text": "Arrange two meetings that cannot overlap between 9 and 11, each lasting one hour.", "label": "reason"}
+{"id": "train-reason-07-1", "group": "train-reason-07", "text": "Please help with this request: Arrange two meetings that cannot overlap between 9 and 11, each lasting one hour.", "label": "reason"}
+{"id": "train-reason-07-2", "group": "train-reason-07", "text": "Task for you: Arrange two meetings that cannot overlap between 9 and 11, each lasting one hour.", "label": "reason"}
+{"id": "train-reason-08-0", "group": "train-reason-08", "text": "Which is cheaper per item: 6 for $12 or 10 for $25?", "label": "reason"}
+{"id": "train-reason-08-1", "group": "train-reason-08", "text": "Please help with this request: Which is cheaper per item: 6 for $12 or 10 for $25?", "label": "reason"}
+{"id": "train-reason-08-2", "group": "train-reason-08", "text": "Task for you: Which is cheaper per item: 6 for $12 or 10 for $25?", "label": "reason"}
+{"id": "train-reason-09-0", "group": "train-reason-09", "text": "If today is Tuesday, what day is it in ten days?", "label": "reason"}
+{"id": "train-reason-09-1", "group": "train-reason-09", "text": "Please help with this request: If today is Tuesday, what day is it in ten days?", "label": "reason"}
+{"id": "train-reason-09-2", "group": "train-reason-09", "text": "Task for you: If today is Tuesday, what day is it in ten days?", "label": "reason"}
+{"id": "train-tool_use-00-0", "group": "train-tool_use-00", "text": "Check the current weather in Boston.", "label": "tool_use"}
+{"id": "train-tool_use-00-1", "group": "train-tool_use-00", "text": "Please help with this request: Check the current weather in Boston.", "label": "tool_use"}
+{"id": "train-tool_use-00-2", "group": "train-tool_use-00", "text": "Task for you: Check the current weather in Boston.", "label": "tool_use"}
+{"id": "train-tool_use-01-0", "group": "train-tool_use-01", "text": "Send an email to the support desk about my missing parcel.", "label": "tool_use"}
+{"id": "train-tool_use-01-1", "group": "train-tool_use-01", "text": "Please help with this request: Send an email to the support desk about my missing parcel.", "label": "tool_use"}
+{"id": "train-tool_use-01-2", "group": "train-tool_use-01", "text": "Task for you: Send an email to the support desk about my missing parcel.", "label": "tool_use"}
+{"id": "train-tool_use-02-0", "group": "train-tool_use-02", "text": "Create a calendar event for tomorrow at noon.", "label": "tool_use"}
+{"id": "train-tool_use-02-1", "group": "train-tool_use-02", "text": "Please help with this request: Create a calendar event for tomorrow at noon.", "label": "tool_use"}
+{"id": "train-tool_use-02-2", "group": "train-tool_use-02", "text": "Task for you: Create a calendar event for tomorrow at noon.", "label": "tool_use"}
+{"id": "train-tool_use-03-0", "group": "train-tool_use-03", "text": "Look up the current share price of ACME.", "label": "tool_use"}
+{"id": "train-tool_use-03-1", "group": "train-tool_use-03", "text": "Please help with this request: Look up the current share price of ACME.", "label": "tool_use"}
+{"id": "train-tool_use-03-2", "group": "train-tool_use-03", "text": "Task for you: Look up the current share price of ACME.", "label": "tool_use"}
+{"id": "train-tool_use-04-0", "group": "train-tool_use-04", "text": "Search the web for recent changes to the city bus timetable.", "label": "tool_use"}
+{"id": "train-tool_use-04-1", "group": "train-tool_use-04", "text": "Please help with this request: Search the web for recent changes to the city bus timetable.", "label": "tool_use"}
+{"id": "train-tool_use-04-2", "group": "train-tool_use-04", "text": "Task for you: Search the web for recent changes to the city bus timetable.", "label": "tool_use"}
+{"id": "train-tool_use-05-0", "group": "train-tool_use-05", "text": "Open a support ticket for the broken printer.", "label": "tool_use"}
+{"id": "train-tool_use-05-1", "group": "train-tool_use-05", "text": "Please help with this request: Open a support ticket for the broken printer.", "label": "tool_use"}
+{"id": "train-tool_use-05-2", "group": "train-tool_use-05", "text": "Task for you: Open a support ticket for the broken printer.", "label": "tool_use"}
+{"id": "train-tool_use-06-0", "group": "train-tool_use-06", "text": "Fetch the latest status of order ZX55 from the order system.", "label": "tool_use"}
+{"id": "train-tool_use-06-1", "group": "train-tool_use-06", "text": "Please help with this request: Fetch the latest status of order ZX55 from the order system.", "label": "tool_use"}
+{"id": "train-tool_use-06-2", "group": "train-tool_use-06", "text": "Task for you: Fetch the latest status of order ZX55 from the order system.", "label": "tool_use"}
+{"id": "train-tool_use-07-0", "group": "train-tool_use-07", "text": "Book a table at a restaurant for Friday evening.", "label": "tool_use"}
+{"id": "train-tool_use-07-1", "group": "train-tool_use-07", "text": "Please help with this request: Book a table at a restaurant for Friday evening.", "label": "tool_use"}
+{"id": "train-tool_use-07-2", "group": "train-tool_use-07", "text": "Task for you: Book a table at a restaurant for Friday evening.", "label": "tool_use"}
+{"id": "train-tool_use-08-0", "group": "train-tool_use-08", "text": "Set a reminder to call the dentist next week.", "label": "tool_use"}
+{"id": "train-tool_use-08-1", "group": "train-tool_use-08", "text": "Please help with this request: Set a reminder to call the dentist next week.", "label": "tool_use"}
+{"id": "train-tool_use-08-2", "group": "train-tool_use-08", "text": "Task for you: Set a reminder to call the dentist next week.", "label": "tool_use"}
+{"id": "train-tool_use-09-0", "group": "train-tool_use-09", "text": "Download this report from our document store.", "label": "tool_use"}
+{"id": "train-tool_use-09-1", "group": "train-tool_use-09", "text": "Please help with this request: Download this report from our document store.", "label": "tool_use"}
+{"id": "train-tool_use-09-2", "group": "train-tool_use-09", "text": "Task for you: Download this report from our document store.", "label": "tool_use"}
+{"id": "train-chat-00-0", "group": "train-chat-00", "text": "Hello, how are you doing today?", "label": "chat"}
+{"id": "train-chat-00-1", "group": "train-chat-00", "text": "Please help with this request: Hello, how are you doing today?", "label": "chat"}
+{"id": "train-chat-00-2", "group": "train-chat-00", "text": "Task for you: Hello, how are you doing today?", "label": "chat"}
+{"id": "train-chat-01-0", "group": "train-chat-01", "text": "Tell me a joke about penguins.", "label": "chat"}
+{"id": "train-chat-01-1", "group": "train-chat-01", "text": "Please help with this request: Tell me a joke about penguins.", "label": "chat"}
+{"id": "train-chat-01-2", "group": "train-chat-01", "text": "Task for you: Tell me a joke about penguins.", "label": "chat"}
+{"id": "train-chat-02-0", "group": "train-chat-02", "text": "What is photosynthesis?", "label": "chat"}
+{"id": "train-chat-02-1", "group": "train-chat-02", "text": "Please help with this request: What is photosynthesis?", "label": "chat"}
+{"id": "train-chat-02-2", "group": "train-chat-02", "text": "Task for you: What is photosynthesis?", "label": "chat"}
+{"id": "train-chat-03-0", "group": "train-chat-03", "text": "Write a short poem about autumn.", "label": "chat"}
+{"id": "train-chat-03-1", "group": "train-chat-03", "text": "Please help with this request: Write a short poem about autumn.", "label": "chat"}
+{"id": "train-chat-03-2", "group": "train-chat-03", "text": "Task for you: Write a short poem about autumn.", "label": "chat"}
+{"id": "train-chat-04-0", "group": "train-chat-04", "text": "Who wrote Pride and Prejudice?", "label": "chat"}
+{"id": "train-chat-04-1", "group": "train-chat-04", "text": "Please help with this request: Who wrote Pride and Prejudice?", "label": "chat"}
+{"id": "train-chat-04-2", "group": "train-chat-04", "text": "Task for you: Who wrote Pride and Prejudice?", "label": "chat"}
+{"id": "train-chat-05-0", "group": "train-chat-05", "text": "Explain why the sky appears blue.", "label": "chat"}
+{"id": "train-chat-05-1", "group": "train-chat-05", "text": "Please help with this request: Explain why the sky appears blue.", "label": "chat"}
+{"id": "train-chat-05-2", "group": "train-chat-05", "text": "Task for you: Explain why the sky appears blue.", "label": "chat"}
+{"id": "train-chat-06-0", "group": "train-chat-06", "text": "Invent a name for a friendly dragon.", "label": "chat"}
+{"id": "train-chat-06-1", "group": "train-chat-06", "text": "Please help with this request: Invent a name for a friendly dragon.", "label": "chat"}
+{"id": "train-chat-06-2", "group": "train-chat-06", "text": "Task for you: Invent a name for a friendly dragon.", "label": "chat"}
+{"id": "train-chat-07-0", "group": "train-chat-07", "text": "Tell a bedtime story about a lighthouse.", "label": "chat"}
+{"id": "train-chat-07-1", "group": "train-chat-07", "text": "Please help with this request: Tell a bedtime story about a lighthouse.", "label": "chat"}
+{"id": "train-chat-07-2", "group": "train-chat-07", "text": "Task for you: Tell a bedtime story about a lighthouse.", "label": "chat"}
+{"id": "train-chat-08-0", "group": "train-chat-08", "text": "What is the difference between a comet and an asteroid?", "label": "chat"}
+{"id": "train-chat-08-1", "group": "train-chat-08", "text": "Please help with this request: What is the difference between a comet and an asteroid?", "label": "chat"}
+{"id": "train-chat-08-2", "group": "train-chat-08", "text": "Task for you: What is the difference between a comet and an asteroid?", "label": "chat"}
+{"id": "train-chat-09-0", "group": "train-chat-09", "text": "Thanks for helping me today.", "label": "chat"}
+{"id": "train-chat-09-1", "group": "train-chat-09", "text": "Please help with this request: Thanks for helping me today.", "label": "chat"}
+{"id": "train-chat-09-2", "group": "train-chat-09", "text": "Task for you: Thanks for helping me today.", "label": "chat"}

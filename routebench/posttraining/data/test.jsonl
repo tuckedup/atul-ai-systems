@@ -1,0 +1,40 @@
+{"id": "test-classify-00-0", "group": "test-classify-00", "text": "Assign a sentiment to this SQL course review: Clear examples, worth every penny.", "label": "classify"}
+{"id": "test-classify-01-0", "group": "test-classify-01", "text": "Label the intent of this quotation: \"Send an email to my manager.\"", "label": "classify"}
+{"id": "test-classify-02-0", "group": "test-classify-02", "text": "Is this description about finance or sport? The goalkeeper saved a penalty.", "label": "classify"}
+{"id": "test-classify-03-0", "group": "test-classify-03", "text": "Mark this text as formal or informal: Hey mate, fancy a cuppa?", "label": "classify"}
+{"id": "test-classify-04-0", "group": "test-classify-04", "text": "Choose bug-report or feature-request for: The export button crashes the app.", "label": "classify"}
+{"id": "test-extract-00-0", "group": "test-extract-00", "text": "From this SQL tutorial announcement, copy the room number: Join us in room B204.", "label": "extract"}
+{"id": "test-extract-01-0", "group": "test-extract-01", "text": "Return only the quoted action in: The operator said \"restart service\" at 09:15.", "label": "extract"}
+{"id": "test-extract-02-0", "group": "test-extract-02", "text": "Pull the version string from: Release v3.7.2 is ready for download.", "label": "extract"}
+{"id": "test-extract-03-0", "group": "test-extract-03", "text": "List the two airports mentioned: Fly from LAX to JFK.", "label": "extract"}
+{"id": "test-extract-04-0", "group": "test-extract-04", "text": "Find the subtotal in: subtotal 26.00, tax 2.60, total 28.60.", "label": "extract"}
+{"id": "test-summarize-00-0", "group": "test-summarize-00", "text": "Give a short digest of this coding workshop: Students learned loops, wrote tests, and shared solutions.", "label": "summarize"}
+{"id": "test-summarize-01-0", "group": "test-summarize-01", "text": "Recap this email: Please restart service. It timed out after the update. We need a fix today.", "label": "summarize"}
+{"id": "test-summarize-02-0", "group": "test-summarize-02", "text": "Shorten this trip diary: We visited a museum, walked by the river, and caught the evening ferry.", "label": "summarize"}
+{"id": "test-summarize-03-0", "group": "test-summarize-03", "text": "Compress this research note: The first trial failed. A lower temperature improved yield in the second trial.", "label": "summarize"}
+{"id": "test-summarize-04-0", "group": "test-summarize-04", "text": "Give the gist: The library closes for repairs in July and reopens in August with longer hours.", "label": "summarize"}
+{"id": "test-code-00-0", "group": "test-code-00", "text": "Write Python that labels reviews by checking a dictionary of keywords.", "label": "code"}
+{"id": "test-code-01-0", "group": "test-code-01", "text": "Debug a function that extracts invoice totals from strings.", "label": "code"}
+{"id": "test-code-02-0", "group": "test-code-02", "text": "Create a JavaScript function that builds a SQL query string.", "label": "code"}
+{"id": "test-code-03-0", "group": "test-code-03", "text": "Implement an exponential retry delay in Ruby.", "label": "code"}
+{"id": "test-code-04-0", "group": "test-code-04", "text": "Explain why a recursive Fibonacci implementation repeats work.", "label": "code"}
+{"id": "test-sql-00-0", "group": "test-sql-00", "text": "Write SQL that classifies payments above 100 as large using CASE.", "label": "sql"}
+{"id": "test-sql-01-0", "group": "test-sql-01", "text": "Extract the month from a timestamp with a PostgreSQL query.", "label": "sql"}
+{"id": "test-sql-02-0", "group": "test-sql-02", "text": "Summarize sales per quarter using GROUP BY.", "label": "sql"}
+{"id": "test-sql-03-0", "group": "test-sql-03", "text": "Return the second highest price using a SQL window function.", "label": "sql"}
+{"id": "test-sql-04-0", "group": "test-sql-04", "text": "Explain why this database query fails: SELECT * FROM orders GROUP BY customer_id.", "label": "sql"}
+{"id": "test-reason-00-0", "group": "test-reason-00", "text": "A developer has 18 bugs and fixes one third. How many remain?", "label": "reason"}
+{"id": "test-reason-01-0", "group": "test-reason-01", "text": "An email campaign reaches 200 people and 15 percent reply. How many replies is that?", "label": "reason"}
+{"id": "test-reason-02-0", "group": "test-reason-02", "text": "A server uses 120 watts for five hours. Calculate its energy in watt-hours.", "label": "reason"}
+{"id": "test-reason-03-0", "group": "test-reason-03", "text": "Schedule four 15-minute appointments starting at 14:00 with no gaps. When do they end?", "label": "reason"}
+{"id": "test-reason-04-0", "group": "test-reason-04", "text": "Every blue tile is square. This tile is round. Can it be blue?", "label": "reason"}
+{"id": "test-tool_use-00-0", "group": "test-tool_use-00", "text": "Run the saved SQL report in our warehouse and fetch the current results.", "label": "tool_use"}
+{"id": "test-tool_use-01-0", "group": "test-tool_use-01", "text": "Email my summary document to the project lead.", "label": "tool_use"}
+{"id": "test-tool_use-02-0", "group": "test-tool_use-02", "text": "Search our issue tracker for unresolved Python bugs.", "label": "tool_use"}
+{"id": "test-tool_use-03-0", "group": "test-tool_use-03", "text": "Cancel my calendar appointment with Alex this afternoon.", "label": "tool_use"}
+{"id": "test-tool_use-04-0", "group": "test-tool_use-04", "text": "Look up whether the downtown library is open right now.", "label": "tool_use"}
+{"id": "test-chat-00-0", "group": "test-chat-00", "text": "What is SQL used for?", "label": "chat"}
+{"id": "test-chat-01-0", "group": "test-chat-01", "text": "Tell me a fictional story about an email lost in cyberspace.", "label": "chat"}
+{"id": "test-chat-02-0", "group": "test-chat-02", "text": "Explain what a software bug is to a child.", "label": "chat"}
+{"id": "test-chat-03-0", "group": "test-chat-03", "text": "Compose a haiku about a rainy railway station.", "label": "chat"}
+{"id": "test-chat-04-0", "group": "test-chat-04", "text": "That was helpful, thank you and goodbye.", "label": "chat"}

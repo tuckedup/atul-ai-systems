@@ -1,0 +1,574 @@
+[
+  {
+    "epoch": 1,
+    "mean_training_loss": 0.7072048121520008,
+    "validation": {
+      "count": 24,
+      "correct": 20,
+      "accuracy": 0.8333333333333334,
+      "macro_f1": 0.8330357142857143,
+      "invalid": 0,
+      "per_class": {
+        "classify": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "extract": {
+          "support": 3,
+          "correct": 2,
+          "f1": 0.8
+        },
+        "summarize": {
+          "support": 3,
+          "correct": 3,
+          "f1": 0.75
+        },
+        "code": {
+          "support": 3,
+          "correct": 3,
+          "f1": 0.8571428571428571
+        },
+        "sql": {
+          "support": 3,
+          "correct": 3,
+          "f1": 0.8571428571428571
+        },
+        "reason": {
+          "support": 3,
+          "correct": 2,
+          "f1": 0.8
+        },
+        "tool_use": {
+          "support": 3,
+          "correct": 2,
+          "f1": 0.8
+        },
+        "chat": {
+          "support": 3,
+          "correct": 2,
+          "f1": 0.8
+        }
+      },
+      "confusion": {
+        "classify": {
+          "classify": 3,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "extract": {
+          "classify": 0,
+          "extract": 2,
+          "summarize": 0,
+          "code": 1,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "summarize": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 3,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "code": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 3,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "sql": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 3,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "reason": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 1,
+          "code": 0,
+          "sql": 0,
+          "reason": 2,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "tool_use": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 1,
+          "reason": 0,
+          "tool_use": 2,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "chat": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 1,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 2,
+          "INVALID": 0
+        }
+      }
+    }
+  },
+  {
+    "epoch": 2,
+    "mean_training_loss": 0.07514252395994844,
+    "validation": {
+      "count": 24,
+      "correct": 23,
+      "accuracy": 0.9583333333333334,
+      "macro_f1": 0.9571428571428572,
+      "invalid": 0,
+      "per_class": {
+        "classify": {
+          "support": 3,
+          "correct": 2,
+          "f1": 0.8
+        },
+        "extract": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "summarize": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "code": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "sql": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "reason": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "tool_use": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "chat": {
+          "support": 3,
+          "correct": 3,
+          "f1": 0.8571428571428571
+        }
+      },
+      "confusion": {
+        "classify": {
+          "classify": 2,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 1,
+          "INVALID": 0
+        },
+        "extract": {
+          "classify": 0,
+          "extract": 3,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "summarize": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 3,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "code": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 3,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "sql": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 3,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "reason": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 3,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "tool_use": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 3,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "chat": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 3,
+          "INVALID": 0
+        }
+      }
+    }
+  },
+  {
+    "epoch": 3,
+    "mean_training_loss": 0.005885554350243183,
+    "validation": {
+      "count": 24,
+      "correct": 22,
+      "accuracy": 0.9166666666666666,
+      "macro_f1": 0.9142857142857143,
+      "invalid": 0,
+      "per_class": {
+        "classify": {
+          "support": 3,
+          "correct": 2,
+          "f1": 0.8
+        },
+        "extract": {
+          "support": 3,
+          "correct": 3,
+          "f1": 0.8571428571428571
+        },
+        "summarize": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "code": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "sql": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "reason": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "tool_use": {
+          "support": 3,
+          "correct": 2,
+          "f1": 0.8
+        },
+        "chat": {
+          "support": 3,
+          "correct": 3,
+          "f1": 0.8571428571428571
+        }
+      },
+      "confusion": {
+        "classify": {
+          "classify": 2,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 1,
+          "INVALID": 0
+        },
+        "extract": {
+          "classify": 0,
+          "extract": 3,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "summarize": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 3,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "code": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 3,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "sql": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 3,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "reason": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 3,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "tool_use": {
+          "classify": 0,
+          "extract": 1,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 2,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "chat": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 3,
+          "INVALID": 0
+        }
+      }
+    }
+  },
+  {
+    "epoch": 4,
+    "mean_training_loss": 0.0008031244713492924,
+    "validation": {
+      "count": 24,
+      "correct": 23,
+      "accuracy": 0.9583333333333334,
+      "macro_f1": 0.9571428571428572,
+      "invalid": 0,
+      "per_class": {
+        "classify": {
+          "support": 3,
+          "correct": 2,
+          "f1": 0.8
+        },
+        "extract": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "summarize": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "code": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "sql": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "reason": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "tool_use": {
+          "support": 3,
+          "correct": 3,
+          "f1": 1.0
+        },
+        "chat": {
+          "support": 3,
+          "correct": 3,
+          "f1": 0.8571428571428571
+        }
+      },
+      "confusion": {
+        "classify": {
+          "classify": 2,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 1,
+          "INVALID": 0
+        },
+        "extract": {
+          "classify": 0,
+          "extract": 3,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "summarize": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 3,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "code": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 3,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "sql": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 3,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "reason": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 3,
+          "tool_use": 0,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "tool_use": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 3,
+          "chat": 0,
+          "INVALID": 0
+        },
+        "chat": {
+          "classify": 0,
+          "extract": 0,
+          "summarize": 0,
+          "code": 0,
+          "sql": 0,
+          "reason": 0,
+          "tool_use": 0,
+          "chat": 3,
+          "INVALID": 0
+        }
+      }
+    }
+  }
+]

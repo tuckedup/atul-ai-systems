@@ -1,0 +1,5 @@
+{
+  "text": "Write SQL that labels overdue invoices using CASE.",
+  "baseline": "`CREATE TABLE invoices AS SELECT * FROM",
+  "tuned": "sql"
+}
