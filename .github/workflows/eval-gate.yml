@@ -2,7 +2,8 @@
 name: eval-gate
 on:
   pull_request:
-    paths: ["forgecode/**", "routebench/**", "packages/core/**"]
+    # The standalone SFT experiment has its own offline evidence gate.
+    paths: ["forgecode/**", "routebench/**", "!routebench/posttraining/**", "packages/core/**"]
 jobs:
   forgebench-smoke:
     runs-on: ubuntu-latest

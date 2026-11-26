@@ -1,0 +1,20 @@
+{
+  "adapter/adapter_config.json": "355a279f115ffaeef0bab70ff56f34086d03499fd02fbb09c7607a6499050c89",
+  "adapter/adapter_model.safetensors": "88daa2e5700777041ff2a4ab33b2052045374575a11204f6cdeb32d44d92567b",
+  "adapter/README.md": "936dab0a9df44ec143278b5206d8082454327127c1a736032f7cdbed2b912b9c",
+  "base_dev.json": "ace366cfdaa831ff1a36141a0f931a9c3d8fb6bf79c07d49e95c4299a644c876",
+  "base_test.json": "064356edbdbe29a3ec54df91e5b4231e0b11eaec68c8ccd75746c5420b8ab537",
+  "config.json": "20dbc73d26ebfec1158d2d11e1b42f14a882060ba96a8e2528e1d29944a31dc9",
+  "demo.json": "638ad160c93b846429fb908409a568b9e3cdb1bb1d29bbcbacd29ac442957861",
+  "dev_epoch_1.json": "883dee71281a7ba4951ce6cce33a84e828d21ba5f8c817a2e3403fa7e96fd923",
+  "dev_epoch_2.json": "5c68b40db844517c71c41a9772a92f4749609b007e770bd3fd2327b4475b76cd",
+  "dev_epoch_3.json": "fb7e2b6c28662b8b9b21c22fb68aff0e6a31bab7931de26f19596b2fe698604d",
+  "dev_epoch_4.json": "5c68b40db844517c71c41a9772a92f4749609b007e770bd3fd2327b4475b76cd",
+  "history.json": "2d2e7aa160b8a00d91d6b1753a649c4b296367b125a7f7494fe1ff69b488b8ee",
+  "reload-check.json": "9b22995007c077b132f745607af99ec609cb51272022b829bfde998030f57dc4",
+  "report.json": "a639dccfae75d3fb2b612215336d96bdc84b8a08d66b8c4e7bfef8fd13f92990",
+  "source/dataset.py": "b3e5caabd32ac6cfb154de75d9cdce18a07e5d2c04ec5dd84cfcfdaeedcdca3d",
+  "source/Dockerfile": "756c97109582470995eb379c06b66f222f7c8405760bfc0a925b1bdb5ed7847e",
+  "source/experiment.py": "6fb225e722307ab562eb796a0f589f6f186d5ff7c638524dbaa2a0f50829db49",
+  "tuned_test.json": "cfe7e8dd430ed8a63f9f39ce692bbd8ddec554c24a6020454623a5a34fddca37"
+}

@@ -1,0 +1,24 @@
+{"id": "dev-classify-00-0", "group": "dev-classify-00", "text": "Label this restaurant review: Bland food but kind staff.", "label": "classify"}
+{"id": "dev-classify-01-0", "group": "dev-classify-01", "text": "Decide whether this message is a complaint: My delivery arrived damaged.", "label": "classify"}
+{"id": "dev-classify-02-0", "group": "dev-classify-02", "text": "Choose a genre for: A detective searches a haunted mansion.", "label": "classify"}
+{"id": "dev-extract-00-0", "group": "dev-extract-00", "text": "Return the currency code in: Payment of 80 EUR received.", "label": "extract"}
+{"id": "dev-extract-01-0", "group": "dev-extract-01", "text": "Copy the order identifier: Receipt for order AB-902.", "label": "extract"}
+{"id": "dev-extract-02-0", "group": "dev-extract-02", "text": "List the ingredients named here: soup contains peas, salt and onions.", "label": "extract"}
+{"id": "dev-summarize-00-0", "group": "dev-summarize-00", "text": "Compress this update: The migration finished. Two jobs failed. Both were rerun successfully.", "label": "summarize"}
+{"id": "dev-summarize-01-0", "group": "dev-summarize-01", "text": "Give a brief synopsis: A sailor gets lost, finds an island, and returns with a map.", "label": "summarize"}
+{"id": "dev-summarize-02-0", "group": "dev-summarize-02", "text": "Turn these minutes into a recap: Marketing wants a delay. Engineering agrees. Launch moves to June.", "label": "summarize"}
+{"id": "dev-code-00-0", "group": "dev-code-00", "text": "Implement a queue in C++.", "label": "code"}
+{"id": "dev-code-01-0", "group": "dev-code-01", "text": "Why does this Python expression fail: int(\"banana\")?", "label": "code"}
+{"id": "dev-code-02-0", "group": "dev-code-02", "text": "Write tests for a JavaScript date formatter.", "label": "code"}
+{"id": "dev-sql-00-0", "group": "dev-sql-00", "text": "Write a query to average delivery time per region.", "label": "sql"}
+{"id": "dev-sql-01-0", "group": "dev-sql-01", "text": "Explain this SQL: SELECT DISTINCT city FROM addresses.", "label": "sql"}
+{"id": "dev-sql-02-0", "group": "dev-sql-02", "text": "Delete expired sessions with a database statement.", "label": "sql"}
+{"id": "dev-reason-00-0", "group": "dev-reason-00", "text": "A shirt costs $40 before a 25 percent discount. What is the final price?", "label": "reason"}
+{"id": "dev-reason-01-0", "group": "dev-reason-01", "text": "Two painters take four hours together. How much wall do they paint in one hour?", "label": "reason"}
+{"id": "dev-reason-02-0", "group": "dev-reason-02", "text": "Can a triangle have sides 2, 3 and 9? Explain.", "label": "reason"}
+{"id": "dev-tool_use-00-0", "group": "dev-tool_use-00", "text": "Find the live departure time of flight AB123.", "label": "tool_use"}
+{"id": "dev-tool_use-01-0", "group": "dev-tool_use-01", "text": "Add milk to my shopping list app.", "label": "tool_use"}
+{"id": "dev-tool_use-02-0", "group": "dev-tool_use-02", "text": "Retrieve the newest incident from our monitoring service.", "label": "tool_use"}
+{"id": "dev-chat-00-0", "group": "dev-chat-00", "text": "Describe the water cycle.", "label": "chat"}
+{"id": "dev-chat-01-0", "group": "dev-chat-01", "text": "Make up a silly limerick about a robot.", "label": "chat"}
+{"id": "dev-chat-02-0", "group": "dev-chat-02", "text": "Good morning! I hope you have a pleasant day.", "label": "chat"}

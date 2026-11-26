@@ -2,6 +2,36 @@
 
 `atul-ai-systems` is a portfolio platform for building, evaluating, and operating bounded AI agents. A shared `aisys-core` package supplies provider-neutral LLM access, OpenTelemetry tracing, typed tools, durable approval gates, hash-chained audit records, and evaluation primitives. Three applications build on it: ForgeCode repairs code with a tested agent loop, RouteBench routes OpenAI-compatible inference using measured quality/cost/latency and reliability controls, and Incident Commander investigates operational alerts with scoped agents, durable pause/resume, memory, risk review, and human approval. An Operator API and React UI provide the common control surface.
 
+## LLM post-training experiment
+
+[RouteBench task-label LoRA](routebench/posttraining/README.md) adds a real
+Qwen2.5-0.5B fine-tuning run with frozen splits, validation-only checkpoint
+selection, saved adapter weights, and paired held-out evaluation. It reuses
+RouteBench's existing eight-label taxonomy rather than adding another app.
+
+| Held-out result | Untouched model | Selected adapter |
+|---|---:|---:|
+| Exact label accuracy | 2/40 (5%) | 32/40 (80%) |
+| Macro F1 | 0.0425 | 0.8275 |
+| Invalid answers | 20 | 2 |
+
+**The promotion gate failed** because two answers were invalid. The result
+demonstrates local LLM post-training with evals tied to training, including a
+candidate rejection; it does not establish production serving or real-user
+adoption. These are 40 synthetic English requests, and the scores include
+output-format compliance. A fresh process reproduced both models' predictions.
+
+Verify the recorded evidence with Python alone:
+
+```powershell
+python -m unittest discover -s routebench/posttraining -p 'test_*.py' -v
+python routebench/posttraining/experiment.py verify routebench/posttraining/evidence/seed42 --integrity-only
+```
+
+The [experiment README](routebench/posttraining/README.md) provides GPU setup,
+training, fresh-process replay, a new-request demo, failure cases, and exact
+limits on what the measurements prove.
+
 ## Architecture
 
 ```text
